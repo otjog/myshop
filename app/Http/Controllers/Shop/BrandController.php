@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Models\Shop\Product\Brand;
-use App\Models\Seo\MetaTagsCreater;
+use App\Libraries\Seo\MetaTagsCreater;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
@@ -114,8 +114,8 @@ class BrandController extends Controller{
             $this->data['data']['products'] = $products->getActiveProductsOfBrand($name);
         }
 
-        $this->data['meta'] = $this->metaTagsCreater->getMetaTags($this->data);
-//dd($this->data);
+        $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
+
         return view( 'templates.default', $this->data);
     }
 

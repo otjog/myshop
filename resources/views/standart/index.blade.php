@@ -6,14 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}"><meta name="yandex-verification" content="5cfc0ee706c042ca" />
 
-    @if( isset($meta) && $meta !== null)
+    @if(isset($meta) && $meta !== null)
         <title> {{$meta['title']}} </title>
         <meta name="description"    content=" {{$meta['description']}} ">
         <meta name="keywords"       content=" {{$meta['keywords']}} ">
-    @else
-        <title>Запчасти к котлам Мастер Газ Сеул - продажа запчастей по всей России. Трехходовые клапаны, теплообменники к котлам Master Gas Seoul.</title>
-        <meta name="description" content="Интернет-магазин Master-Gas. Каталог запчастей Мастер Газ. Продажа запчастей для Сеул. Как купить трехходовой клапан. Советы по выбору.">
-        <meta name="keywords" content="Трехходовой клапан мастер газ, купить насос мастер газ, продажа, теплообменник master gas, запчасти к котлам мастер газ, трехходовой кран мастер газ, датчик давления мастер газ, котлы Master Gas">
     @endif
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
