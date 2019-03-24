@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Shop\Order\Basket;
 use Illuminate\Http\Request;
 use App\Models\Shop\Product\Product;
-use App\Models\Seo\MetaTagsCreater;
+use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Settings;
 
 class ProductController extends Controller{
@@ -85,9 +85,9 @@ class ProductController extends Controller{
 
         $this->data['template']['custom'][] = 'shop-icons';
 
-        $this->data['data']['product']  = $this->products->getActiveProduct($id);
+        $this->data['data']['product'] = $this->products->getActiveProduct($id);
 
-        $this->data['meta'] = $this->metaTagsCreater->getMetaTags($this->data);
+        $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
         return view( 'templates.default', $this->data);
 

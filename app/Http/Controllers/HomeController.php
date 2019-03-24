@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Settings;
+use App\Libraries\Seo\MetaTagsCreater;
 
 class HomeController extends Controller{
 
@@ -12,9 +13,13 @@ class HomeController extends Controller{
 
     protected $settings;
 
-    public function __construct(){
+    protected $metaTagsCreater;
+
+    public function __construct(MetaTagsCreater $metaTagsCreater){
 
         $this->settings = Settings::getInstance();
+
+        $this->metaTagsCreater  = $metaTagsCreater;
 
         $this->data['template'] = [];
     }
@@ -28,6 +33,8 @@ class HomeController extends Controller{
         //  $this->data['template'] ['modules']['custom']  = 'shop-icons';
 
         $this->data['template'] ['modules']['offers']  = 'default';
+
+        $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
         return view( 'templates.default', $this->data);
     }

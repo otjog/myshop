@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
-use App\Models\Seo\MetaTagsCreater;
+use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Shop\Order\Basket;
 use Illuminate\Http\Request;
 use App\Models\Shop\Category\Category;
 use App\Models\Shop\Product\Product;
 use App\Models\Settings;
+
 class CategoryController extends Controller{
 
     protected $categories;
@@ -122,7 +123,7 @@ class CategoryController extends Controller{
 
         }
 
-        $this->data['meta'] = $this->metaTagsCreater->getMetaTags($this->data);
+        $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
         return view( 'templates.default', $this->data);
     }
