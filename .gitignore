@@ -17,3 +17,4 @@ yarn-error.log
 /public/favicon.ico
 /public/css/_*/
 /resources/views/_*/
+/config/shipment.php
