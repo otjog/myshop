@@ -15,6 +15,3 @@ yarn-error.log
 #delete_before_clone
 /public/.htaccess
 /public/favicon.ico
-/public/css/_*/
-/resources/views/_*/
-/config/shipment.php
