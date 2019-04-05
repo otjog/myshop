@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Parse;
+namespace App\Libraries\Parser;
 
 use App\Models\Shop\Category\Category;
-use App\Http\Controllers\Controller;
 use App\Models\Site\Image;
 use Illuminate\Http\Request;
 use phpQuery;
@@ -11,8 +10,8 @@ use App\Models\Shop\Product\Product;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class FromSiteController extends Controller{
-
+class FromSite
+{
     private $host;
 
     private $startPathName;

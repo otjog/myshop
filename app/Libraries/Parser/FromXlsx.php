@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Parse;
+namespace App\Libraries\Parser;
 
 use App\Models\Shop\Category\Category;
-use App\Http\Controllers\Controller;
 use App\Models\Site\Image;
 use App\Models\Shop\Price\Currency;
 use Illuminate\Http\Request;
@@ -12,8 +11,8 @@ use App\Models\Shop\Product\Product;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class FromXlsxController extends Controller{
-
+class FromXlsx
+{
     private $pathToFile;
 
     private $startRow;
@@ -620,6 +619,7 @@ class FromXlsxController extends Controller{
         DB::table('product_has_price')
             ->where('active', 1)
             ->whereIn('product_id',    $columns['products_id'])
+            ->whereIn('price_id',      $columns['prices_id'])
             ->update(['active' => 0]
             );
     }
