@@ -37,6 +37,20 @@ class Category extends Model{
             ->get();
     }
 
+    public function getActiveCategoriesById($ids){
+        return self::select(
+            'id',
+            'parent_id',
+            'name',
+            'original_name',
+            'url'
+        )
+            ->where('active', 1)
+            ->whereIn('id', $ids)
+            ->orderBy('sort')
+            ->get();
+    }
+
     public function getChildrenCategories($parent_id){
         return self::select(
             'id',

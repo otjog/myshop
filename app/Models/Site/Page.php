@@ -24,6 +24,37 @@ class Page extends Model{
             ->get();
     }
 
+    public function getActivePages(){
+        return self::select(
+            'pages.id',
+            'pages.active',
+            'pages.alias',
+            'pages.name',
+            'pages.description',
+            'pages.sort',
+            'pages.created_at',
+            'pages.updated_at'
+        )
+            ->where('active', 1)
+            ->get();
+    }
+
+    public function getActivePagesById($ids){
+        return self::select(
+            'pages.id',
+            'pages.active',
+            'pages.alias',
+            'pages.name',
+            'pages.description',
+            'pages.sort',
+            'pages.created_at',
+            'pages.updated_at'
+        )
+            ->where('active', 1)
+            ->whereIn('id', $ids)
+            ->get();
+    }
+
     public function getPageIfActive($id){
         return self::select(
             'pages.id',
