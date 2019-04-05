@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Parse;
+namespace App\Libraries\Parser;
 
 use App\Models\Shop\Category\Category;
-use App\Http\Controllers\Controller;
 use App\Models\Site\Image;
 use App\Models\Shop\Price\Currency;
-use App\Models\Shop\Price\Price;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Models\Shop\Product\Product;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
-class FromXlsxController extends Controller{
-
+class FromXlsx
+{
     private $pathToFile;
 
     private $startRow;
@@ -29,26 +28,26 @@ class FromXlsxController extends Controller{
             */
             'images'            => [
                 'default'   =>  [],
-                'columns'   =>  ['src' => 'L'],
+                'columns'   =>  ['name' => 'G'],
             ],
 
             'products'          => [
-                'default'   =>  [ 'manufacturer_id' => '1', 'thumbnail' => null, 'weight' => 0, 'length' => 0, 'width' => 0, 'height' => 0, ],
-                'columns'   =>  [ 'scu' => 'B', 'name' => 'C', 'weight' => 'F', 'length' => 'G', 'width' => 'H', 'height' => 'I', 'category_id' => 'J','active' => 'M' ],
-                'compare'   =>  'scu'
+                'default'   =>  [ 'active' => 1, ],
+                'columns'   =>  [ 'category_id' => 'I', 'name' => 'H', 'description' => 'M' ],
+                'compare'   =>  'name'
             ],
 
-            /*
+
             'product_has_price.wholesale' => [
-                'default'   =>  [ 'active' => '1', 'price_id' => '3' ],
-                'columns'   =>  [ 'value'  => 'C' ],
+                'default'   =>  [ 'active' => '1', 'price_id' => '1', 'currency_id' => '1' ],
+                'columns'   =>  [ 'value'  => 'J' ],//currency_id может принимать, как сам id так и код: RUB;
             ],
-            */
+            /*
             'product_has_price.retail' => [
-                'default'   =>  [ 'active' => '1', 'price_id' => '1' ],
-                'columns'   =>  [ 'value'  => 'D', 'currency_id' => 'E' ],//currency_id может принимать, как сам id так и код: RUB; EUR; USD и т.п.
+                'default'   =>  [ 'active' => '1', 'price_id' => '1', 'currency_id' => '1' ],
+                'columns'   =>  [ 'value'  => 'C' ],//currency_id может принимать, как сам id так и код: RUB; EUR; USD и т.п.
             ],
-
+*/
             'product_has_image' => [
                 'default'   =>  [],
                 'columns'   =>  [],
@@ -57,23 +56,11 @@ class FromXlsxController extends Controller{
     ];
 
     private $imageParameters = [
-        'thumb' => [
-            'action'    => 'replace', //replace|false = nothing
-            'height'    => 150,
-            'width'     => 150,
-            'addition'  => '-thumbnail-' . 150 . 'x'. 150
-            ],
-        'big' => [
-            'action'    => 'add',//replace|add|false = nothing
-            'height'    => 1000,
-            'width'     => 1000,
-            'addition'  => ''
-        ]
+        'action'    => 'add',//replace|add|false = nothing
+        'addition'  => ''
     ];
 
     private $mainImageFolder = 'storage/img/shop/product/';
-
-    private $thumbImageFolder = 'storage/img/shop/product/thumbnail/';
 
     private $pivotTable;
 
@@ -85,9 +72,11 @@ class FromXlsxController extends Controller{
 
     private $reader;
 
+    private $exceptions = [];
+
     public function __construct(Request $request, Product $product, Category $category, Image $image){
 
-        $this->pathToFile   = public_path('/storage/parse/celtic.xlsx');
+        $this->pathToFile   = public_path('/storage/parse/fashionopt-09-03-19-2.xlsx');
 
         $this->startRow     = '2';
 
@@ -145,6 +134,7 @@ class FromXlsxController extends Controller{
         }
 
         return $newDataInTables;
+
     }
 
     private function store($newDataInTables){
@@ -175,8 +165,11 @@ class FromXlsxController extends Controller{
                 case 'product_has_image' :
                     $this->storeProductsImages($newDataInTables [ 'product_has_image' ] );
                     break;
+
             }
+
         }
+
     }
 
     private function getGroupIterator(){
@@ -229,13 +222,14 @@ class FromXlsxController extends Controller{
         switch($clearTableName){
 
             case 'images' :
-                if($columnName === 'src'){
+                if($columnName === 'name'){
                     $images =  explode('|', $value);
                     if( count($images) > 0 && $images[0] !== '')
                         return $images;
                     return null;
                 }
                 break;
+
         }
 
         return $value;
@@ -350,68 +344,52 @@ class FromXlsxController extends Controller{
 
         foreach($parameters as $sc_value => $currentParameters){
 
-            foreach($currentParameters['src'] as $key => $src){
+            foreach($currentParameters['name'] as $key => $src){
 
-                $src = public_path('/storage/parse/images/'.$src);
+                try {
+                    $exifImageType = exif_imagetype($src);
 
-                $srcImageData = $this->getImageData($src);
+                } catch (Exception $exception){
+                    $this->exceptions[] = [
+                        $exception->getMessage(),
+                        $exception->getCode(),
+                        $exception->getLine()
+                    ];
+                    break;
+                }
 
-                /*****************Create Image************************/
-                $image = $this->loadImage($src, $srcImageData['const_ext']);
+                if($exifImageType !== false){
 
-                $squareImage = $this->createNewImage($image, $srcImageData, 'big');
+                    $imageName  = $this->getNewImageName($sc_value . $this->imageParameters['addition'], $exifImageType);
 
-                if($squareImage){
+                    try {
+                        file_put_contents($this->mainImageFolder . $imageName, file_get_contents($src));
+                    } catch (Exception $exception) {
+                        $this->exceptions[] = [
+                            $exception->getMessage(),
+                            $exception->getCode(),
+                            $exception->getLine()
+                        ];
+                        break;
+                    }
 
-                    $imageName  = $this->getNewImageName($this->mainImageFolder, $sc_value . $this->imageParameters['big']['addition'], $srcImageData['extension']);
+                    $tableRow = $this->getCurrentTableRow($imagesCollection, 'name', $imageName);
 
-                    $newImage   = $this->saveImage($squareImage, $imageName, $this->mainImageFolder, $srcImageData['const_ext']);
+                    if($tableRow !== null){
 
-                    if($newImage !== false){
+                        $data['images']['update'] = $this->getArrayForUpdate(['name' => $imageName], $tableRow, $data['images']['update']);
 
-                        $tableRow = $this->getCurrentTableRow($imagesCollection, 'src', $imageName);
+                    }else{
 
-                        if($tableRow !== null){
+                        $result = $this->getArrayForInsert(['name' => $imageName], $data['images']['new'], 'name');
 
-                            $data['images']['update'] = $this->getArrayForUpdate(['src' => $imageName], $tableRow, $data['images']['update']);
-
-                        }else{
-
-                            $result = $this->getArrayForInsert(['src' => $imageName], $data['images']['new'], 'src');
-
-                            if($result !== false) {
-                                $data['images']['new'][] = $result;
-                                $data['product_has_image'][] = [ 'product_' . $compareColumn  => $sc_value, 'src' => $result['src']];
-                            }
-
+                        if($result !== false) {
+                            $data['images']['new'][] = $result;
+                            $data['product_has_image'][] = [ 'product_' . $compareColumn  => $sc_value, 'name' => $result['name']];
                         }
 
                     }
-
                 }
-                /*****************End Image***************************/
-
-
-                /*****************Create Thumb************************/
-                if($key === 0){
-
-                    $thumb = $this->createNewImage($image, $srcImageData, 'thumb');
-
-                    if($thumb){
-
-                        $thumbName = $this->getNewImageName($this->thumbImageFolder, $sc_value . $this->imageParameters['thumb']['addition'], $srcImageData['extension']);
-                        $newThumb = $this->saveImage($thumb, $thumbName, $this->thumbImageFolder, $srcImageData['const_ext']);
-
-                        if($newThumb !== false){
-
-                            $data['products'][$sc_value]['thumbnail'] = $thumbName;
-
-                        }
-
-                    }
-
-                }
-                /*****************End Thumb************************/
             }
 
         }
@@ -503,7 +481,7 @@ class FromXlsxController extends Controller{
 
             if($product !== null){
 
-                $image = $this->getCurrentTableRow($imagesCollection, 'src', $currentParameters[ 'src' ] );
+                $image = $this->getCurrentTableRow($imagesCollection, 'name', $currentParameters[ 'name' ] );
 
                 if($image !==  null){
 
@@ -641,89 +619,22 @@ class FromXlsxController extends Controller{
         DB::table('product_has_price')
             ->where('active', 1)
             ->whereIn('product_id',    $columns['products_id'])
+            ->whereIn('price_id',      $columns['prices_id'])
             ->update(['active' => 0]
             );
     }
 
-    //todo переименовать функцию
-    private function getImageData($src){
+    private function getExtensionImage($exifImageType){
 
-        list($imageData['width'], $imageData['height'], $imageData['const_ext']) =  getimagesize($src);
-
-        $imageData['extension'] = $this->getExtensionImage($imageData['const_ext']);
-
-        return $imageData;
-
-    }
-
-    private function getExtensionImage($constanta){
-
-        $mime = explode( '/', image_type_to_mime_type( $constanta ) ) ;
+        $mime = explode( '/', image_type_to_mime_type($exifImageType)) ;
 
         return array_pop($mime);
 
     }
 
-    private function loadImage($src, $constanta){
-        switch($constanta){
-            case 1  :	return imagecreatefromgif($src);
-            case 2  :   return imagecreatefromjpeg($src);
-            case 3  :   return imagecreatefrompng($src);
-            case 18 :   return imagecreatefromwebp($src);
-            default : return false;
-        }
-    }
+    private function getNewImageName($partName, $exifImageType){
 
-    private function createNewImage($srcImage, $srcImageData, $roleImage){
-
-        $dstImage = imagecreatetruecolor($this->imageParameters[$roleImage]['width'], $this->imageParameters[$roleImage]['height']);
-
-        $colorIndex = imagecolorallocate($dstImage, 255, 255,255);
-
-        imagefill($dstImage, 0, 0, $colorIndex);
-
-        $margin = array_fill_keys(['x', 'y'], 0);
-
-        $dstImageData = array_combine(['width', 'height'], [$this->imageParameters[$roleImage]['width'], $this->imageParameters[$roleImage]['height']]);
-
-        $ratio = $srcImageData['width'] / $srcImageData['height'];
-
-        if($ratio !== 1){
-            list($margin, $dstImageData) = $this->getParametersForSquareImage($ratio, $margin, $dstImageData, $roleImage);
-        }
-
-        $result = imagecopyresampled(
-            $dstImage,
-            $srcImage,
-            ''.$margin['x'],
-            ''.$margin['y'],
-            0,
-            0,
-            ''.$dstImageData['width'],
-            ''.$dstImageData['height'],
-            ''.$srcImageData['width'],
-            ''.$srcImageData['height']);
-
-        if($result)
-            return $dstImage;
-        return false;
-
-    }
-
-    private function getParametersForSquareImage($ratio, $margin, $dstImageData, $roleImage){
-
-        if($ratio > 1){
-            $dstImageData['height'] /= $ratio;
-            $margin['y'] = ($this->imageParameters[$roleImage]['height'] - $dstImageData['height']) / 2;
-        }else{
-            $dstImageData['width'] *= $ratio;
-            $margin['x'] = ($this->imageParameters[$roleImage]['width'] - $dstImageData['width']) / 2;
-        }
-
-        return [$margin, $dstImageData];
-    }
-
-    private function getNewImageName($path, $partName, $extension){
+        $extension = $this->getExtensionImage($exifImageType);
 
         $partName = $this->translit($partName);
         $partName = strtolower($partName);
@@ -732,22 +643,12 @@ class FromXlsxController extends Controller{
 
         $fullName =  $partName . '.' . $extension;
 
-        if( file_exists(public_path( $path ) . $fullName )){
+        if( file_exists(public_path($this->mainImageFolder) . $fullName )){
             $newPartName = $this->changeSimilarName($partName);
-            $fullName = $this->getNewImageName($path, $newPartName, $extension);
+            $fullName = $this->getNewImageName($newPartName, $exifImageType);
         }
 
         return $fullName;
-    }
-
-    private function saveImage($image, $imageName, $path, $constanta){
-        switch($constanta){
-            case 1  :	return imagegif($image, public_path( $path . $imageName ));
-            case 2  :   return imagejpeg($image, public_path( $path . $imageName ));
-            case 3  :   return imagepng($image, public_path( $path . $imageName ));
-            case 18 :   return imagewebp($image, public_path( $path . $imageName ));
-            default : return false;
-        }
     }
 
     private function changeSimilarName($name){
@@ -764,6 +665,7 @@ class FromXlsxController extends Controller{
         }
 
     }
+
 
     private function translit($string){
         $converter = array(
