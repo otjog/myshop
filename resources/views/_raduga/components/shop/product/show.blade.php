@@ -5,15 +5,15 @@
 
         <p>
             @if( isset($product->images[0]->name) && $product->images[0]->name !== null)
-                <a href="{{ URL::asset('storage/img/shop/product/l/' . $product->images[0]->name) }}" title="">
+                <a href="{{route('models.sizes.images.show', ['product', 'l', $product->images[0]->name])}}" title="">
                     <img
-                            src="{{ URL::asset('storage/img/shop/product/m/' . $product->images[0]->name) }}"
+                            src="{{route('models.sizes.images.show', ['product', 'm', $product->images[0]->name])}}"
                             alt=""
                     />
                 </a>
             @else
                 <img
-                        src="{{ URL::asset('storage/img/shop/default/m/' . $global_data['project_data']['components']['shop']['images']['default_name']) }}"
+                        src="{{route('models.sizes.images.show', ['product', 'm', 'no_image.jpg'])}}"
                         alt=""
                 />
             @endif
@@ -22,8 +22,8 @@
             <ul class="list-unstyled list-inline">
                 @foreach( $product->images as $image)
                     <li class="list-inline-item">
-                        <a href="{{ URL::asset('storage/img/shop/product/l/' . $image->name) }}">
-                            <img src="{{ URL::asset('storage/img/shop/product/xxs/' . $image->name) }}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
+                        <a href="{{route('models.sizes.images.show', ['product', 'l', $image->name])}}">
+                            <img src="{{route('models.sizes.images.show', ['product', 'xxs', $image->name])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
                         </a>
                     </li>
                 @endforeach
