@@ -67,13 +67,13 @@
                         @if( isset($product->images[0]->name) && $product->images[0]->name !== null )
                             <img
                                     class="img-fluid mx-auto my-auto d-block"
-                                    src="{{ URL::asset('storage/img/shop/product/s/' . $product->images[0]->name) }}"
+                                    src="{{route('models.sizes.images.show', ['product', 's', $product->images[0]->name])}}"
                                     alt=""
                             />
                         @else
                             <img
                                     class="img-fluid mx-auto my-auto d-block"
-                                    src="{{ URL::asset('storage/img/shop/default/s/' . $global_data['project_data']['components']['shop']['images']['default_name']) }}"
+                                    src="{{route('models.sizes.images.show', ['product', 's', 'no_image.jpg'])}}"
                                     alt=""
                             />
                         @endif

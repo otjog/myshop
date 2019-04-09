@@ -44,6 +44,9 @@
         Route::post('/redirect/{msg}', 'Shop\PayController@redirect');
     });
 
+    //Image
+    Route::resource('models.sizes.images',     'Image\ImageController',    [ 'only' => [ 'show' ]]);
+
     //Forms
     Route::group(['prefix' => 'form'], function () {
 
