@@ -36,7 +36,7 @@ class HomeController extends Controller{
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.index', $this->data);
     }
 
 }

@@ -38,11 +38,6 @@ class CategoryController extends Controller{
 
         $this->metaTagsCreater  = $metaTagsCreater;
 
-        $this->data['template'] = [
-            'component' => 'shop',
-            'resource'  => 'category',
-        ];
-
     }
 
     /**
@@ -54,11 +49,10 @@ class CategoryController extends Controller{
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template'] ['view']        = 'list';
-        $this->data['data']     ['categories']  =  $this->categories->getCategoriesTree();
-        $this->data['data']     ['header_page'] =  'Категории';
+        $this->data['categories']  =  $this->categories->getCategoriesTree();
+        $this->data['header_page'] =  'Категории';
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.category.list', $this->data);
     }
 
     /**
@@ -96,13 +90,12 @@ class CategoryController extends Controller{
 
         $category = $this->categories->getCategory($id);
 
-        $this->data['template'] ['view']                = 'show';
-        $this->data['template'] ['sidebar']             = 'product_filter';
-        $this->data['template'] ['filter-tags']         = 'filter-tags';
-        $this->data['data']     ['category']            = $category;
-        $this->data['data']     ['children_categories'] = $this->categories->getActiveChildrenCategories($id);
-        $this->data['data']     ['header_page']         = $category[0]->name;
-        $this->data['data']     ['parameters']          = [];
+        $this->data['template']['sidebar']             = 'product_filter';
+        $this->data['template']['filter-tags']         = 'filter-tags';
+        $this->data['category']            = $category;
+        $this->data['children_categories'] = $this->categories->getActiveChildrenCategories($id);
+        $this->data['header_page']         = $category[0]->name;
+        $this->data['parameters']          = [];
 
         $this->data['template']['custom'][] = 'shop-icons';
 
@@ -112,20 +105,20 @@ class CategoryController extends Controller{
 
             $routeData = ['category' => $id];
 
-            $this->data['data'] ['products'] = $products->getFilteredProducts($routeData, $filterData);
+            $this->data['products'] = $products->getFilteredProducts($routeData, $filterData);
 
-            $this->data['data'] ['parameters'] = $request->toArray();
+            $this->data['parameters'] = $request->toArray();
 
 
         }else{
 
-            $this->data['data'] ['products'] = $products->getActiveProductsFromCategory($id);
+            $this->data['products'] = $products->getActiveProductsFromCategory($id);
 
         }
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.category.show', $this->data);
     }
 
     /**

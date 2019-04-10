@@ -38,11 +38,6 @@ class BrandController extends Controller{
 
         $this->metaTagsCreater = $metaTagsCreater;
 
-        $this->data['template'] = [
-            'component'     => 'shop',
-            'resource'      => 'brand',
-        ];
-
     }
 
     /**
@@ -54,11 +49,10 @@ class BrandController extends Controller{
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template'] ['view']    = 'list';
         $this->data['data']     ['brands']  = $this->brands->getActiveBrands();
         $this->data['data']     ['header_page'] =  'Бренды';
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.brand.list', $this->data);
     }
 
     /**
@@ -97,9 +91,9 @@ class BrandController extends Controller{
         $this->data['template'] ['view']        = 'show';
         $this->data['template'] ['sidebar']     = 'product_filter';
         $this->data['template'] ['filter-tags'] = 'filter-tags';
-        $this->data['data']     ['brand']       = $brand;
-        $this->data['data']     ['header_page'] = 'Товары бренда ' . $brand[0]->name;
-        $this->data['data']     ['parameters']  = [];
+        $this->data['brand']       = $brand;
+        $this->data['header_page'] = 'Товары бренда ' . $brand[0]->name;
+        $this->data['parameters']  = [];
 
         $this->data['template']['custom'][] = 'shop-icons';
 
@@ -109,14 +103,14 @@ class BrandController extends Controller{
 
             $filterData = $request->toArray();
 
-            $this->data['data']['products'] = $products->getFilteredProducts($routeData, $filterData);
+            $this->data['products'] = $products->getFilteredProducts($routeData, $filterData);
         } else {
-            $this->data['data']['products'] = $products->getActiveProductsOfBrand($name);
+            $this->data['products'] = $products->getActiveProductsOfBrand($name);
         }
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.brand.show', $this->data);
     }
 
     /**

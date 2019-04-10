@@ -22,10 +22,6 @@ class BasketController extends Controller{
 
         $this->baskets = $baskets;
 
-        $this->data['template'] = [
-            'component' => 'shop',
-            'resource'  => 'basket'
-        ];
     }
 
     /**
@@ -88,13 +84,11 @@ class BasketController extends Controller{
 
         if($basket->order_id === null){
 
-            $this->data['template']['view'] = 'edit';
+            $this->data['basket']   = $basket;
 
-            $this->data['data']['basket']   = $basket;
+            $this->data['parcels'] = $products->getParcelParameters($basket->products);
 
-            $this->data['data']['parcels'] = $products->getParcelParameters($basket->products);
-
-            return view( 'templates.default', $this->data);
+            return view( '_raduga.components.shop.basket.edit', $this->data);
 
         } else {
 
@@ -127,29 +121,6 @@ class BasketController extends Controller{
     public function destroy($id)
     {
         //
-    }
-
-    private function changeQuantityInArray($products){
-
-        $newProducts = [];
-
-        foreach ($products as $key => $product){
-
-            if( substr( $key, 0, 1 ) !== '_'){
-
-                $product['quantity'] = (int)$product['quantity'];
-
-                if($product['quantity'] > 0){
-
-                    $newProducts[] = $product;
-
-                }
-
-            }
-
-        }
-
-        return $newProducts;
     }
 
 }

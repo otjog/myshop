@@ -29,10 +29,6 @@ class OrderController extends Controller{
 
         $this->baskets  = $baskets;
 
-        $this->data['template'] = [
-            'component' => 'shop',
-            'resource'  => 'order',
-        ];
     }
 
     /**
@@ -86,13 +82,11 @@ class OrderController extends Controller{
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template']['view'] = 'create';
+        $this->data['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
-        $this->data['data']['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
+        $this->data['payments'] = $payments->getActiveMethods();
 
-        $this->data['data']['payments'] = $payments->getActiveMethods();
-
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.order.create', $this->data);
     }
 
     /**
@@ -105,11 +99,9 @@ class OrderController extends Controller{
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template']['view'] = 'show';
+        $this->data['order']    = $this->orders->getOrderById($products, $id);
 
-        $this->data['data']['order']    = $this->orders->getOrderById($products, $id);
-
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.order.show', $this->data);
     }
 
     /**

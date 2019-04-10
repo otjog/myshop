@@ -37,10 +37,6 @@ class ProductController extends Controller{
 
         $this->metaTagsCreater = $metaTagsCreater;
 
-        $this->data['template'] = [
-            'component' => 'shop',
-            'resource'  => 'product'
-        ];
     }
 
     /**
@@ -81,15 +77,13 @@ class ProductController extends Controller{
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template']['view'] = 'show';
-
         $this->data['template']['custom'][] = 'shop-icons';
 
-        $this->data['data']['product'] = $this->products->getActiveProduct($id);
+        $this->data['product'] = $this->products->getActiveProduct($id);
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.product.show', $this->data);
 
     }
 
