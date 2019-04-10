@@ -20,7 +20,7 @@ $(document).ready(function() {
     $(".btn-wishlist, .btn-compare, .display .fa").tooltip('hide');
 
     // Product Owl Carousel
-    $("#owl-product").owlCarousel({
+    $(".owl-carousel").owlCarousel({
         autoPlay: false, //Set AutoPlay to 3 seconds
         items : 3,
         stopOnHover : true,

@@ -14,6 +14,6 @@ class ShopOffersComposer{
     }
 
     public function compose(View $view){
-        $view->with('offers', $this->offers->getSliceProductOffer(6, 'deal-week'));
+        $view->with('offers', $this->offers->getProductsOffers(6));
     }
 }
