@@ -1,14 +1,13 @@
 <div id="main-container-home" class="container">
 
     @if(isset( $template['banner'] ))
-        @include( $global_data['project_data']['template_name'] .'.modules.banner.default')
+        @include('_raduga.modules.banner.default')
     @endif
 
-    @if(isset( $template['component'] ))
         <div class="row">
             @if(isset($template['sidebar']))
                 <div class="col-md-3 col-sm-12">
-                    @include( $global_data['project_data']['template_name'] .'.modules.'.$template['sidebar'].'.default', $data)
+                    @include('_raduga.modules.'.$template['sidebar'].'.default')
                 </div>
                 @php $colMdComponent = '9'; @endphp
             @else
@@ -16,16 +15,15 @@
             @endif
 
             <div class="col-md-{{$colMdComponent}} col-sm-12">
-                @include( $global_data['project_data']['template_name'] .'.components.'.$template['component'].'.'.$template['resource'].'.'.$template['view'], $data)
+                @yield('component')
             </div>
 
         </div>
-    @endif
 
     @if(isset( $template['modules'] ) && count( $template['modules'] ) > 0)
         @foreach($template['modules'] as $folder => $file)
 
-            @include( $global_data['project_data']['template_name'] .'.modules.' . $folder . '.' . $file)
+            @include('_raduga.modules.' . $folder . '.' . $file)
 
         @endforeach
     @endif

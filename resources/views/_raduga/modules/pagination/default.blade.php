@@ -7,8 +7,8 @@
         <div class="col-sm-6 pagination-block">
             <ul class="pagination rounded-0">
                 @if($products->currentPage() != 1)
-                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($data['parameters'])->url(1)}}"><i class="fa fa-angle-double-left"></i></a></li>
-                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($data['parameters'])->previousPageUrl()}}"><i class="fa fa-angle-left"></i></a></li>
+                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($parameters)->url(1)}}"><i class="fa fa-angle-double-left"></i></a></li>
+                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($parameters)->previousPageUrl()}}"><i class="fa fa-angle-left"></i></a></li>
                 @else
                     <li class="page-item disabled"><span class="page-link"><i class="fa fa-angle-double-left"></i></span></li>
                     <li class="page-item disabled"><span class="page-link"><i class="fa fa-angle-left"></i></span></li>
@@ -25,15 +25,15 @@
             <!-- Выводим в цикле кнопки, текущая страница не имеет ссылки на саму себя -->
                 @for($i = $startPage; $i <= $endPage && $i <= $products->lastPage(); $i++)
                     @if($products->currentPage() != $i)
-                        <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($data['parameters'])->url($i)}}">{{$i}}</a></li>
+                        <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($parameters)->url($i)}}">{{$i}}</a></li>
                     @else
                         <li class="page-item active"><span class="page-link">{{$i}}</span></li>
                     @endif
                 @endfor
             <!-- Не показываем стрелки движения вправо, если мы на последеней странице -->
                 @if($products->currentPage() != $products->lastPage())
-                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($data['parameters'])->nextPageUrl()}}"><i class="fa fa-angle-right"></i></a></li>
-                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($data['parameters'])->url($products->lastPage())}}"><i class="fa fa-angle-double-right"></i></a></li>
+                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($parameters)->nextPageUrl()}}"><i class="fa fa-angle-right"></i></a></li>
+                    <li class="page-item"><a class="page-link rounded-0" href="{{$products->appends($parameters)->url($products->lastPage())}}"><i class="fa fa-angle-double-right"></i></a></li>
                 @else
                     <li class="page-item disabled"><span class="page-link"><i class="fa fa-angle-right"></i></span></li>
                     <li class="page-item disabled"><span class="page-link"><i class="fa fa-angle-double-right"></i></span></li>

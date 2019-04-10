@@ -36,11 +36,7 @@ class SearchController extends Controller{
 
         $this->queryString    = $request->search;
 
-        $this->data['template']     = [
-            'component'     => 'shop',
-            'resource'      => 'search',
-        ];
-        $this->data['data']['parameters']  = $request->toArray();
+        $this->data['parameters']  = $request->toArray();
 
 
     }
@@ -53,17 +49,15 @@ class SearchController extends Controller{
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template'] ['view']        = 'show';
-
-        $this->data['data']     ['products']    = [];
-        $this->data['data']     ['query']       = $this->queryString;
-        $this->data['data']     ['header_page'] = 'Результаты поиска по запросу: ' . $this->queryString;
+        $this->data['products']    = [];
+        $this->data['query']       = $this->queryString;
+        $this->data['header_page'] = 'Результаты поиска по запросу: ' . $this->queryString;
 
         if( isset( $searchIdResult[ 'matches' ] ) && count( $searchIdResult[ 'matches' ] ) > 0 ){
-            $this->data['data'] ['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
+            $this->data['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
         }
 
-        return view( 'templates.default', $this->data);
+        return view( '_raduga.components.shop.search.show', $this->data);
     }
 
 }

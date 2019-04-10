@@ -1,4 +1,7 @@
-@if( isset($basket->products) )
+@extends('_raduga.index')
+
+@section('component')
+    @if( isset($basket->products) )
 
     <div class="col-12 col-lg-9">
         <h4 class="mb-3">Корзина</h4>
@@ -119,3 +122,4 @@
     </div>
 
 @endif
+@endsection

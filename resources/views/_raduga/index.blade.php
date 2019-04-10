@@ -21,13 +21,13 @@
 	<body>
 
 	<!-- Header Section Starts -->
-		@include($global_data['project_data']['template_name'] .'.positions.header.default')
+		@include('_raduga.positions.header.default')
 	<!-- Header Section Ends -->
 	<!-- Main Container Starts -->
-		@include($global_data['project_data']['template_name'] .'.positions.content.default')
+		@include('_raduga.positions.content.default')
 	<!-- Main Container Ends -->
 	<!-- Footer Section Starts -->
-		@include($global_data['project_data']['template_name'] .'.positions.footer.default')
+		@include('_raduga.positions.footer.default')
 	<!-- Footer Section Ends -->
 
 	<!-- Template JS Files -->

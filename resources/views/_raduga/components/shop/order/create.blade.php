@@ -1,4 +1,7 @@
-<div class="container">
+@extends('_raduga.index')
+
+@section('component')
+    <div class="container">
 
     {{-- ALERT --}}
     @if (session('status'))
@@ -215,3 +218,4 @@
     </div>
 
 </div>
+@endsection
