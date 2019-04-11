@@ -21766,32 +21766,32 @@ hr {
   padding-right: 0;
 }
 
-#owl-product .item {
+.owl-carousel .item {
   padding-left: 5px;
   padding-right: 5px;
 }
 
-#owl-product .owl-controls {
+.owl-carousel .owl-controls {
   margin: 0;
 }
 
-#owl-product .owl-controls .owl-buttons div {
+.owl-carousel .owl-controls .owl-buttons div {
   position: absolute;
   background: none;
   font-size: 26px;
 }
 
-#owl-product .owl-controls .owl-buttons .owl-prev,
-#owl-product .owl-controls .owl-buttons .owl-next {
+.owl-carousel .owl-controls .owl-buttons .owl-prev,
+.owl-carousel .owl-controls .owl-buttons .owl-next {
   top: -61px;
   color: #fff;
 }
 
-#owl-product .owl-controls .owl-buttons .owl-prev {
+.owl-carousel .owl-controls .owl-buttons .owl-prev {
   right: 60px;
 }
 
-#owl-product .owl-controls .owl-buttons .owl-next {
+.owl-carousel .owl-controls .owl-buttons .owl-next {
   right: 20px;
 }
 

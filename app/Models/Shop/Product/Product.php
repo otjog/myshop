@@ -645,8 +645,6 @@ class Product extends Model{
                 $products = $productQuery
                     ->where('products.active', 1)
 
-                    ->where('products.created_at', '>=', date('Y-m-d', strtotime('-1 week')))
-
                     ->orderBy('products.created_at')
 
                     ->take($take)

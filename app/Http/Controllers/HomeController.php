@@ -21,18 +21,13 @@ class HomeController extends Controller{
 
         $this->metaTagsCreater  = $metaTagsCreater;
 
-        $this->data['template'] = [];
     }
 
     public function index(){
 
         $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
-        $this->data['template'] ['banner']  = 'default';
-
-        //  $this->data['template'] ['modules']['custom']  = 'shop-icons';
-
-        $this->data['template'] ['modules']['offers']  = 'default';
+        $this->data['template'] = config('template.home');
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
