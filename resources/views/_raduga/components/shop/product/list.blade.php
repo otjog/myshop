@@ -51,6 +51,6 @@
         <!-- Product Grid Display Ends -->
 
         <!-- Shop Page Navigation -->
-        @include($global_data['project_data']['template_name'] .'.modules.pagination.default')
+        @include('_raduga.modules.pagination.index', ['module' => ['module' => 'pagination','template' => 'default']])
     @endif
 @endsection

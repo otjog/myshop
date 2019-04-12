@@ -3,7 +3,7 @@
         <!-- Wrapper For Slides Starts -->
         <div class="carousel-inner">
             @foreach($banners as $banner)
-                @include( $global_data['project_data']['template_name'] .'.modules.banner.' . $banner->type . '.' . $banner->template)
+                @include( '_raduga.modules.banner.' . $module['template'] . '.' . $banner->type . '.default')
             @endforeach
         </div>
         <!-- Wrapper For Slides Ends -->

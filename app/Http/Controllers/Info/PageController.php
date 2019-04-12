@@ -24,6 +24,8 @@ class PageController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->pages = $pages;
 
     }
@@ -35,7 +37,7 @@ class PageController extends Controller{
      */
     public function index(){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.content.info.page.list');
 
         $this->data['pages']  = $this->pages->getAllPages();
 
@@ -72,9 +74,9 @@ class PageController extends Controller{
      */
     public function show($id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.info.page.show');
 
-        $this->data['data']['page']  = $this->pages->getPageIfActive($id);
+        $this->data['page']  = $this->pages->getPageIfActive($id);
 
         return view('_raduga.components.info.page.show', $this->data);
 
@@ -88,9 +90,9 @@ class PageController extends Controller{
      */
     public function edit($id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.info.page.edit');
 
-        $this->data['data']['page']  = $this->pages->getPage($id);
+        $this->data['page']  = $this->pages->getPage($id);
 
         return view('_raduga.components.info.page.edit', $this->data);
     }

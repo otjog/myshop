@@ -193,7 +193,7 @@
                     @endif
 
                     {{-- SHIPMENT --}}
-                    @include( $global_data['project_data']['template_name'] .'.modules.shipment.default', ['deliveryTemplates' => ['offers-checkbox']])
+                    @include('_raduga.modules.shipment.index', ['module' => ['module' => 'shipment','template' => 'order']])
 
                 </div>
 

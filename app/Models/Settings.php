@@ -45,7 +45,23 @@ class Settings {
     private function __clone(){}
 
     public function addParameter($name, $value){
-        $this->data[$name] = $value;
+
+        $nameArray = explode('.', $name);
+
+        $max = count($nameArray)-1;
+        if ($max === 0) {
+            $this->data[$name] = $value;
+        } else {
+            $result = array($nameArray[$max] => $value);
+            for($i=$max-1; $i>0; $result = array($nameArray[$i--] => $result));
+
+            $this->data[$nameArray[0]] = $result;
+        }
+
+    }
+
+    public function issetParameter($path){
+        return false;
     }
 
     public function getParameters(){
@@ -65,17 +81,16 @@ class Settings {
             if($key === 0)
                 $temporary = $data;
 
-            if($key+1 === count($pathArray) )
-                return $this->getLevel($temporary, $level);
-            else
-                $temporary = $this->getLevel($temporary, $level);
+            if(isset($temporary[$level])){
+                if($key+1 === count($pathArray))
+                    return $temporary[$level];
+                else
+                    $temporary = $temporary[$level];
+            } else {
+                return null;
+            }
+
         }
-
-    }
-
-    private function getLevel($array, $level){
-
-        return $array[ $level ];
 
     }
 

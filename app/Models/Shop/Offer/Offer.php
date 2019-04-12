@@ -4,6 +4,7 @@ namespace App\Models\Shop\Offer;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Shop\Product\Product;
+use App\Models\Settings;
 
 class Offer extends Model{
 
@@ -14,8 +15,20 @@ class Offer extends Model{
             ->withTimestamps();
     }
 
-    public function getProductsOffers($take = 100){
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->settings = Settings::getInstance();
+
+    }
+
+    public function getProductsOffers($take = 10){
+
         $offers = $this->getActiveOffers();
+
+        $newOffers = collect();
+
         $products = new Product();
 
         foreach($offers as $offer){
@@ -30,14 +43,21 @@ class Offer extends Model{
 
                 $offer->relations = ['products' => $offerProducts];
             }
-        }
 
-        return $offers;
+            $newOffers->put($offer->name, $offer);
+        }
+        unset($offers);
+        return $newOffers;
     }
 
     //TODO поле name сделать уникальным
     public function getActiveOffers(){
-        return self::select(
+
+        if($this->settings->getParameter('models.offers.activeOffers')){
+            return $this->settings->getParameter('models.offers.activeOffers');
+        }
+
+        $result = self::select(
             'id',
             'name',
             'header',
@@ -45,6 +65,32 @@ class Offer extends Model{
         )
             ->where('active', 1)
             ->get();
+
+        $this->settings->addParameter('models.offers.activeOffers', $result);
+
+        return $result;
+
     }
 
+    public function getActiveOfferByName($name){
+
+        if($this->settings->getParameter('models.offers.getActiveOfferByName|' . $name)){
+            return $this->settings->getParameter('models.offers.getActiveOfferByName|' . $name);
+        }
+
+        $result = self::select(
+            'id',
+            'name',
+            'header',
+            'related'
+        )
+            ->where('active', 1)
+            ->where('name', $name)
+            ->get();
+
+        $this->settings->addParameter('models.offers.getActiveOfferByName|' . $name, $result);
+
+        return $result;
+
+    }
 }

@@ -22,7 +22,7 @@ class Shipment extends Model{
             ->get();
     }
 
-    public function getDeliveryServices(){
+    public function getShipmentServices(){
         return self::select(
             'id',
             'alias',
@@ -34,7 +34,6 @@ class Shipment extends Model{
             ->where('is_service', 1)
             ->get();
     }
-
 
     public function getDefaultShipments(){
         return self::select(
