@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Shop\Price\Currency;
 use App\Models\Shop\Price\Price;
+use Illuminate\Support\Facades\Cache;
 
 class Settings {
 
@@ -28,12 +29,18 @@ class Settings {
 
         $this->price = new Price();
 
-        $this->data = config('general');
+        $this->data = Cache::remember('config:general', 1440, function(){
+            return config('general');
+        });
+
         $this->data['components']['shop']['currency'] =
-            $this->currency
-                ->select('id', 'char_code', 'symbol')
-                ->where('main', '1')
-                ->first();
+            Cache::rememberForever('config:general:components:shop:currency', function(){
+                return $this->currency
+                    ->select('id', 'char_code', 'symbol')
+                    ->where('main', '1')
+                    ->first();
+            });
+
         $this->data['components']['shop']['price'] =
             $this->price
                 ->select('id', 'name')

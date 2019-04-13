@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
-use App\Models\Site\Menu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,9 +11,9 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(Menu $menu)
+    public function boot()
     {
-        View::share('menus', $menu->getActiveMenus());
+        //
     }
 
     /**
