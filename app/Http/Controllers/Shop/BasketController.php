@@ -20,6 +20,8 @@ class BasketController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->baskets = $baskets;
 
     }
@@ -78,7 +80,7 @@ class BasketController extends Controller{
      */
     public function edit(Product $products, $token){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.content.shop.basket.edit');
 
         $basket = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 

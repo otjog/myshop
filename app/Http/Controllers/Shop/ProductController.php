@@ -31,6 +31,8 @@ class ProductController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->products = $products;
 
         $this->baskets = $baskets;
@@ -75,9 +77,7 @@ class ProductController extends Controller{
      */
     public function show($id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
-        $this->data['template']['custom'][] = 'shop-icons';
+        $this->data['template'] = config('template.content.shop.product.show');
 
         $this->data['product'] = $this->products->getActiveProduct($id);
 

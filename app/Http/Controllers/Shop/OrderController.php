@@ -25,6 +25,8 @@ class OrderController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->orders   = $orders;
 
         $this->baskets  = $baskets;
@@ -80,8 +82,6 @@ class OrderController extends Controller{
 
         $token = $request->session()->get('_token');
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
         $this->data['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
         $this->data['payments'] = $payments->getActiveMethods();
@@ -97,7 +97,7 @@ class OrderController extends Controller{
      */
     public function show(Product $products, $id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.content.shop.order.show');
 
         $this->data['order']    = $this->orders->getOrderById($products, $id);
 
@@ -134,6 +134,4 @@ class OrderController extends Controller{
     public function destroy($id){
         //DELETE
     }
-
-    /*****************Helpers**********************/
 }

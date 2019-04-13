@@ -43,24 +43,27 @@
                         @endif
                                         </span>
                 </div>
+                <div class="cart-button">
+                    @if( !isset($product->basket_parameters) || count($product->basket_parameters) === 0)
+                        <form method="post" role="form" action="{{route('baskets.store')}}">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="product_id"       value="{{ $product->id}}">
+                            <input type="hidden" name="quantity" value="1" >
+                            <button type="submit" class="btn btn-cart">
+                                В корзину
+                                <i class="fa fa-shopping-cart"></i>
+                            </button>
+                        </form>
+                    @else
+                        <a class="pt-2 d-block" href="{{ route( 'products.show', $product->id ) }}">
+                            Перейти к товару
+                        </a>
+                    @endif
+                </div>
             @endif
-            <div class="cart-button button-group">
-                @if( !isset($product->basket_parameters) || count($product->basket_parameters) === 0)
-                    <form method="post" role="form" action="{{route('baskets.store')}}">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="product_id"       value="{{ $product->id}}">
-                        <input type="hidden" name="quantity" value="1" >
-                        <button type="submit" class="btn btn-cart">
-                            В корзину
-                        </button>
-                    </form>
-                @else
-                    <a class="pt-2 d-block" href="{{ route( 'products.show', $product->id ) }}">
-                        Перейти к товару
-                    </a>
-                @endif
 
-            </div>
+
+
         </div>
     </div>
 </div>

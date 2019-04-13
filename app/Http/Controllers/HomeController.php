@@ -19,15 +19,15 @@ class HomeController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->metaTagsCreater  = $metaTagsCreater;
 
     }
 
     public function index(){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
-        $this->data['template'] = config('template.home');
+        $this->data['template'] = config('template.content.home');
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 

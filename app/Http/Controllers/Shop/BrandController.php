@@ -32,6 +32,8 @@ class BrandController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->brands = $brands;
 
         $this->baskets = $baskets;
@@ -47,7 +49,7 @@ class BrandController extends Controller{
      */
     public function index(){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.content.shop.brand.list');
 
         $this->data['data']     ['brands']  = $this->brands->getActiveBrands();
         $this->data['data']     ['header_page'] =  'Бренды';
@@ -84,9 +86,9 @@ class BrandController extends Controller{
      */
     public function show(Request $request, Product $products, $name){
 
-        $brand = $this->brands->getBrand($name);
+        $this->data['template'] = config('template.content.shop.brand.show');
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $brand = $this->brands->getBrand($name);
 
         $this->data['template'] ['view']        = 'show';
         $this->data['template'] ['sidebar']     = 'product_filter';
@@ -94,8 +96,6 @@ class BrandController extends Controller{
         $this->data['brand']       = $brand;
         $this->data['header_page'] = 'Товары бренда ' . $brand[0]->name;
         $this->data['parameters']  = [];
-
-        $this->data['template']['custom'][] = 'shop-icons';
 
         if (count($request->query) > 0) {
 

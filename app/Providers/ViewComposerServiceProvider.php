@@ -14,13 +14,11 @@ class ViewComposerServiceProvider extends ServiceProvider{
     public function boot(){
         $template = env('SITE_TEMPLATE');
         View::composers([
-            'App\Http\ViewComposers\ModelsMenuComposer' => $template . '.index',
-            'App\Http\ViewComposers\ShopBasketComposer'     => $template . '.modules.shop_basket.default',
-            'App\Http\ViewComposers\ProductFilterComposer'  => $template . '.modules.product_filter.default',
-            'App\Http\ViewComposers\BannerComposer'         => $template . '.modules.banner.default',
-
-            'App\Http\ViewComposers\Shop\Product\ShopOffersComposer' => $template . '.modules.offers.default',
-            'App\Http\ViewComposers\Shop\Delivery\DeliveryOffersComposer' => $template . '.modules.shipment.default',
+            'App\Http\ViewComposers\BannerComposer'         => $template . '.modules.banner.index',
+            'App\Http\ViewComposers\Shop\Product\ShopOffersComposer' => $template . '.modules.offers.index',
+            'App\Http\ViewComposers\ShopBasketComposer'     => $template . '.modules.shop_basket.index',
+            'App\Http\ViewComposers\ProductFilterComposer'  => $template . '.modules.product_filter.index',
+            'App\Http\ViewComposers\Shop\Delivery\DeliveryOffersComposer' => $template . '.modules.shipment.index',
         ]);
     }
 

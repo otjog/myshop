@@ -32,6 +32,8 @@ class CategoryController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->categories       = $categories;
 
         $this->baskets          = $baskets;
@@ -47,7 +49,7 @@ class CategoryController extends Controller{
      */
     public function index(){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.content.shop.category.list');
 
         $this->data['categories']  =  $this->categories->getCategoriesTree();
         $this->data['header_page'] =  'Категории';
@@ -86,7 +88,7 @@ class CategoryController extends Controller{
      */
     public function show(Request $request, Product $products, $id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['template'] = config('template.content.shop.category.show');
 
         $category = $this->categories->getCategory($id);
 
@@ -96,8 +98,6 @@ class CategoryController extends Controller{
         $this->data['children_categories'] = $this->categories->getActiveChildrenCategories($id);
         $this->data['header_page']         = $category[0]->name;
         $this->data['parameters']          = [];
-
-        $this->data['template']['custom'][] = 'shop-icons';
 
         if( count( $request->query ) > 0 ){
 

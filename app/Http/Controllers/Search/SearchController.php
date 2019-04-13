@@ -30,6 +30,8 @@ class SearchController extends Controller{
 
         $this->settings = Settings::getInstance();
 
+        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+
         $this->products = $products;
 
         $this->baskets  = $baskets;
@@ -43,11 +45,11 @@ class SearchController extends Controller{
 
     public function show(){
 
+        $this->data['template'] = config('template.content.shop.search.show');
+
         $sphinx  = new SphinxSearch();
 
         $searchIdResult = $sphinx->search($this->queryString, env( 'SPHINXSEARCH_INDEX' ))->query();
-
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
 
         $this->data['products']    = [];
         $this->data['query']       = $this->queryString;

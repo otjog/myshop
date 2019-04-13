@@ -14,8 +14,12 @@ class Offer extends Model{
             ->withTimestamps();
     }
 
-    public function getProductsOffers($take = 100){
+    public function getProductsOffers($take = 10){
+
         $offers = $this->getActiveOffers();
+
+        $newOffers = collect();
+
         $products = new Product();
 
         foreach($offers as $offer){
@@ -30,13 +34,16 @@ class Offer extends Model{
 
                 $offer->relations = ['products' => $offerProducts];
             }
-        }
 
-        return $offers;
+            $newOffers->put($offer->name, $offer);
+        }
+        unset($offers);
+        return $newOffers;
     }
 
     //TODO поле name сделать уникальным
     public function getActiveOffers(){
+
         return self::select(
             'id',
             'name',
@@ -45,6 +52,20 @@ class Offer extends Model{
         )
             ->where('active', 1)
             ->get();
+
     }
 
+    public function getActiveOfferByName($name){
+
+        return self::select(
+            'id',
+            'name',
+            'header',
+            'related'
+        )
+            ->where('active', 1)
+            ->where('name', $name)
+            ->get();
+
+    }
 }
