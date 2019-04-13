@@ -23,6 +23,7 @@
     "dependencies": {
         "@fancyapps/fancybox": "^3.5.7",
         "font-awesome": "^4.7.0",
-        "suggestions-jquery": "^19.2.0"
+        "suggestions-jquery": "^19.2.0",
+        "tridi": "^1.0.0"
     }
 }

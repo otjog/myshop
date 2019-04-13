@@ -21,8 +21,8 @@
                     />
                 @endif
             </p>
-            @if( isset( $product->images ) && count( $product->images ) > 1)
-                <ul class="list-unstyled list-inline">
+            <ul class="list-unstyled list-inline">
+                @if( isset( $product->images ) && count( $product->images ) > 1)
                     @foreach( $product->images as $image)
                         <li class="list-inline-item">
                             <a href="{{route('models.sizes.images.show', ['product', 'l', $image->name])}}">
@@ -30,8 +30,31 @@
                             </a>
                         </li>
                     @endforeach
-                </ul>
-            @endif
+                @endif
+                    @if(isset($photo360['extFile']) && $photo360['extFile'] !== '')
+                        <li class="list-inline-item">
+                            <a href="#photo360-popup" class="open-popup-link">
+                                <img src="{{route('models.sizes.images.show', ['photo360', 'xxs', 'icon'])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
+                            </a>
+                        </li>
+                            <div id="photo360-popup" class="photo360-popup mfp-hide">
+                                <div
+                                        id="photo360"
+                                        data-location="{{$photo360['path']}}"
+                                        data-format="png"
+                                        data-count="18"
+                                >
+                                </div>
+                                <button type="button" class="btn custom-control-next">Назад</button>
+                                <button type="button" class="btn custom-control-stop">Остановить</button>
+                                <button type="button" class="btn custom-control-start">Воспроизвести</button>
+                                <button type="button" class="btn custom-control-prev">Вперед</button>
+                            </div>
+                        <script>
+
+                        </script>
+                    @endif
+            </ul>
         </div>
         <!-- Left Ends -->
         <!-- Right Starts -->

@@ -95,3 +95,65 @@ function changeQuantity(e, buttonIndex){
     }
 }
 //END Quantity Button
+
+
+/* PHOTO360 */
+$('.open-popup-link').magnificPopup({
+    type:'inline',
+    midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+});
+let photo360 = document.getElementById('photo360');
+
+import Tridi from 'tridi/dist/js/tridi';
+
+let tridi = new Tridi({
+    element: '#photo360',
+    location: photo360.getAttribute('data-location'),
+    format: photo360.getAttribute('data-format'),
+    count: photo360.getAttribute('data-count'),
+});
+
+tridi.load();
+
+let prevBtn = document.querySelector('.custom-control-prev');
+let nextBtn = document.querySelector('.custom-control-next');
+let startBtn = document.querySelector('.custom-control-start');
+let stopBtn = document.querySelector('.custom-control-stop');
+
+// Click events
+
+prevBtn.addEventListener('click', function() {
+    tridi.prev();
+});
+
+nextBtn.addEventListener('click', function() {
+    tridi.next();
+});
+
+startBtn.addEventListener('click', function() {
+    tridi.autoplayStart();
+});
+
+stopBtn.addEventListener('click', function() {
+    tridi.autoplayStop();
+});
+
+// Touch events
+
+prevBtn.addEventListener('touchend', function() {
+    tridi.prev();
+}, { passive: true });
+
+nextBtn.addEventListener('touchend', function() {
+    tridi.next();
+}, { passive: true });
+
+startBtn.addEventListener('touchend', function() {
+    tridi.autoplayStart();
+}, { passive: true });
+
+stopBtn.addEventListener('touchend', function() {
+    tridi.autoplayStop();
+}, { passive: true });
+/*END PHOTO360*/
+
