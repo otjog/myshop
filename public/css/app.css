@@ -21508,7 +21508,6 @@ hr {
 
 .product-col {
   margin-bottom: 20px;
-  padding: 15px 15px 10px;
   background: #fff;
   border: 1px solid #e8e8e8;
 }
@@ -21519,7 +21518,7 @@ hr {
 }
 
 .product-col .caption {
-  padding-top: 10px;
+  padding: 10px 15px;
 }
 
 .product-col h4 {

@@ -43,7 +43,7 @@
             <div class="row">
                 @foreach( $products_row as $key => $product )
                     <!-- Product Starts -->
-                        @include('_raduga.components.shop.product.elements.product_card', ['wrapClass' => 'col-lg-4 col-md-6 col-sm-12'])
+                        @include('_raduga.components.shop.product.elements.product_card', ['wrapClass' => 'col-lg-4 col-md-6 col-sm-12 p-1'])
                     <!-- Product Ends -->
                 @endforeach
             </div>
