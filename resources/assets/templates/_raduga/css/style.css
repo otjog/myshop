@@ -1247,3 +1247,11 @@ hr { border-color:#8c8f92; }
 		    transition: all 1s ease;	
 }
 
+.photo360-popup {
+	position: relative;
+	background: #FFF;
+	padding: 20px;
+	width: auto;
+	max-width: 1000px;
+	margin: 20px auto;
+}

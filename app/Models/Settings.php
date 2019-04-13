@@ -29,9 +29,7 @@ class Settings {
 
         $this->price = new Price();
 
-        $this->data = Cache::remember('config:general', 1440, function(){
-            return config('general');
-        });
+        $this->data = config('general');
 
         $this->data['components']['shop']['currency'] =
             Cache::rememberForever('config:general:components:shop:currency', function(){

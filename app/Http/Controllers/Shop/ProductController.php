@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Shop\Product\Product;
 use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Settings;
+use App\Models\Site\Photo360;
 
 class ProductController extends Controller{
 
@@ -77,9 +78,13 @@ class ProductController extends Controller{
      */
     public function show($id){
 
+        $photo360 = new Photo360();
+
         $this->data['template'] = config('template.content.shop.product.show');
 
         $this->data['product'] = $this->products->getActiveProduct($id);
+
+        $this->data['photo360'] = $photo360->getPhotos($this->data['product']['scu']);
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 

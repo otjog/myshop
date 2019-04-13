@@ -34,11 +34,14 @@ class Image extends Model{
             ->get();
     }
 
-    public function showImage($model, $size, $name)
+    public function showImage($model, $size, $originalName)
     {
+
+        $name = str_replace('|', '/', $originalName);
+
         $imageSettings = $this->settings->getParameter('images.models.' . $model);
 
-        $pathToSizedImage = $imageSettings['path_to_image_folder'] . $size . '/' . $name;
+        $pathToSizedImage = $imageSettings['path_to_image_folder'] . $size . '/' . $originalName;
 
         $pathToOriginalImage = $imageSettings['path_to_image_folder'] . $name;
 
