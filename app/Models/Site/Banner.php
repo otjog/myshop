@@ -8,7 +8,7 @@ use App\Models\Shop\Product\Product;
 class Banner extends Model{
 
     public function getActiveBanners(){
-        $banners =  self::select(
+        $banners = self::select(
             'id',
             'source',
             'img',
