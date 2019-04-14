@@ -22,79 +22,6 @@
             ],
         ],
         'content' => [
-            'shop' => [
-                'product' => [
-                    'show' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                ],
-                'category' => [
-                    'show' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                    'list' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                ],
-                'brand' => [
-                    'show' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                    'list' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                ],
-                'search' => [
-                    'show' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [ ],
-                    ],
-                ],
-                'basket' => [
-                    'edit' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                ],
-                'order' => [
-                    'show' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                ],
-            ],
-            'info' => [
-                'page' => [
-                    'show' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                    'list' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                    'edit' => [
-                        'top' => [],
-                        'side' => [],
-                        'bottom' => [],
-                    ],
-                ],
-            ],
             'home' => [
                 'top' => [
                     [
@@ -119,9 +46,6 @@
                     ],
 
                 ],
-                'bottom' => [],
-                'content_top' => [],
-                'content_side' => [],
                 'content_bottom' => [
                     [
                         'module' => 'offers',

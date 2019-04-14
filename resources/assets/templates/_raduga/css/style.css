@@ -106,6 +106,9 @@ hr { border-color:#8c8f92; }
 	color:#fff;
 }
 
+.price-old {
+	text-decoration: line-through;
+}
 /* Header Area Styles Starts */
 
 #header-area {
@@ -440,8 +443,8 @@ hr { border-color:#8c8f92; }
 					.product-col .price span.price-old {
 						color: #808080;
 						font-size: 18px;
-						text-decoration: line-through;
 					}
+
 				.product-col .btn-wishlist, 
 				.product-col .btn-compare {
 					margin-right: 3px;
