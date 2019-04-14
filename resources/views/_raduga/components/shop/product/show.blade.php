@@ -40,8 +40,8 @@
                                 <div
                                         id="photo360"
                                         data-location="{{$photo360['path']}}"
-                                        data-format="png"
-                                        data-count="18"
+                                        data-format="{{$photo360['extFile']}}"
+                                        data-count="{{$photo360['count']}}"
                                 >
                                 </div>
                                 <button type="button" class="btn custom-control-next">Назад</button>
