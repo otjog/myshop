@@ -85,11 +85,19 @@ for(let buttonsType in quantity.buttons){
 
 function changeQuantity(e, buttonIndex){
 
-    let minValue = e.target.dataset.quantityMinValue;
+    let target = e.target;
 
-    if ( e.target.classList.contains('quantity_inc')) {
+    if(target.tagName === 'I'){
+        target = target.parentElement;
+
+    }
+
+    if (target.classList.contains('quantity_inc')) {
         ++quantity.inputs[buttonIndex].value;
-    } else if(e.target.classList.contains('quantity_dec')){
+    } else if(target.classList.contains('quantity_dec')){
+
+        let minValue = target.dataset.quantityMinValue;
+
         if(quantity.inputs[buttonIndex].value > minValue)
             --quantity.inputs[buttonIndex].value;
     }
@@ -106,54 +114,58 @@ let photo360 = document.getElementById('photo360');
 
 import Tridi from 'tridi/dist/js/tridi';
 
-let tridi = new Tridi({
-    element: '#photo360',
-    location: photo360.getAttribute('data-location'),
-    format: photo360.getAttribute('data-format'),
-    count: photo360.getAttribute('data-count'),
-});
+if(photo360 !== undefined && photo360 !== null){
 
-tridi.load();
+    let tridi = new Tridi({
+        element: '#photo360',
+        location: photo360.getAttribute('data-location'),
+        format: photo360.getAttribute('data-format'),
+        count: photo360.getAttribute('data-count'),
+    });
 
-let prevBtn = document.querySelector('.custom-control-prev');
-let nextBtn = document.querySelector('.custom-control-next');
-let startBtn = document.querySelector('.custom-control-start');
-let stopBtn = document.querySelector('.custom-control-stop');
+    tridi.load();
+
+    let prevBtn = document.querySelector('.custom-control-prev');
+    let nextBtn = document.querySelector('.custom-control-next');
+    let startBtn = document.querySelector('.custom-control-start');
+    let stopBtn = document.querySelector('.custom-control-stop');
 
 // Click events
 
-prevBtn.addEventListener('click', function() {
-    tridi.prev();
-});
+    prevBtn.addEventListener('click', function() {
+        tridi.prev();
+    });
 
-nextBtn.addEventListener('click', function() {
-    tridi.next();
-});
+    nextBtn.addEventListener('click', function() {
+        tridi.next();
+    });
 
-startBtn.addEventListener('click', function() {
-    tridi.autoplayStart();
-});
+    startBtn.addEventListener('click', function() {
+        tridi.autoplayStart();
+    });
 
-stopBtn.addEventListener('click', function() {
-    tridi.autoplayStop();
-});
+    stopBtn.addEventListener('click', function() {
+        tridi.autoplayStop();
+    });
 
 // Touch events
 
-prevBtn.addEventListener('touchend', function() {
-    tridi.prev();
-}, { passive: true });
+    prevBtn.addEventListener('touchend', function() {
+        tridi.prev();
+    }, { passive: true });
 
-nextBtn.addEventListener('touchend', function() {
-    tridi.next();
-}, { passive: true });
+    nextBtn.addEventListener('touchend', function() {
+        tridi.next();
+    }, { passive: true });
 
-startBtn.addEventListener('touchend', function() {
-    tridi.autoplayStart();
-}, { passive: true });
+    startBtn.addEventListener('touchend', function() {
+        tridi.autoplayStart();
+    }, { passive: true });
 
-stopBtn.addEventListener('touchend', function() {
-    tridi.autoplayStop();
-}, { passive: true });
+    stopBtn.addEventListener('touchend', function() {
+        tridi.autoplayStop();
+    }, { passive: true });
+}
+
 /*END PHOTO360*/
 

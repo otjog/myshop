@@ -37292,11 +37292,18 @@ for (var buttonsType in quantity.buttons) {
 
 function changeQuantity(e, buttonIndex) {
 
-    var minValue = e.target.dataset.quantityMinValue;
+    var target = e.target;
 
-    if (e.target.classList.contains('quantity_inc')) {
+    if (target.tagName === 'I') {
+        target = target.parentElement;
+    }
+
+    if (target.classList.contains('quantity_inc')) {
         ++quantity.inputs[buttonIndex].value;
-    } else if (e.target.classList.contains('quantity_dec')) {
+    } else if (target.classList.contains('quantity_dec')) {
+
+        var minValue = target.dataset.quantityMinValue;
+
         if (quantity.inputs[buttonIndex].value > minValue) --quantity.inputs[buttonIndex].value;
     }
 }
@@ -37312,55 +37319,59 @@ var photo360 = document.getElementById('photo360');
 
 
 
-var tridi = new __WEBPACK_IMPORTED_MODULE_0_tridi_dist_js_tridi___default.a({
-    element: '#photo360',
-    location: photo360.getAttribute('data-location'),
-    format: photo360.getAttribute('data-format'),
-    count: photo360.getAttribute('data-count')
-});
+if (photo360 !== undefined && photo360 !== null) {
 
-tridi.load();
+    var tridi = new __WEBPACK_IMPORTED_MODULE_0_tridi_dist_js_tridi___default.a({
+        element: '#photo360',
+        location: photo360.getAttribute('data-location'),
+        format: photo360.getAttribute('data-format'),
+        count: photo360.getAttribute('data-count')
+    });
 
-var prevBtn = document.querySelector('.custom-control-prev');
-var nextBtn = document.querySelector('.custom-control-next');
-var startBtn = document.querySelector('.custom-control-start');
-var stopBtn = document.querySelector('.custom-control-stop');
+    tridi.load();
 
-// Click events
+    var prevBtn = document.querySelector('.custom-control-prev');
+    var nextBtn = document.querySelector('.custom-control-next');
+    var startBtn = document.querySelector('.custom-control-start');
+    var stopBtn = document.querySelector('.custom-control-stop');
 
-prevBtn.addEventListener('click', function () {
-    tridi.prev();
-});
+    // Click events
 
-nextBtn.addEventListener('click', function () {
-    tridi.next();
-});
+    prevBtn.addEventListener('click', function () {
+        tridi.prev();
+    });
 
-startBtn.addEventListener('click', function () {
-    tridi.autoplayStart();
-});
+    nextBtn.addEventListener('click', function () {
+        tridi.next();
+    });
 
-stopBtn.addEventListener('click', function () {
-    tridi.autoplayStop();
-});
+    startBtn.addEventListener('click', function () {
+        tridi.autoplayStart();
+    });
 
-// Touch events
+    stopBtn.addEventListener('click', function () {
+        tridi.autoplayStop();
+    });
 
-prevBtn.addEventListener('touchend', function () {
-    tridi.prev();
-}, { passive: true });
+    // Touch events
 
-nextBtn.addEventListener('touchend', function () {
-    tridi.next();
-}, { passive: true });
+    prevBtn.addEventListener('touchend', function () {
+        tridi.prev();
+    }, { passive: true });
 
-startBtn.addEventListener('touchend', function () {
-    tridi.autoplayStart();
-}, { passive: true });
+    nextBtn.addEventListener('touchend', function () {
+        tridi.next();
+    }, { passive: true });
 
-stopBtn.addEventListener('touchend', function () {
-    tridi.autoplayStop();
-}, { passive: true });
+    startBtn.addEventListener('touchend', function () {
+        tridi.autoplayStart();
+    }, { passive: true });
+
+    stopBtn.addEventListener('touchend', function () {
+        tridi.autoplayStop();
+    }, { passive: true });
+}
+
 /*END PHOTO360*/
 
 /***/ }),
