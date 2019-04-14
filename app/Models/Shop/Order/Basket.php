@@ -55,30 +55,6 @@ class Basket extends Model{
 
             $basket->relations['products'] = $products->getProductsFromBasket( $basket->id );
 
-            foreach($basket->products as $key => $product){
-
-                $attributes = explode(',', $product['pivot']['order_attributes']);
-
-                $parameters = $product->basket_parameters;
-
-                $temporary = [];
-
-                foreach($attributes as $attribute){
-
-                    foreach($parameters as $parameter){
-                        if($parameter->pivot->id === (int)$attribute){
-                            $temporary[] = $parameter;
-                        }
-                    }
-
-                }
-
-                $product['pivot']['order_attributes_collection'] = $temporary;
-
-                $product->quantity = $product['pivot']['quantity'];
-
-            }
-
             $basket->total      = $this->getTotal($basket->products);
 
             $basket->count_scu  = count($basket->products);

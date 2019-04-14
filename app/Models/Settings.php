@@ -32,7 +32,7 @@ class Settings {
         $this->data = config('general');
 
         $this->data['components']['shop']['currency'] =
-            Cache::rememberForever('config:general:components:shop:currency', function(){
+            Cache::rememberForever('config:general:components:shop:currency', function()  {
                 return $this->currency
                     ->select('id', 'char_code', 'symbol')
                     ->where('main', '1')

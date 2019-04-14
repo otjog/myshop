@@ -5,7 +5,6 @@
     <div class="row product-info full">
         <!-- Left Starts -->
         <div class="col-sm-6 images-block">
-
             <p>
                 @if( isset($product->images[0]->name) && $product->images[0]->name !== null)
                     <a href="{{route('models.sizes.images.show', ['product', 'l', $product->images[0]->name])}}" title="">
@@ -89,46 +88,41 @@
                 <!-- Manufacturer Ends -->
                 <hr />
             @if( isset($product->price['value']) && $product->price['value'] !== null)
-                <!-- Price Starts -->
-                    <div class="price">
-                        <span class="price-head">Цена :</span>
-                        <span class="price-new">{{ $product->price['value'] }}{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</span>
-                        @if( isset($product->price['sale']) && $product->price['sale'] > 0)
-                            <span class="price-old">{{$product->price['value'] + $product->price['sale']}}{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</span>
-                        @endif
-                    </div>
-                <!-- Price Ends -->
-                <div class="my-4">
                     <form id="buy-form" method="post" role="form" action="{{route('baskets.store')}}">
-                        <div class="row mx-0">
-                            <div class="product_quantity col-3">
-                                <span>Кол-во: </span>
-                                <input type="text"      name="quantity"     value="1" size="5" pattern="[0-9]*" class="quantity_input">
-                                <input type="hidden"    name="product_id"   value="{{$product->id}}">
-                                <input type="hidden"    name="_token"       value="{{csrf_token()}}">
-                                <div class="quantity_buttons">
-                                    <div
-                                            class="quantity_inc quantity_control"
-                                    >
-                                        <i class="fas fa-chevron-up"></i>
-                                    </div>
-                                    <div
-                                            class="quantity_dec quantity_control"
-                                            data-quantity-min-value="1"
-                                    >
-                                        <i class="fas fa-chevron-down"></i>
+                        <!-- Price Starts -->
+                        <div class="price">
+                            @if( isset($product->basket_parameters) && count($product->basket_parameters) > 0)
+                                @include('_raduga.components.shop.product.elements.multi_price')
+                            @else
+                                @include('_raduga.components.shop.product.elements.once_price')
+                            @endif
+                        </div>
+                        <!-- Price Ends -->
+                        <div class="my-4">
+                            <div class="row mx-0">
+                                <div class="product_quantity col-3">
+                                    <span>Кол-во: </span>
+                                    <input type="text"      name="quantity"     value="1" size="5" pattern="[0-9]*" class="quantity_input">
+                                    <input type="hidden"    name="product_id"   value="{{$product->id}}">
+                                    <input type="hidden"    name="_token"       value="{{csrf_token()}}">
+                                    <div class="quantity_buttons">
+                                        <div class="quantity_inc quantity_control">
+                                            <i class="fas fa-chevron-up"></i>
+                                        </div>
+                                        <div class="quantity_dec quantity_control" data-quantity-min-value="1">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="cart-button button-group col-3">
-                                <button type="submit" class="btn btn-cart">
-                                    В корзину
-                                </button>
+                                <div class="cart-button button-group col-3">
+                                    <button type="submit" class="btn btn-cart">
+                                        В корзину
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
-                </div>
-            @endif
+                @endif
             </div>
         </div>
         <!-- Right Ends -->
