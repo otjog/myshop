@@ -28,6 +28,7 @@ class Photo360
 
             $this->data['extFile'] = $extFile[1];
             $this->data['path'] = '/storage/img/' . $this->folderName . '/' . $folder;
+            $this->data['count'] = count($photos);
         }
 
         return $this->data;
