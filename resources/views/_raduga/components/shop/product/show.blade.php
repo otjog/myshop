@@ -123,76 +123,13 @@
                         </div>
                     </form>
                 @endif
+                @if(isset( $product->description ))
+                    <h4>Описание</h4>
+                    <p>{{ $product->description }}</p>
+                @endif
             </div>
         </div>
         <!-- Right Ends -->
     </div>
     <!-- Product Info Ends -->
-    <!-- Tabs Starts -->
-    <div class="tabs-panel panel-smart">
-        <!-- Nav Tabs Starts -->
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a href="#tab-description" class="nav-link active">Описание</a>
-            </li>
-            <li class="nav-item"><a href="#tab-review" class="nav-link">Отзывы</a></li>
-        </ul>
-        <!-- Nav Tabs Ends -->
-        <!-- Tab Content Starts -->
-        <div class="tab-content clearfix">
-            <!-- Description Starts -->
-            <div class="tab-pane active" id="tab-description">
-                @if(isset( $product->description ))
-                    <p>{{ $product->description }}</p>
-                @endif
-            </div>
-            <!-- Description Ends -->
-            <!-- Review Starts -->
-            <div class="tab-pane" id="tab-review">
-                <form>
-                    <div class="form-group required row">
-                        <label class="col-sm-2 col-form-label text-right" for="input-name">Name</label>
-                        <div class="col-sm-10">
-                            <input type="text" name="name" value="" id="input-name" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group required row">
-                        <label class="col-sm-2 col-form-label text-right" for="input-review">Review</label>
-                        <div class="col-sm-10">
-                            <textarea name="text" rows="5" id="input-review" class="form-control"></textarea>
-                            <div class="help-block">
-                                Some note goes here..
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group required row">
-                        <label class="col-sm-2 col-form-label text-right ratings">Ratings</label>
-                        <div class="col-sm-10">
-                            Bad&nbsp;
-                            <input type="radio" name="rating" value="1" />
-                            &nbsp;
-                            <input type="radio" name="rating" value="2" />
-                            &nbsp;
-                            <input type="radio" name="rating" value="3" />
-                            &nbsp;
-                            <input type="radio" name="rating" value="4" />
-                            &nbsp;
-                            <input type="radio" name="rating" value="5" />
-                            &nbsp;Good
-                        </div>
-                    </div>
-                    <div class="buttons">
-                        <div class="offset-sm-2 col-sm-10">
-                            <button type="button" id="button-review" class="btn btn-main">
-                                Submit
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <!-- Review Ends -->
-        </div>
-        <!-- Tab Content Ends -->
-    </div>
-    <!-- Tabs Ends -->
 @endsection

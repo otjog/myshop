@@ -20,7 +20,7 @@
             <!-- Search Ends -->
             <!-- Logo Starts -->
             <div class="col-xl-6 col-md-4 col-sm-12 text-center">
-                <div id="logo"><a href="{{route('home')}}"><img src="{{URL::asset('storage/images/logo.png')}}" title="Electro Shoppe" alt="Electro Shoppe" class="img-fluid" /></a></div>
+                <div id="logo"><a href="{{route('home')}}"><span class="display-4">RADUGA31.RU</span></a></div>
             </div>
             <!-- Logo Starts -->
             <!-- Shopping Cart Starts -->

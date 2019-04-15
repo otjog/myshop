@@ -12,7 +12,6 @@
         <div class="row">
             @php $colMdComponent = '12'; @endphp
             @if(isset($template['side']) && $template['side'] !== null)
-                <?php dd($template['side'])?>
                 <div class="col-md-3 col-sm-12">
                     @foreach($template['side'] as $module)
                         @if(count($module) > 0)

@@ -6,13 +6,13 @@
                 @if( isset($product->images[0]->name) && $product->images[0]->name !== null )
                     <img
                             class="img-fluid"
-                            src="{{route('models.sizes.images.show', ['product', 's', $product->images[0]->name])}}"
+                            src="{{route('models.sizes.images.show', ['product', 's-1-17', $product->images[0]->name])}}"
                             alt="product"
                     />
                 @else
                     <img
                             class="img-fluid"
-                            src="{{route('models.sizes.images.show', ['product', 's', 'no_image.jpg'])}}"
+                            src="{{route('models.sizes.images.show', ['product', 's-1-17', 'no_image.jpg'])}}"
                             alt="product"
                     />
                 @endif
@@ -54,15 +54,9 @@
                                 <i class="fa fa-shopping-cart"></i>
                             </button>
                         </form>
-                    @else
-                        <a class="pt-2 d-block" href="{{ route( 'products.show', $product->id ) }}">
-                            Перейти к товару
-                        </a>
                     @endif
                 </div>
             @endif
-
-
 
         </div>
     </div>

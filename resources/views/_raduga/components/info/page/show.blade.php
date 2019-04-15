@@ -1,4 +1,8 @@
-<div class="col-lg-8 offset-lg-2">
-    <h1>{{$page->name}}</h1>
-    <div class="single_post_text">{!! $page->description !!}</div>
-</div>
+@extends('_raduga.index')
+
+@section('component')
+    <div class="col-lg-8 offset-lg-2">
+        <h1>{{$page->name}}</h1>
+        <div class="single_post_text">{!! $page->description !!}</div>
+    </div>
+@endsection

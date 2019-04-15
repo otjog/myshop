@@ -3,7 +3,8 @@
     <button type="button" data-toggle="dropdown" class="btn btn-block dropdown-toggle">
         <i class="fa fa-shopping-cart"></i>
         <span id="cart-total">
-            {{ $basket->count_scu or 0}}<small>товар(ов)</small> - {{ $basket->total  or 0}}<small>{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</small></span>
+
+            {{ $basket->declesion or '0 товаров'}} - {{ $basket->total  or 0}}<small>{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</small></span>
         <i class="fa fa-caret-down"></i>
     </button>
     @if( isset($basket) && $basket !== null)
@@ -55,11 +56,6 @@
                                     {{ $product->price['value']}}{{$global_data['project_data']['components']['shop']['currency']['symbol']}}
                                 </small>
                             @endif
-                        </td>
-                        <td class="text-center">
-                            <a href="#">
-                                <i class="fa fa-times"></i><!-- Todo описать кнопку удаления товара-->
-                            </a>
                         </td>
                     </tr>
                 @endforeach
