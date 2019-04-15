@@ -3,10 +3,6 @@
         'header' => [
             'top' => [
                 [
-                    'module' => 'site.header.top_line',
-                    'template' => 'default'
-                ],
-                [
                     'module' => 'site.header.main_line',
                     'template' => 'default'
                 ],

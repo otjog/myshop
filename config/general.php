@@ -9,6 +9,7 @@
             'email' => env('SITE_EMAIL'),
             'phone' => env('SITE_PHONE'),
             'address' => env('SITE_ADDRESS'),
+            'company_name' => env('SITE_COMPANY_NAME'),
         ],
         'general' => [
             'images' => [
@@ -32,6 +33,7 @@
                         'xxs'   => '55x55',
                         'xs'    => '130x130',
                         's'     => '370x370',
+                        's-1-17'=> '370x210',
                         'm'     => '450x450',
                         'm-13'  => '450x600', //W*1 x H*1.3
                         'l'     => '1000x1000',

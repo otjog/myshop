@@ -41,10 +41,5 @@
             </ul>
         </div>
         <!-- Pagination Ends -->
-        <!-- Results Starts -->
-        <div class="col-sm-6 results">
-            Showing 1 to 3 of 12 (4 Pages)
-        </div>
-        <!-- Results Ends -->
     </div>
 @endif
