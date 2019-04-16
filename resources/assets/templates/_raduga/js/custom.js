@@ -1,11 +1,20 @@
 //MAGNIFIC POPUP
 $(document).ready(function() {
-    $('.images-block').magnificPopup({
-        delegate: 'a', 
+    $('.images-block a.open-popup-link[data-magnific-type="image"]').magnificPopup({
         type: 'image',
         gallery: {
-        enabled: true
-        }
+            enabled: true
+        },
+    });
+});
+
+//MAGNIFIC POPUP
+$(document).ready(function() {
+    $('.images-block a.open-popup-link[data-magnific-type="inline"]').magnificPopup({
+        type: 'inline',
+        gallery: {
+            enabled: true
+        },
     });
 });
 
@@ -121,6 +130,8 @@ if(photo360 !== undefined && photo360 !== null){
         location: photo360.getAttribute('data-location'),
         format: photo360.getAttribute('data-format'),
         count: photo360.getAttribute('data-count'),
+        autoplay: true,
+        autoplaySpeed: 125,
     });
 
     tridi.load();

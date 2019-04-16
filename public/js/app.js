@@ -13738,7 +13738,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(11);
-module.exports = __webpack_require__(42);
+module.exports = __webpack_require__(41);
 
 
 /***/ }),
@@ -36500,7 +36500,6 @@ module.exports = function spread(callback) {
 __webpack_require__(37);
 __webpack_require__(38);
 __webpack_require__(39);
-__webpack_require__(41);
 
 /***/ }),
 /* 37 */
@@ -37207,9 +37206,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tridi_dist_js_tridi___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_tridi_dist_js_tridi__);
 //MAGNIFIC POPUP
 $(document).ready(function () {
-    $('.images-block').magnificPopup({
-        delegate: 'a',
+    $('.images-block a.open-popup-link[data-magnific-type="image"]').magnificPopup({
         type: 'image',
+        gallery: {
+            enabled: true
+        }
+    });
+});
+
+//MAGNIFIC POPUP
+$(document).ready(function () {
+    $('.images-block a.open-popup-link[data-magnific-type="inline"]').magnificPopup({
+        type: 'inline',
         gallery: {
             enabled: true
         }
@@ -37325,7 +37333,9 @@ if (photo360 !== undefined && photo360 !== null) {
         element: '#photo360',
         location: photo360.getAttribute('data-location'),
         format: photo360.getAttribute('data-format'),
-        count: photo360.getAttribute('data-count')
+        count: photo360.getAttribute('data-count'),
+        autoplay: true,
+        autoplaySpeed: 125
     });
 
     tridi.load();
@@ -37867,25 +37877,6 @@ if (true)
 
 /***/ }),
 /* 41 */
-/***/ (function(module, exports) {
-
-$(function () {
-
-	// GOOGLE MAP
-	$("#map-block").height($("#map-wrapper").height()); // Set Map Height
-	function initialize($) {
-		var mapOptions = {
-			zoom: 8,
-			center: new google.maps.LatLng(17.421306, 78.457553),
-			disableDefaultUI: true
-		};
-		var map = new google.maps.Map(document.getElementById('map-block'), mapOptions);
-	}
-	google.maps.event.addDomListener(window, 'load', initialize);
-});
-
-/***/ }),
-/* 42 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
