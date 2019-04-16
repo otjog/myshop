@@ -12,8 +12,7 @@ class Banner extends Model{
             'id',
             'source',
             'img',
-            'title',
-            'template'
+            'title'
         )
             ->where('active', 1)
             ->get();
