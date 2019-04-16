@@ -7,7 +7,12 @@
         <div class="col-sm-6 images-block">
             <p>
                 @if( isset($product->images[0]->name) && $product->images[0]->name !== null)
-                    <a href="{{route('models.sizes.images.show', ['product', 'l', $product->images[0]->name])}}" title="">
+                    <a
+                            href="{{route('models.sizes.images.show', ['product', 'l', $product->images[0]->name])}}"
+                            class="open-popup-link"
+                            data-magnific-type="image"
+                            title=""
+                    >
                         <img
                                 src="{{route('models.sizes.images.show', ['product', 'm', $product->images[0]->name])}}"
                                 alt=""
@@ -24,7 +29,11 @@
                 @if( isset( $product->images ) && count( $product->images ) > 1)
                     @foreach( $product->images as $image)
                         <li class="list-inline-item">
-                            <a href="{{route('models.sizes.images.show', ['product', 'l', $image->name])}}">
+                            <a
+                                    href="{{route('models.sizes.images.show', ['product', 'l', $image->name])}}"
+                                    class="open-popup-link"
+                                    data-magnific-type="image"
+                            >
                                 <img src="{{route('models.sizes.images.show', ['product', 'xxs', $image->name])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
                             </a>
                         </li>
@@ -32,7 +41,12 @@
                 @endif
                     @if(isset($photo360['extFile']) && $photo360['extFile'] !== '')
                         <li class="list-inline-item">
-                            <a href="#photo360-popup" class="open-popup-link">
+                            <a
+                                    href="#photo360-popup"
+                                    class="open-popup-link"
+                                    data-magnific-type="inline"
+                                    data-magnific-src="#photo360-popup"
+                            >
                                 <img src="{{route('models.sizes.images.show', ['photo360', 'xxs', 'icon'])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
                             </a>
                         </li>
@@ -49,9 +63,6 @@
                                 <button type="button" class="btn custom-control-start">Воспроизвести</button>
                                 <button type="button" class="btn custom-control-prev">Вперед</button>
                             </div>
-                        <script>
-
-                        </script>
                     @endif
             </ul>
         </div>
