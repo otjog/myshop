@@ -1,4 +1,4 @@
-@if( isset($offers[$offer_alias]) & $offers[$offer_alias] !== null)
+@if( isset($offers[$offer_alias]) && $offers[$offer_alias] !== null)
     @if( isset($offers[$offer_alias]->products) && count($offers[$offer_alias]->products) > 0)
         <section class="product-carousel">
             <!-- Heading Starts -->
