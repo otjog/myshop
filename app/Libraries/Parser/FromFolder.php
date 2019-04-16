@@ -62,6 +62,11 @@ class FromFolder
                 'price_id' => '1',
                 'currency_id' => '1',
             ],
+            'product_has_parameter' => [
+                [
+                    'parameter_id' => '1',
+                ]
+            ],
 
             'product_has_image' => [
             ],
@@ -159,6 +164,10 @@ class FromFolder
                     $this->storePrices($parameters);
                     break;
 
+                case 'product_has_parameter' :
+                    $this->storeProductParameters($parameters);
+                    break;
+
                 case 'product_has_image' :
                     $this->storeProductsImages($newDataInTables [ 'product_has_image' ] );
                     break;
@@ -226,10 +235,31 @@ class FromFolder
 
                 if (!isset($currentParameters['products']['name'])) {
                     $currentParameters['products']['name'] = $value;
-                } elseif (stripos($value, 'Цена') === false) {
+                } elseif (stripos($value, 'Цена') === false && stripos($value, 'С монтажом') === false) {
                     $currentParameters['products']['description'] .= $value;
+
                 } else {
-                    $currentParameters['product_has_price.retail']['value'] = (int)str_ireplace(['Цена', ' ' ], '', $value);
+
+                    if (stripos($value, 'Цена') !== false) {
+
+                        $currentParameters['product_has_price.retail']['value'] = (int)str_ireplace(['Цена', 'С монтажом', ' ' ], '', $value);
+
+                        $currentParameters['product_has_parameter'][0]['value'] = 'Без монтажа';
+
+                        $currentParameters['product_has_parameter'][0]['basket_value'] = 0;
+
+                    } elseif (stripos($value, 'С монтажом') !== false) {
+
+                        $currentParameters['product_has_parameter'][1] = $currentParameters['product_has_parameter'][0];
+
+                        $currentParameters['product_has_parameter'][1]['value'] = 'C монтажом';
+
+                        $value = (int)str_ireplace(['Цена', 'С монтажом', ' ' ], '', $value);
+
+                        $currentParameters['product_has_parameter'][1]['basket_value'] = $value - $currentParameters['product_has_price.retail']['value'];
+
+                    }
+
                 }
 
             }
@@ -441,6 +471,42 @@ class FromFolder
         $data = $this->getPricesData($priceParameters);
         $this->deActiveOldPrice($data['old_price']);
         $this->updateCurrentTable($data['new_price'], 'product_has_price');
+    }
+
+    private function getProductParametersData($parameters)
+    {
+
+        $data = [
+            'new'   => []
+        ];
+
+        $productsCollection = $this->product->getAllProducts();
+
+        foreach($parameters as $sc_value => $currentParameters) {
+
+            $product = $this->getCurrentTableRow($productsCollection, $this->compareColumn, $sc_value);
+
+            if($product !== null){
+
+                foreach ($currentParameters as $currentParameter) {
+                    $currentParameter['product_id'] = $product->id;
+
+                    $currentParameter = $this->addTimeStamp($currentParameter);
+
+                    $data['new'][] = $currentParameter;
+                }
+
+            }
+        }
+
+        return $data;
+
+    }
+
+    private function storeProductParameters($parameters){
+        $data = $this->getProductParametersData($parameters);
+
+        $this->updateCurrentTable($data, 'product_has_parameter');
     }
 
     private function getProductsImagesData($parameters){
