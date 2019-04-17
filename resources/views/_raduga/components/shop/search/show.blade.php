@@ -7,5 +7,5 @@
         </h2>
     <!-- Main Heading Ends -->
 
-    @include( $global_data['project_data']['template_name'] .'.components.shop.product.list')
+    @include('_raduga.components.shop.product.elements.product_list')
 @endsection

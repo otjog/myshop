@@ -4,20 +4,7 @@
     <div class="container">
         <!-- Nested Row Starts -->
         <div class="row">
-            <!-- Search Starts -->
-            <div class="col-xl-3 col-md-4 col-sm-12">
-                <div id="search">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search">
-                        <span class="input-group-btn">
-									<button class="btn" type="button">
-										<i class="fa fa-search"></i>
-									</button>
-								  </span>
-                    </div>
-                </div>
-            </div>
-            <!-- Search Ends -->
+            @include('_raduga.modules.search.index', ['module' => ['module'=>'search', 'template'=>'default' ]])
             <!-- Logo Starts -->
             <div class="col-xl-6 col-md-4 col-sm-12 text-center">
                 <div id="logo"><a href="{{route('home')}}"><span class="display-4">RADUGA31.RU</span></a></div>
