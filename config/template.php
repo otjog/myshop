@@ -10,7 +10,7 @@
                     'module' => 'menu',
                     'template' => 'navbar',
                     'attach' => [
-                        'menu_alias' => 'top_menu'
+                        'menu_name' => 'top_menu'
                     ]
 
                 ]
@@ -30,14 +30,14 @@
                         'module' => 'menu',
                         'template' => 'vertical',
                         'attach' => [
-                            'menu_alias' => 'vertical'
+                            'menu_name' => 'vertical'
                         ]
                     ],
                     [
                         'module' => 'offers',
                         'template' => 'vertical',
                         'attach' => [
-                            'offer_alias' => 'sale'
+                            'offer_name' => 'sale'
                         ]
                     ],
 
@@ -47,14 +47,14 @@
                         'module' => 'offers',
                         'template' => 'horizontal',
                         'attach' => [
-                            'offer_alias' => 'newest'
+                            'offer_name' => 'newest'
                         ]
                     ],
                     [
                         'module' => 'offers',
                         'template' => 'horizontal',
                         'attach' => [
-                            'offer_alias' => 'sale'
+                            'offer_name' => 'sale'
                         ]
                     ],
 
@@ -67,21 +67,21 @@
                     'module' => 'menu',
                     'template' => 'footer',
                     'attach' => [
-                        'menu_alias' => 'footer_menu_about'
+                        'menu_name' => 'footer_menu_about'
                     ]
                 ],
                 [
                     'module' => 'menu',
                     'template' => 'footer',
                     'attach' => [
-                        'menu_alias' => 'footer_menu_shop'
+                        'menu_name' => 'footer_menu_shop'
                     ]
                 ],
                 [
                     'module' => 'menu',
                     'template' => 'footer',
                     'attach' => [
-                        'menu_alias' => 'footer_menu_services'
+                        'menu_name' => 'footer_menu_services'
                     ]
                 ],
                 [
