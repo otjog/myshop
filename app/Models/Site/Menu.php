@@ -16,7 +16,7 @@ class Menu extends Model
 
         $menus = self::select(
             'menus.id',
-            'menus.alias',
+            'menus.header',
             'menus.name'
         )
             ->with(['models' => function ($query) {
@@ -61,11 +61,12 @@ class Menu extends Model
                         }
                         break;
                 }
-                $newMenus->put($menu->alias, $menu);
+                $newMenus->put($menu->name, $menu);
             }
 
         }
         unset($menus);
+
         return $newMenus;
     }
 }

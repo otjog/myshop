@@ -64,22 +64,9 @@
     Route::match(['get', 'post'], '/ajax', 'Ajax\AjaxController@index');
 
     /************************Админка*************************************************/
-    Auth::routes();
 
-    Route::group(['prefix' => 'adminio', 'middleware' => ['auth']], function () {
-
-        //Admin Home
-        Route::get('/', 'Admin\AdminController@index')->name('admin');
-
-        //Admin Products
-        Route::resource('products',     'Shop\ProductController',       [ 'except' => [ 'show' ]]);
-
-        //Admin Categories
-        Route::resource('categories',   'Shop\CategoryController',      [ 'except' => [ 'show' ]]);
-
-        //Admin Pages
-        Route::resource('pages',        'Info\PageController',          [ 'except' => [ 'show' ]]);
-
+    Route::group(['prefix' => 'admin'], function () {
+        Voyager::routes();
     });
 
 
