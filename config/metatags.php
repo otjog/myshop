@@ -10,9 +10,9 @@ return [
             'siteName' => env('APP_NAME'),
         ],
         'tags' => [
-            'title' => 'Пальто и платья - купить, цена, инструкция и фото в интернет-магазине {{siteName}}',
-            'description' => 'Пальто и платья - купить в Москве, Белгороде и России: цена, инструкция по эксплуатации и характеристики в интернет-магазине {{siteName}}. Доставка в любой регион России, гарантия - 12 мес.',
-            'keywords' => 'Пальто, платья, купальники купить, пальто цвета, платья отзывы, нижнее белье купить, куртки купить',
+            'title' => env('METATAGS_DEFAULT_TAGS_TITLE'),
+            'description' => env('METATAGS_DEFAULT_TAGS_DESCRIPTION'),
+            'keywords' => env('METATAGS_DEFAULT_TAGS_KEYWORDS'),
 
         ]
 
@@ -21,17 +21,17 @@ return [
     'product' => [
 
         'relations' => [
-            'productScu'        => 'scu',
-            'productName'       => 'name',
-            'productPrice'      => 'price|value',
-            'categoryName'      => 'category|name',
-            'manufacturerName'  => 'manufacturer|name',
+            'productScu'        => env('METATAGS_PRODUCT_RELATIONS_PRODUCTSCU'),
+            'productName'       => env('METATAGS_PRODUCT_RELATIONS_PRODUCTNAME'),
+            'productPrice'      => env('METATAGS_PRODUCT_RELATIONS_PRODUCTPRICE'),
+            'categoryName'      => env('METATAGS_PRODUCT_RELATIONS_CATEGORYNAME'),
+            'manufacturerName'  => env('METATAGS_PRODUCT_RELATIONS_MANUFACTURERNAME'),
         ],
         'values' => [],
         'tags' => [
-            'title' => '{{productName}} {{manufacturerName}} - купить, цена, инструкция и фото в интернет-магазине {{siteName}}',
-            'description' => '{{productName}} {{manufacturerName}} - купить в Москве, Белгороде и России: цена, инструкция по эксплуатации и характеристики в интернет-магазине {{siteName}}. Доставка в любой регион России, гарантия - 12 мес.',
-            'keywords' => '{{productName}} {{manufacturerName}}, {{categoryName}}, {{productName}} купить, {{productName}} характеристики, {{productName}} отзывы, {{manufacturerName}} купить, {{categoryName}} купить',
+            'title' => env('METATAGS_PRODUCT_TAGS_TITLE'),
+            'description' => env('METATAGS_PRODUCT_TAGS_DESCRIPTION'),
+            'keywords' => env('METATAGS_PRODUCT_TAGS_KEYWORDS'),
 
         ]
 
@@ -40,13 +40,13 @@ return [
     'category' => [
 
         'relations' => [
-            'categoryName'      => 'name',
+            'categoryName' => env('METATAGS_CATEGORY_RELATIONS_CATEGORYNAME'),
         ],
         'values' => [],
         'tags' => [
-            'title' => '{{categoryName}} для дома, коттеджа и дачи, купить {{categoryName}} в Белгороде, Москве, СПб и РФ - цены, отзывы, видео, фото и характеристики в интернет-магазине {{siteName}}',
-            'description' => 'Купить {{categoryName}} для коттеджа, дома и дачи в Белгороде, Москве и РФ - цены, отзывы, видео, фото и характеристики в интернет-магазине {{siteName}}. В продаже имеются {{categoryName}} всех типов по лучшей цене. Гарантия, доставка во все регионы.',
-            'keywords' => '{{categoryName}},  {{categoryName}} цены характеристики, {{categoryName}} отзывы, {{categoryName}} купить, {{categoryName}} цена, {{categoryName}} цены характеристики отзывы',
+            'title' => env('METATAGS_CATEGORY_TAGS_TITLE'),
+            'description' => env('METATAGS_CATEGORY_TAGS_DESCRIPTION'),
+            'keywords' => env('METATAGS_CATEGORY_TAGS_KEYWORDS'),
 
         ]
 
@@ -55,13 +55,13 @@ return [
     'brand' => [
 
         'relations' => [
-            'brandName'      => 'name',
+            'brandName' => env('METATAGS_BRAND_RELATIONS_BRANDNAME'),
         ],
 
         'tags' => [
-            'title' => '{{brandName}} для дома, коттеджа и дачи, купить {{brandName}} в Белгороде, Москве, СПб и РФ - цены, отзывы, видео, фото и характеристики в интернет-магазине {{siteName}}',
-            'description' => 'Купить {{brandName}} для коттеджа, дома и дачи в Белгороде, Москве и РФ - цены, отзывы, видео, фото и характеристики в интернет-магазине {{siteName}}. В продаже имеются {{categoryName}} всех типов по лучшей цене. Гарантия, доставка во все регионы.',
-            'keywords' => '{{brandName}},  {{brandName}} цены характеристики, {{brandName}} отзывы, {{brandName}} купить, {{brandName}} цена, {{brandName}} цены характеристики отзывы',
+            'title' => env('METATAGS_BRAND_TAGS_TITLE'),
+            'description' => env('METATAGS_BRAND_TAGS_DESCRIPTION'),
+            'keywords' => env('METATAGS_BRAND_TAGS_KEYWORDS'),
 
         ]
 
