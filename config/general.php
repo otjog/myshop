@@ -16,12 +16,12 @@
                 'path' => 'storage/img/',
                 'const_ext' => 2 //сохранять миниатюры в jpeg
             ]
-        ],
+        ], //????????? УДАЛИТЬ
         'images' => [
             'models' => [
                 'banner' => [
                     'size' => [
-                        'main' => '1110x400'
+                        'main' => env('GENERAL_IMAGES_MODELS_BANNER_SIZE_MAIN')
                     ],
                     'original_folder' => '', //со слешем, ex.: original/
                     'path_to_default_image'  => public_path('storage/img/banners/default/no-image.jpg'),
@@ -30,13 +30,13 @@
                 ],
                 'product' => [
                     'size' => [
-                        'xxs'   => '55x55',
-                        'xs'    => '130x130',
-                        's'     => '370x370',
-                        's-1-17'=> '370x210',
-                        'm'     => '450x450',
-                        'm-13'  => '450x600', //W*1 x H*1.3
-                        'l'     => '1000x1000',
+                        'xxs'   => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_XXS'),
+                        'xs'    => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_XS'),
+                        's'     => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_S'),
+                        's-1-17'=> env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_S-1-17'),
+                        'm'     => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_M'),
+                        'm-13'  => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_M-13'), //W*1 x H*1.3
+                        'l'     => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_L'),
                     ],
                     'original_folder' => '', //со слешем, ex.: original/
                     'path_to_default_image'  => public_path('storage/img/shop/product/default/no-image.jpg'),
@@ -45,12 +45,7 @@
                 ],
                 'photo360' => [
                     'size' => [
-                        'xxs'   => '55x55',
-                        'xs'    => '130x130',
-                        's'     => '370x370',
-                        'm'     => '450x450',
-                        'm-13'  => '450x600', //W*1 x H*1.3
-                        'l'     => '1000x1000',
+                        'xxs'   => env('GENERAL_IMAGES_MODELS_PHOTO360_SIZE_XXS'),
                     ],
                     'original_folder' => '', //со слешем, ex.: original/
                     'path_to_default_image'  => public_path('storage/img/photo360/default/icon.jpg'),
@@ -63,9 +58,9 @@
             'shop' => [
                 'currency' => '',
                 'price' => '',
-                'pagination' => 15,
-                'chunk_products' => 3,
-                'chunk_categories' => 4,
+                'pagination' => env('GENERAL_COMPONENTS_SHOP_PAGINATION'),
+                'chunk_products' => env('GENERAL_COMPONENTS_SHOP_CHUNK_PRODUCTS'),
+                'chunk_categories' => env('GENERAL_COMPONENTS_SHOP_CHUNK_CATEGORIES'),
                 'filter_prefix' => 'p_',
             ]
         ],
