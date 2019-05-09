@@ -54,7 +54,7 @@ class BrandController extends Controller{
         $this->data['data']     ['brands']  = $this->brands->getActiveBrands();
         $this->data['data']     ['header_page'] =  'Бренды';
 
-        return view( '_raduga.components.shop.brand.list', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.brand.list', $this->data);
     }
 
     /**
@@ -110,7 +110,7 @@ class BrandController extends Controller{
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( '_raduga.components.shop.brand.show', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.brand.show', $this->data);
     }
 
     /**

@@ -88,7 +88,7 @@ class ProductController extends Controller{
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( '_raduga.components.shop.product.show', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.product.show', $this->data);
 
     }
 
