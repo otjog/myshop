@@ -86,7 +86,7 @@ class OrderController extends Controller{
 
         $this->data['payments'] = $payments->getActiveMethods();
 
-        return view( '_raduga.components.shop.order.create', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.order.create', $this->data);
     }
 
     /**
@@ -101,7 +101,7 @@ class OrderController extends Controller{
 
         $this->data['order']    = $this->orders->getOrderById($products, $id);
 
-        return view( '_raduga.components.shop.order.show', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.order.show', $this->data);
     }
 
     /**

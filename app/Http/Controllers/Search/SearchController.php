@@ -59,7 +59,7 @@ class SearchController extends Controller{
             $this->data['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
         }
 
-        return view( '_raduga.components.shop.search.show', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.search.show', $this->data);
     }
 
 }

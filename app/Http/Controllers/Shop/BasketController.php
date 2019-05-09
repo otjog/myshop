@@ -90,7 +90,7 @@ class BasketController extends Controller{
 
             $this->data['parcels'] = $products->getParcelParameters($basket->products);
 
-            return view( '_raduga.components.shop.basket.edit', $this->data);
+            return view( $this->settings->data['template_name'] . '.components.shop.basket.edit', $this->data);
 
         } else {
 

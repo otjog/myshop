@@ -54,7 +54,7 @@ class CategoryController extends Controller{
         $this->data['categories']  =  $this->categories->getCategoriesTree();
         $this->data['header_page'] =  'Категории';
 
-        return view( '_raduga.components.shop.category.list', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.category.list', $this->data);
     }
 
     /**
@@ -118,7 +118,7 @@ class CategoryController extends Controller{
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( '_raduga.components.shop.category.show', $this->data);
+        return view( $this->settings->data['template_name'] . '.components.shop.category.show', $this->data);
     }
 
     /**

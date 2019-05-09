@@ -41,7 +41,7 @@ class PageController extends Controller{
 
         $this->data['pages']  = $this->pages->getAllPages();
 
-        return view('_raduga.components.info.page.index', $this->data);
+        return view($this->settings->data['template_name'] . '.components.info.page.index', $this->data);
 
     }
 
@@ -78,7 +78,7 @@ class PageController extends Controller{
 
         $this->data['page']  = $this->pages->getPageIfActive($id);
 
-        return view('_raduga.components.info.page.show', $this->data);
+        return view($this->settings->data['template_name'] . '.components.info.page.show', $this->data);
 
     }
 
@@ -94,7 +94,7 @@ class PageController extends Controller{
 
         $this->data['page']  = $this->pages->getPage($id);
 
-        return view('_raduga.components.info.page.edit', $this->data);
+        return view($this->settings->data['template_name'] . '.components.info.page.edit', $this->data);
     }
 
     /**
