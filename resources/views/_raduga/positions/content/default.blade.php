@@ -1,8 +1,10 @@
-<div id="main-container-home" class="container">
+@php
+    $template = $global_data['template']['schema']['current']['content'];
+@endphp
 
+<div id="main-container-home" class="container">
     @if(isset($template['top']) && $template['top'] !== null)
         @foreach($template['top'] as $module)
-
             @if(count($module) > 0)
                 @include('_raduga.modules.' . $module['module'] . '.index' , ['module' => $module])
             @endif

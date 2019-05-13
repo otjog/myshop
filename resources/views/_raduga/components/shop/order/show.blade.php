@@ -103,7 +103,7 @@
 
                     <div class="col-lg-2 text-center">
                         <span class="text-muted">{{ $product->price['value'] }}</span>
-                        <span class="text-muted small"><small>{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</small></span>
+                        <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
                     </div>
 
                     <div class="col-lg-2 text-center">
@@ -113,7 +113,7 @@
 
                     <div class="col-lg-2 text-center">
                         <span>{{ $product->price['value'] * $product->pivot['quantity'] }}</span>
-                        <span class="text-muted small"><small>{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</small></span>
+                        <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
                     </div>
 
                 </div>
@@ -128,7 +128,7 @@
 
                 <div class="col-lg-2 text-center">
                     <span>{{ $order->total }}</span>
-                    <span class="text-muted small"><small>{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</small></span>
+                    <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
                 </div>
 
             </div>

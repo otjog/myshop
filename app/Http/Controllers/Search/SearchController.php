@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Search;
 
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
@@ -11,7 +12,11 @@ use App\Models\Settings;
 
 class SearchController extends Controller{
 
-    protected $data = [];
+    protected $globalData;
+
+    protected $data;
+
+    protected $template;
 
     protected $settings;
 
@@ -26,11 +31,15 @@ class SearchController extends Controller{
      *
      * @return void
      */
-    public function __construct(Request $request, Product $products, Basket $baskets){
+    public function __construct(Request $request, Product $products, Basket $baskets, Template $template){
 
         $this->settings = Settings::getInstance();
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
 
         $this->products = $products;
 
@@ -45,7 +54,7 @@ class SearchController extends Controller{
 
     public function show(){
 
-        $this->data['template'] = config('template.content.shop.search.show');
+        $this->data['template'] = $this->template->getTemplateWithContent('shop.search.show');
 
         $sphinx  = new SphinxSearch();
 
@@ -59,7 +68,7 @@ class SearchController extends Controller{
             $this->data['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
         }
 
-        return view( $this->settings->data['template_name'] . '.components.shop.search.show', $this->data);
+        return view( $this->data['template']['name'] . '.components.shop.search.show', $this->globalData);
     }
 
 }

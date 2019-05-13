@@ -4,7 +4,7 @@
         <i class="fa fa-shopping-cart"></i>
         <span id="cart-total">
 
-            {{ $basket->declesion or '0 товаров'}} - {{ $basket->total  or 0}}<small>{{$global_data['project_data']['components']['shop']['currency']['symbol']}}</small></span>
+            {{ $basket->declesion or '0 товаров'}} - {{ $basket->total  or 0}}<small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
         <i class="fa fa-caret-down"></i>
     </button>
     @if( isset($basket) && $basket !== null)
@@ -27,7 +27,7 @@
                                 @else
                                     <img
                                             class="img-fluid"
-                                            src="{{ URL::asset('storage/img/shop/default/xxs/' . $global_data['project_data']['components']['shop']['images']['default_name']) }}"
+                                            src="{{ URL::asset('storage/img/shop/default/xxs/' . $global_data['components']['shop']['images']['default_name']) }}"
                                             alt="product"
                                     />
                                 @endif
@@ -53,7 +53,7 @@
                         <td class="text-right">
                             @if( isset($product->price['value']) && $product->price['value'] !== null)
                                 <small>
-                                    {{ $product->price['value']}}{{$global_data['project_data']['components']['shop']['currency']['symbol']}}
+                                    {{ $product->price['value']}}{{$global_data['components']['shop']['currency']['symbol']}}
                                 </small>
                             @endif
                         </td>
@@ -69,7 +69,7 @@
                     <td class="text-left">
                         {{$basket->total}}
                         <small>
-                            {{$global_data['project_data']['components']['shop']['currency']['symbol']}}
+                            {{$global_data['components']['shop']['currency']['symbol']}}
                         </small>
                     </td>
                 </tr>

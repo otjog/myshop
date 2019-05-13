@@ -30,7 +30,7 @@
                         'module' => 'offers',
                         'template' => 'vertical',
                         'attach' => [
-                            'offer_name' => 'sale'
+                            'offer_name' => 'newest'
                         ]
                     ],
 

@@ -1,3 +1,6 @@
+@php
+    $template = $global_data['template']['schema']['current']['header'];
+@endphp
 <header id="header-area">
         @if(isset($template['top']) && $template['top'] !== null)
             @foreach($template['top'] as $module)

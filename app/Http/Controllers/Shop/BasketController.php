@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Models\Shop\Product\Product;
 use App\Models\Shop\Order\Basket;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Settings;
@@ -12,15 +13,23 @@ class BasketController extends Controller{
 
     protected $baskets;
 
-    protected $data = [];
+    protected $data;
+
+    protected $globalData;
+
+    protected $template;
 
     protected $settings;
 
-    public function __construct(Basket $baskets){
+    public function __construct(Basket $baskets, Template $template){
 
         $this->settings = Settings::getInstance();
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
 
         $this->baskets = $baskets;
 
@@ -80,8 +89,7 @@ class BasketController extends Controller{
      */
     public function edit(Product $products, $token){
 
-        $this->data['template'] = config('template.content.shop.basket.edit');
-
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.basket.edit');
         $basket = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
         if($basket->order_id === null){
@@ -90,7 +98,7 @@ class BasketController extends Controller{
 
             $this->data['parcels'] = $products->getParcelParameters($basket->products);
 
-            return view( $this->settings->data['template_name'] . '.components.shop.basket.edit', $this->data);
+            return view( $this->data['template']['name'] . '.components.shop.basket.edit', $this->globalData);
 
         } else {
 

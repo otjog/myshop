@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Shop;
 use App\Libraries\Services\Pay\Contracts\OnlinePayment;
 use App\Models\Shop\Customer;
 use App\Models\Shop\Order\Payment;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Order\Basket;
 use App\Models\Shop\Order\Order;
 use App\Models\Shop\Product\Product;
 use App\Models\Settings;
+
 class OrderController extends Controller{
 
     protected $orders;
@@ -19,13 +21,21 @@ class OrderController extends Controller{
 
     protected $settings;
 
-    protected $data = [];
+    protected $data;
 
-    public function __construct(Order $orders, Basket $baskets){
+    protected $globalData;
+
+    protected $template;
+
+    public function __construct(Order $orders, Basket $baskets, Template $template){
 
         $this->settings = Settings::getInstance();
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
 
         $this->orders   = $orders;
 
@@ -86,7 +96,7 @@ class OrderController extends Controller{
 
         $this->data['payments'] = $payments->getActiveMethods();
 
-        return view( $this->settings->data['template_name'] . '.components.shop.order.create', $this->data);
+        return view( $this->data['template']['name'] . '.components.shop.order.create', $this->globalData);
     }
 
     /**
@@ -97,11 +107,11 @@ class OrderController extends Controller{
      */
     public function show(Product $products, $id){
 
-        $this->data['template'] = config('template.content.shop.order.show');
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.order.show');
 
         $this->data['order']    = $this->orders->getOrderById($products, $id);
 
-        return view( $this->settings->data['template_name'] . '.components.shop.order.show', $this->data);
+        return view( $this->data['template']['name'] . '.components.shop.order.show', $this->globalData);
     }
 
     /**

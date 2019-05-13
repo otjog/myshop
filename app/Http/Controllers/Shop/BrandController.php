@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Models\Shop\Product\Brand;
 use App\Libraries\Seo\MetaTagsCreater;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
@@ -18,7 +19,11 @@ class BrandController extends Controller{
 
     protected $settings;
 
-    protected $data = [];
+    protected $data;
+
+    protected $globalData;
+
+    protected $template;
 
     protected $metaTagsCreater;
 
@@ -27,12 +32,16 @@ class BrandController extends Controller{
      *
      * @return void
      */
-    public function __construct(Brand $brands, Basket $baskets, MetaTagsCreater $metaTagsCreater)
+    public function __construct(Brand $brands, Basket $baskets, MetaTagsCreater $metaTagsCreater, Template $template)
     {
 
         $this->settings = Settings::getInstance();
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
 
         $this->brands = $brands;
 
@@ -49,12 +58,12 @@ class BrandController extends Controller{
      */
     public function index(){
 
-        $this->data['template'] = config('template.content.shop.brand.list');
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.brand.list');
 
-        $this->data['data']     ['brands']  = $this->brands->getActiveBrands();
-        $this->data['data']     ['header_page'] =  'Бренды';
+        $this->data['brands']  = $this->brands->getActiveBrands();
+        $this->data['header_page'] =  'Бренды';
 
-        return view( $this->settings->data['template_name'] . '.components.shop.brand.list', $this->data);
+        return view( $this->data['template']['name'] . '.components.shop.brand.list', $this->globalData);
     }
 
     /**
@@ -86,13 +95,10 @@ class BrandController extends Controller{
      */
     public function show(Request $request, Product $products, $name){
 
-        $this->data['template'] = config('template.content.shop.brand.show');
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.brand.show');
 
         $brand = $this->brands->getBrand($name);
 
-        $this->data['template'] ['view']        = 'show';
-        $this->data['template'] ['sidebar']     = 'product_filter';
-        $this->data['template'] ['filter-tags'] = 'filter-tags';
         $this->data['brand']       = $brand;
         $this->data['header_page'] = 'Товары бренда ' . $brand[0]->name;
         $this->data['parameters']  = [];
@@ -110,7 +116,7 @@ class BrandController extends Controller{
 
         $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
-        return view( $this->settings->data['template_name'] . '.components.shop.brand.show', $this->data);
+        return view( $this->data['template']['name'] . '.components.shop.brand.show', $this->globalData);
     }
 
     /**
