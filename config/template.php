@@ -27,13 +27,6 @@
                 ],
                 'side' => [
                     [
-                        'module' => 'menu',
-                        'template' => 'vertical',
-                        'attach' => [
-                            'menu_name' => 'vertical'
-                        ]
-                    ],
-                    [
                         'module' => 'offers',
                         'template' => 'vertical',
                         'attach' => [
@@ -43,6 +36,13 @@
 
                 ],
                 'content_bottom' => [
+                    [
+                        'module' => 'menu',
+                        'template' => 'icons',
+                        'attach' => [
+                            'menu_name' => 'icons'
+                        ]
+                    ],
                     [
                         'module' => 'offers',
                         'template' => 'horizontal',

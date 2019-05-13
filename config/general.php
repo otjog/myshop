@@ -43,6 +43,15 @@
                     'path_to_image_folder' => public_path('storage/img/shop/product/'),
                     'change' => 'resize', //пропорционально уменьшать и добавлять белые поля
                 ],
+                'category' => [
+                    'size' => [
+                        's'     => env('GENERAL_IMAGES_MODELS_CATEGORY_SIZE_S'),
+                    ],
+                    'original_folder' => '', //со слешем, ex.: original/
+                    'path_to_default_image'  => public_path('storage/img/shop/category/default/no-image.jpg'),
+                    'path_to_image_folder' => public_path('storage/img/shop/category/'),
+                    'change' => 'resize', //пропорционально уменьшать и добавлять белые поля
+                ],
                 'photo360' => [
                     'size' => [
                         'xxs'   => env('GENERAL_IMAGES_MODELS_PHOTO360_SIZE_XXS'),
@@ -50,7 +59,7 @@
                     'original_folder' => '', //со слешем, ex.: original/
                     'path_to_default_image'  => public_path('storage/img/photo360/default/icon.jpg'),
                     'path_to_image_folder' => public_path('storage/img/photo360/'),
-                    'change' => 'resize', //пропорционально уменьшать и добавлять белые поля
+                    'change' => 'fit', //пропорционально уменьшать и добавлять белые поля
                 ]
             ],
         ],
