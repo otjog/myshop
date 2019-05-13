@@ -29,6 +29,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
             )
             ->orderBy('name')
@@ -41,6 +42,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
         )
             ->where('active', 1)
@@ -54,6 +56,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
         )
             ->where('active', 1)
@@ -68,6 +71,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
         )
             ->where('parent_id', $parent_id)
@@ -81,6 +85,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
         )
             ->where('active', 1)
@@ -95,6 +100,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
         )
             ->where('id', $id)
@@ -108,6 +114,7 @@ class Category extends Model{
             'parent_id',
             'name',
             'original_name',
+            'img',
             'url'
         )
             ->where('id', $id)
@@ -134,6 +141,7 @@ class Category extends Model{
             $cur['id'] = $category['id'];
             $cur['parent_id'] = $category['parent_id'];
             $cur['name'] = $category['name'];
+            $cur['img'] = $category['img'];
 
             if($category['parent_id'] == $parent_id){ /* id категории, с которой начинается дерево */
                 $tree[$category['id']] =& $cur;

@@ -9,6 +9,13 @@
             @foreach($categories_row as $key => $category)
 
                 <div class="card rounded-0">
+                    <a href="{{ route( 'categories.show', $category['id'] ) }}">
+                        <img
+                                src="{{route('models.sizes.images.show', ['category', 's', $category['img']])}}"
+                                class="card-img-top"
+                                alt="{{$category['name']}}"
+                        >
+                    </a>
                     <div class="card-body px-2">
                         <a href="{{ route( 'categories.show', $category['id'] ) }}">
                             <h6 class="card-title text-dark text-center"><u>{{$category['name']}}</u></h6>
