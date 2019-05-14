@@ -54,7 +54,7 @@ class SearchController extends Controller{
 
     public function show(){
 
-        $this->data['template'] = $this->template->getTemplateWithContent('shop.search.show');
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.search.show');
 
         $sphinx  = new SphinxSearch();
 

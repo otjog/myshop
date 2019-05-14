@@ -3,8 +3,7 @@
 @section('component')
 
     <?php
-        $data       =& $global_data;
-        $product    =& $global_data['product'];
+        $product =& $global_data['product'];
     ?>
 
     <!-- Product Info Starts -->
@@ -45,7 +44,7 @@
                         </li>
                     @endforeach
                 @endif
-                    @if(isset($data['photo360']['extFile']) && $data['photo360']['extFile'] !== '')
+                    @if(isset($global_data['photo360']['extFile']) && $global_data['photo360']['extFile'] !== '')
                         <li class="list-inline-item">
                             <a
                                     href="#photo360-popup"
@@ -59,9 +58,9 @@
                             <div id="photo360-popup" class="photo360-popup mfp-hide">
                                 <div
                                         id="photo360"
-                                        data-location="{{$data['photo360']['path']}}"
-                                        data-format="{{$data['photo360']['extFile']}}"
-                                        data-count="{{$data['photo360']['count']}}"
+                                        data-location="{{$global_data['photo360']['path']}}"
+                                        data-format="{{$global_data['photo360']['extFile']}}"
+                                        data-count="{{$global_data['photo360']['count']}}"
                                 >
                                 </div>
                                 <button type="button" class="btn custom-control-next">Назад</button>

@@ -1,9 +1,14 @@
 @extends('_raduga.index')
 
 @section('component')
+
+    <?php
+        $products =& $global_data['products'];
+        $parameters =& $global_data['parameters'];
+    ?>
     <!-- Main Heading Starts -->
         <h2 class="main-heading2 page-title">
-            {{$header_page}}
+            {{$global_data['header_page']}}
         </h2>
     <!-- Main Heading Ends -->
 

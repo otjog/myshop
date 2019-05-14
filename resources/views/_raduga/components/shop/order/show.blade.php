@@ -1,6 +1,10 @@
 @extends('_raduga.index')
 
 @section('component')
+    <?php
+        $order =& $global_data['order'];
+    ?>
+
     <div class="container">
 
     @if (session('status'))
@@ -107,7 +111,7 @@
                     </div>
 
                     <div class="col-lg-2 text-center">
-                        <span class="text-muted">{{ $product->pivot['quantity'] }}
+                        <span class="text-muted">{{ $product->pivot['quantity'] }}</span>
                             <span class="text-muted small"><small>шт.</small></span>
                     </div>
 

@@ -47,12 +47,6 @@ class PageController extends Controller{
      */
     public function index(){
 
-        $this->data['template'] = $this->template->getTemplateWithContent('info.page.list');
-
-        $this->data['pages']  = $this->pages->getAllPages();
-
-        return view($this->data['template']['name'] . '.components.info.page.index', $this->globalData);
-
     }
 
     /**
@@ -84,7 +78,7 @@ class PageController extends Controller{
      */
     public function show($id){
 
-        $this->data['template'] = $this->template->getTemplateWithContent('info.page.show');
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('info.page.show');
 
         $this->data['page']  = $this->pages->getPageIfActive($id);
 

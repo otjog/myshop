@@ -1,6 +1,11 @@
 @extends('_raduga.index')
 
 @section('component')
+
+    <?php
+        $basket =& $global_data['basket'];
+    ?>
+
     @if( isset($basket->products) )
 
     <div class="row">

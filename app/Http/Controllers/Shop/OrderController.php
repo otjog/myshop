@@ -92,6 +92,8 @@ class OrderController extends Controller{
 
         $token = $request->session()->get('_token');
 
+        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.order.create');
+
         $this->data['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
         $this->data['payments'] = $payments->getActiveMethods();

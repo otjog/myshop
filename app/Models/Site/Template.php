@@ -19,11 +19,11 @@ class Template extends Model
             ->where('name', $templateName)
             ->first();
 
-        $currenTemplate = $options->options;
+        $currentTemplate = $options->options;
 
-        $currenTemplate['content'] = array_get($currenTemplate['content'], $contentKey, null);
+        $currentTemplate['content'] = array_get($currentTemplate['content'], $contentKey, null);
 
-        $options['current'] = $currenTemplate;
+        $options['current'] = $currentTemplate;
 
         return $options;
     }

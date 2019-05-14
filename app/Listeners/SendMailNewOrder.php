@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Mail;
 class SendMailNewOrder{
 
     private $data;
+
+    private $globalData;
     /**
      * Create the event listener.
      *
@@ -37,11 +39,13 @@ class SendMailNewOrder{
 
         $settings = Settings::getInstance();
 
-        $this->data['settings'] = $settings->getParameters();
+        $this->globalData = $settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
 
         $this->data['order'] = $orders->getOrderById($products, $event->orderId);
 
         Mail::to(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
-            ->send(new OrderShipped($this->data));
+            ->send(new OrderShipped($this->globalData));
     }
 }
