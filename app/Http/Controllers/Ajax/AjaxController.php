@@ -127,7 +127,7 @@ class AjaxController extends Controller{
             $settings = Settings::getInstance();
             $this->data = $settings->getParameters();
 
-            $view = $this->data['global_data']['project_data']['template_name'] . '.modules.' . $this->request['module'] . '.reload.' . $this->request['view'];
+            $view = $this->data['global_data']['template']['name'] . '.modules.' . $this->request['module'] . '.reload.' . $this->request['view'];
             //Добавляем к ответу Представление и обновленную переменную с данными
             $this->response = $this->response->view( $view, $this->data);
         }

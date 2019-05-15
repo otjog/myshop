@@ -114,7 +114,7 @@ class BrandController extends Controller{
             $this->data['products'] = $products->getActiveProductsOfBrand($name);
         }
 
-        $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
+        $this->data['metatags'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
         return view( $this->data['template']['name'] . '.components.shop.brand.show', $this->globalData);
     }

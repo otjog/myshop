@@ -4,6 +4,7 @@
 
     <?php
         $basket =& $global_data['basket'];
+        $parcels =& $global_data['parcels'];
     ?>
 
     @if( isset($basket->products) )

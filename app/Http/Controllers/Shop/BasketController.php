@@ -90,6 +90,7 @@ class BasketController extends Controller{
     public function edit(Product $products, $token){
 
         $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.basket.edit');
+
         $basket = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
         if($basket->order_id === null){

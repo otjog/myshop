@@ -124,7 +124,7 @@ class CategoryController extends Controller{
 
         }
 
-        $this->data['meta'] = $this->metaTagsCreater->getTagsForPage($this->data);
+        $this->data['metatags'] = $this->metaTagsCreater->getTagsForPage($this->data);
 
         return view( $this->data['template']['name'] . '.components.shop.category.show', $this->globalData);
     }
