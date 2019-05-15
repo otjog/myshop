@@ -29,9 +29,9 @@ class Settings {
 
         $this->price = new Price();
 
-        $this->data = config('general');
+        $this->data = config('global-data');
 
-        $this->data['components']['shop']['currency'] =
+        $this->data['global_data']['components']['shop']['currency'] =
             Cache::rememberForever('config:general:components:shop:currency', function()  {
                 return $this->currency
                     ->select('id', 'char_code', 'symbol')
@@ -39,7 +39,7 @@ class Settings {
                     ->first();
             });
 
-        $this->data['components']['shop']['price'] =
+        $this->data['global_data']['components']['shop']['price'] =
             $this->price
                 ->select('id', 'name')
                 ->where('name', 'retail')
@@ -75,6 +75,8 @@ class Settings {
 
     public function getParameter($path){
 
+        $path =  'global_data.' . $path;
+
         $data = $this->getParameters();
 
         $pathArray = explode('.', $path);
@@ -87,6 +89,7 @@ class Settings {
                 $temporary = $data;
 
             if(isset($temporary[$level])){
+
                 if($key+1 === count($pathArray))
                     return $temporary[$level];
                 else
@@ -94,6 +97,8 @@ class Settings {
             } else {
                 return null;
             }
+
+
 
         }
 

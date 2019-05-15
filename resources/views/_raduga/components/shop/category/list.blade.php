@@ -1,10 +1,13 @@
 @extends('_raduga.index')
 
 @section('component')
-    <h1>{{$header_page}}</h1>
+    <?php
+        $categories =& $global_data['categories'];
+    ?>
+    <h1>{{$global_data['header_page']}}</h1>
     <div class="card-columns">
 
-        @foreach($categories->chunk($global_data['project_data']['components']['shop']['chunk_categories']) as $categories_row)
+        @foreach($categories->chunk($global_data['components']['shop']['chunk_categories']) as $categories_row)
 
             @foreach($categories_row as $key => $category)
 

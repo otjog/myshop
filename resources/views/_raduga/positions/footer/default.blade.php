@@ -1,3 +1,6 @@
+@php
+    $template = $global_data['template']['schema']['current']['footer'];
+@endphp
 <footer id="footer-area">
     <!-- Footer Links Starts -->
     <div class="footer-links">

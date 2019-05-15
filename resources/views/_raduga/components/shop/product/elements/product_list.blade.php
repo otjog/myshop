@@ -1,6 +1,6 @@
 @if(isset($products) && count($products) > 0)
     <!-- Product Grid Display Starts -->
-    @foreach($products->chunk($global_data['project_data']['components']['shop']['chunk_products']) as $products_row)
+    @foreach($products->chunk($global_data['components']['shop']['chunk_products']) as $products_row)
         <div class="row">
         @foreach( $products_row as $key => $product )
             <!-- Product Starts -->

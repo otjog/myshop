@@ -21,13 +21,13 @@
 	<body>
 
 	<!-- Header Section Starts -->
-		@include('_raduga.positions.header.default', ['template' => config('template.header')])
+		@include('_raduga.positions.header.default')
 	<!-- Header Section Ends -->
 	<!-- Main Container Starts -->
 		@include('_raduga.positions.content.default')
 	<!-- Main Container Ends -->
 	<!-- Footer Section Starts -->
-		@include('_raduga.positions.footer.default', ['template' => config('template.footer')])
+		@include('_raduga.positions.footer.default')
 	<!-- Footer Section Ends -->
 
 	<!-- Template JS Files -->

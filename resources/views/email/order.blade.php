@@ -1,3 +1,7 @@
+<?php
+    $data =& $global_data;
+    $order =& $global_data['order'];
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
     <body>
@@ -325,7 +329,7 @@
                             align="center"
                     >
                         <span style="color: #333333; font: 10px Arial, sans-serif; line-height: 30px; -webkit-text-size-adjust:none; display: block;">
-                        {{ $product->price['value'] . ' ' . $settings['components']['shop']['currency']['symbol']}}{{----}}
+                        {{ $product->price['value'] . ' ' . $data['components']['shop']['currency']['symbol']}}
                     </span>
                     </td>
                     <td
@@ -348,7 +352,7 @@
                                     -webkit-text-size-adjust:none;
                                     display: block;"
                         >
-                        {{ $product->price['value'] * $product->pivot['quantity'] . ' ' . $settings['components']['shop']['currency']['symbol']}}
+                        {{ $product->price['value'] * $product->pivot['quantity'] . ' ' . $data['components']['shop']['currency']['symbol']}}
                     </span>
                     </td>
                 </tr>
@@ -382,7 +386,7 @@
                             -webkit-text-size-adjust:none;
                             display: block;"
                 >
-                    <b>{{ $order->total . " " . $settings['components']['shop']['currency']['symbol']}}</b>
+                    <b>{{ $order->total . " " . $data['components']['shop']['currency']['symbol']}}</b>
                 </span></td>
             </tr>
 

@@ -70,7 +70,7 @@ class AjaxController extends Controller{
 
                     //Получаем обновленные данные из Глобального массива для передачи во фронт
                     $settings = Settings::getInstance();
-                    $this->data['global_data']['project_data'] = $settings->getParameters();
+                    $this->data = $settings->getParameters();
 
                     //Добавляем заголовки в массив
                     $this->headers['Cache-Control'] = 'no-store';
@@ -125,9 +125,9 @@ class AjaxController extends Controller{
 
             //Получаем обновленные данные из Глобального массива для передачи во фронт
             $settings = Settings::getInstance();
-            $this->data['global_data']['project_data'] = $settings->getParameters();
+            $this->data = $settings->getParameters();
 
-            $view = $this->data['global_data']['project_data']['template_name'] . '.modules.' . $this->request['module'] . '.reload.' . $this->request['view'];
+            $view = $this->data['global_data']['template']['name'] . '.modules.' . $this->request['module'] . '.reload.' . $this->request['view'];
             //Добавляем к ответу Представление и обновленную переменную с данными
             $this->response = $this->response->view( $view, $this->data);
         }

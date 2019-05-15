@@ -1,6 +1,12 @@
 @extends('_raduga.index')
 
 @section('component')
+
+    <?php
+        $basket =& $global_data['basket'];
+        $payments =& $global_data['payments'];
+    ?>
+
     <div class="container">
 
     {{-- ALERT --}}

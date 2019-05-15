@@ -35,11 +35,11 @@
             </h4>
             @if( isset($product->price['value']) && $product->price['value'] !== null)
                 <div class="price">
-                                        <span class="price-new">{{ $product->price['value']}}{{$global_data['project_data']['components']['shop']['currency']['symbol']}}
+                                        <span class="price-new">{{ $product->price['value']}}{{$global_data['components']['shop']['currency']['symbol']}}
                                         </span>
                     <span class="price-old">
                                             @if( isset($product->price['sale']) && $product->price['sale'] > 0)
-                            {{$product->price['value'] + $product->price['sale']}}{{$global_data['project_data']['components']['shop']['currency']['symbol']}}
+                            {{$product->price['value'] + $product->price['sale']}}{{$global_data['components']['shop']['currency']['symbol']}}
                         @endif
                                         </span>
                 </div>

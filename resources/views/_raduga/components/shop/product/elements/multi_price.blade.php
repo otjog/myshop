@@ -17,14 +17,14 @@
                 <span class="price-new">
                                                     {{$product->price['value']
                                                     + $parameter->pivot->basket_value
-                                                    . $global_data['project_data']['components']['shop']['currency']['symbol']}}
+                                                    . $global_data['components']['shop']['currency']['symbol']}}
                                                 </span>
                 @if( isset($product->price['sale']) && $product->price['sale'] > 0)
                     <span class="price-old">
                                                         {{$product->price['value']
                                                         + $product->price['sale']
                                                         + $parameter->pivot->basket_value
-                                                        .$global_data['project_data']['components']['shop']['currency']['symbol']}}
+                                                        .$global_data['components']['shop']['currency']['symbol']}}
                                                     </span>
                 @endif
             </div>

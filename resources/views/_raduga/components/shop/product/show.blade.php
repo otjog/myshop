@@ -1,6 +1,11 @@
 @extends('_raduga.index')
 
 @section('component')
+
+    <?php
+        $product =& $global_data['product'];
+    ?>
+
     <!-- Product Info Starts -->
     <div class="row product-info full">
         <!-- Left Starts -->
@@ -39,7 +44,7 @@
                         </li>
                     @endforeach
                 @endif
-                    @if(isset($photo360['extFile']) && $photo360['extFile'] !== '')
+                    @if(isset($global_data['photo360']['extFile']) && $global_data['photo360']['extFile'] !== '')
                         <li class="list-inline-item">
                             <a
                                     href="#photo360-popup"
@@ -53,9 +58,9 @@
                             <div id="photo360-popup" class="photo360-popup mfp-hide">
                                 <div
                                         id="photo360"
-                                        data-location="{{$photo360['path']}}"
-                                        data-format="{{$photo360['extFile']}}"
-                                        data-count="{{$photo360['count']}}"
+                                        data-location="{{$global_data['photo360']['path']}}"
+                                        data-format="{{$global_data['photo360']['extFile']}}"
+                                        data-count="{{$global_data['photo360']['count']}}"
                                 >
                                 </div>
                                 <button type="button" class="btn custom-control-next">Назад</button>
