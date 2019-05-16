@@ -3,7 +3,7 @@
 @section('component')
 
     <?php
-        $product =& $global_data['product'];
+        $product =& $global_data['shop']['product'];
     ?>
 
     <!-- Product Info Starts -->

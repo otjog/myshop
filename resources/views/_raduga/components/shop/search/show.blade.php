@@ -3,8 +3,8 @@
 @section('component')
 
     <?php
-        $products =& $global_data['products'];
-        $parameters =& $global_data['parameters'];
+        $products =& $global_data['shop']['products'];
+        $parameters =& $global_data['shop']['parameters'];
     ?>
     <!-- Main Heading Starts -->
         <h2 class="main-heading2 page-title">

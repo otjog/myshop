@@ -3,7 +3,7 @@
 @section('component')
 
     <?php
-        $page =& $global_data['page']
+        $page =& $global_data['info']['page']
     ?>
 
     <div class="col-lg-8 offset-lg-2">

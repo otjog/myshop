@@ -7,7 +7,6 @@ use App\Models\Shop\Order\Basket;
 use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Models\Shop\Product\Product;
-use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Settings;
 use App\Models\Site\Photo360;
 
@@ -16,8 +15,6 @@ class ProductController extends Controller{
     protected $products;
 
     protected $baskets;
-
-    protected $metaTagsCreater;
 
     protected $settings;
 
@@ -33,7 +30,7 @@ class ProductController extends Controller{
      * @param  Product $products
      * @return void
      */
-    public function __construct(Product $products, Basket $baskets, MetaTagsCreater $metaTagsCreater, Template $template ){
+    public function __construct(Product $products, Basket $baskets, Template $template ){
 
         $this->settings = Settings::getInstance();
 
@@ -46,8 +43,6 @@ class ProductController extends Controller{
         $this->products = $products;
 
         $this->baskets = $baskets;
-
-        $this->metaTagsCreater = $metaTagsCreater;
 
     }
 
@@ -89,15 +84,13 @@ class ProductController extends Controller{
 
         $photo360 = new Photo360();
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.product.show');
+        $this->data['shop']['product'] = $this->products->getActiveProduct($id);
 
-        $this->data['product'] = $this->products->getActiveProduct($id);
+        $this->data['photo360'] = $photo360->getPhotos($this->data['shop']['product']['scu']);
 
-        $this->data['photo360'] = $photo360->getPhotos($this->data['product']['scu']);
+        $this->data['template'] = $this->template->getTemplateData($this->data,'shop', 'product', 'show', $id);
 
-        $this->data['metatags'] = $this->metaTagsCreater->getTagsForPage($this->data);
-
-        return view( $this->data['template']['name'] . '.components.shop.product.show', $this->globalData);
+        return view( $this->data['template']['viewKey'], $this->globalData);
 
     }
 

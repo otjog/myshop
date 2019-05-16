@@ -2,7 +2,7 @@
 
 @section('component')
     <?php
-        $order =& $global_data['order'];
+        $order =& $global_data['shop']['order'];
     ?>
 
     <div class="container">

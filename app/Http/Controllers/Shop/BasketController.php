@@ -89,17 +89,17 @@ class BasketController extends Controller{
      */
     public function edit(Product $products, $token){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.basket.edit');
-
         $basket = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
         if($basket->order_id === null){
 
-            $this->data['basket']   = $basket;
+            $this->data['shop']['basket']   = $basket;
 
-            $this->data['parcels'] = $products->getParcelParameters($basket->products);
+            $this->data['shop']['parcels'] = $products->getParcelParameters($basket->products);
 
-            return view( $this->data['template']['name'] . '.components.shop.basket.edit', $this->globalData);
+            $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'basket', 'edit');
+
+            return view( $this->data['template']['viewKey'], $this->globalData);
 
         } else {
 

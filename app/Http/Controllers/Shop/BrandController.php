@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Models\Shop\Product\Brand;
-use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -25,14 +24,12 @@ class BrandController extends Controller{
 
     protected $template;
 
-    protected $metaTagsCreater;
-
     /**
      * Создание нового экземпляра контроллера.
      *
      * @return void
      */
-    public function __construct(Brand $brands, Basket $baskets, MetaTagsCreater $metaTagsCreater, Template $template)
+    public function __construct(Brand $brands, Basket $baskets, Template $template)
     {
 
         $this->settings = Settings::getInstance();
@@ -47,8 +44,6 @@ class BrandController extends Controller{
 
         $this->baskets = $baskets;
 
-        $this->metaTagsCreater = $metaTagsCreater;
-
     }
 
     /**
@@ -58,12 +53,13 @@ class BrandController extends Controller{
      */
     public function index(){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.brand.list');
+        $this->data['shop']['brands']  = $this->brands->getActiveBrands();
 
-        $this->data['brands']  = $this->brands->getActiveBrands();
         $this->data['header_page'] =  'Бренды';
 
-        return view( $this->data['template']['name'] . '.components.shop.brand.list', $this->globalData);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'list');
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**
@@ -95,13 +91,11 @@ class BrandController extends Controller{
      */
     public function show(Request $request, Product $products, $name){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.brand.show');
-
         $brand = $this->brands->getBrand($name);
 
-        $this->data['brand']       = $brand;
+        $this->data['shop']['brand']       = $brand;
+        $this->data['shop']['parameters']  = [];
         $this->data['header_page'] = 'Товары бренда ' . $brand[0]->name;
-        $this->data['parameters']  = [];
 
         if (count($request->query) > 0) {
 
@@ -109,14 +103,14 @@ class BrandController extends Controller{
 
             $filterData = $request->toArray();
 
-            $this->data['products'] = $products->getFilteredProducts($routeData, $filterData);
+            $this->data['shop']['products'] = $products->getFilteredProducts($routeData, $filterData);
         } else {
-            $this->data['products'] = $products->getActiveProductsOfBrand($name);
+            $this->data['shop']['products'] = $products->getActiveProductsOfBrand($name);
         }
 
-        $this->data['metatags'] = $this->metaTagsCreater->getTagsForPage($this->data);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'show');
 
-        return view( $this->data['template']['name'] . '.components.shop.brand.show', $this->globalData);
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**

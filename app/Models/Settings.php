@@ -44,7 +44,6 @@ class Settings {
                 ->select('id', 'name')
                 ->where('name', 'retail')
                 ->first();
-
     }
 
     private function __clone(){}

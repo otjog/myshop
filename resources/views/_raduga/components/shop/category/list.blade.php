@@ -2,7 +2,7 @@
 
 @section('component')
     <?php
-        $categories =& $global_data['categories'];
+        $categories =& $global_data['shop']['category'];
     ?>
     <h1>{{$global_data['header_page']}}</h1>
     <div class="card-columns">

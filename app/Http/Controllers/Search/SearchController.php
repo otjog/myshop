@@ -45,30 +45,30 @@ class SearchController extends Controller{
 
         $this->baskets  = $baskets;
 
-        $this->queryString    = $request->search;
+        $this->queryString = $request->search;
 
-        $this->data['parameters']  = $request->toArray();
+        $this->data['shop']['parameters']  = $request->toArray();
 
 
     }
 
     public function show(){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.search.show');
-
         $sphinx  = new SphinxSearch();
 
         $searchIdResult = $sphinx->search($this->queryString, env( 'SPHINXSEARCH_INDEX' ))->query();
 
-        $this->data['products']    = [];
-        $this->data['query']       = $this->queryString;
+        $this->data['shop']['products']    = [];
+        $this->data['query'] = $this->queryString;
         $this->data['header_page'] = 'Результаты поиска по запросу: ' . $this->queryString;
 
         if( isset( $searchIdResult[ 'matches' ] ) && count( $searchIdResult[ 'matches' ] ) > 0 ){
-            $this->data['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
+            $this->data['shop']['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
         }
 
-        return view( $this->data['template']['name'] . '.components.shop.search.show', $this->globalData);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'search', 'show');
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
 }
