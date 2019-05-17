@@ -3,7 +3,6 @@
 namespace App\Models\Site;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Site\Metatags;
 
 class Template extends Model
 {
@@ -42,6 +41,13 @@ class Template extends Model
         $this->data['viewKey'] = $this->data['name'] . '.' . ($component==='home' ? '' : 'components.') . $this->data['componentKey'] . $view;
 
         $this->data['schema'] = $this->getTemplateSchema();
+
+        /* * * MODULES * * */
+        $this->modules = new Modules();
+
+        $this->data['modules'] = $this->modules->getModules($this->data['schema']);
+        /* * END MODULES * */
+
 
         /* * * METATAGS * * */
         $this->metatags = new Metatags();
