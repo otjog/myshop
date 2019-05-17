@@ -3,7 +3,7 @@
 @section('component')
 
     <?php
-        $product =& $global_data['product'];
+        $product =& $global_data['shop']['product'];
     ?>
 
     <!-- Product Info Starts -->
@@ -116,7 +116,7 @@
                         <!-- Price Ends -->
                         <div class="my-4">
                             <div class="row mx-0">
-                                <div class="product_quantity col-3">
+                                <div class="product_quantity col-12 col-md-6 col-lg-6">
                                     <span>Кол-во: </span>
                                     <input type="text"      name="quantity"     value="1" size="5" pattern="[0-9]*" class="quantity_input">
                                     <input type="hidden"    name="product_id"   value="{{$product->id}}">
@@ -130,8 +130,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="cart-button button-group col-3">
-                                    <button type="submit" class="btn btn-cart">
+                                <div class="cart-button button-group px-0 px-md-2 col-12 col-md-6 col-lg-6 mt-3 mt-md-0">
+                                    <button type="submit" class="btn btn-cart btn-block">
                                         В корзину
                                     </button>
                                 </div>

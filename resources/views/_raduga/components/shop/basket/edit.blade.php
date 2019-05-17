@@ -3,8 +3,8 @@
 @section('component')
 
     <?php
-        $basket =& $global_data['basket'];
-        $parcels =& $global_data['parcels'];
+        $basket =& $global_data['shop']['basket'];
+        $parcels =& $global_data['shop']['parcels'];
     ?>
 
     @if( isset($basket->products) )
@@ -17,7 +17,7 @@
                 @method('PUT')
                 @csrf
 
-                <div class="row align-items-center my-2 border-bottom py-2">
+                <div class="row align-items-center my-2 border-bottom py-2 d-none ">
                     <div class="order-1 col-6   order-lg-1 col-lg-1  py-lg-1 px-lg-2">
                         Фото
                     </div>
@@ -82,7 +82,8 @@
                         </div>
                         <div class="order-2 col-6   order-lg-3 col-lg-8">
                             <div class="row">
-                                <div class="col-10 col-lg-4 py-3 text-right">
+                                <div class="col-10 col-lg-4 py-3 text-center text-lg-right">
+                                    <span class="d-inline d-lg-none">Цена:</span>
                                     @if( isset($product->price['sale']) && $product->price['sale'] > 0)
                                         <span class="price-old text-muted">
                                             {{$product->price['value'] + $product->price['sale']}}
@@ -136,7 +137,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-10 col-lg-2 py-3 text-center">
+                                <div class="col-10 col-lg-2 py-3 text-center font-weight-bold">
+                                    <span class="d-inline d-lg-none">Сумма:</span>
                                     <span>{{ $product->price['value'] * $product['pivot']['quantity'] }}</span>
                                     <small>{{$global_data['components']['shop']['currency']['symbol']}}</small>
                                 </div>

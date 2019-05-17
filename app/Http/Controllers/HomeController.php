@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Settings;
-use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Site\Template;
 
 class HomeController extends Controller{
@@ -18,9 +17,7 @@ class HomeController extends Controller{
 
     protected $settings;
 
-    protected $metaTagsCreater;
-
-    public function __construct(MetaTagsCreater $metaTagsCreater, Template $template){
+    public function __construct(Template $template){
 
         $this->settings = Settings::getInstance();
 
@@ -30,15 +27,11 @@ class HomeController extends Controller{
 
         $this->template = $template;
 
-        $this->metaTagsCreater  = $metaTagsCreater;
-
     }
 
     public function index(){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('home');
-
-        $this->data['metatags'] = $this->metaTagsCreater->getTagsForPage($this->data);
+        $this->data['template'] = $this->template->getTemplateData($this->data,'home');
 
         return view( $this->data['template']['name'] . '.index', $this->globalData);
     }

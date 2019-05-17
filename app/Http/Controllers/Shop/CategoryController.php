@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
-use App\Libraries\Seo\MetaTagsCreater;
 use App\Models\Shop\Order\Basket;
 use Illuminate\Http\Request;
 use App\Models\Shop\Category\Category;
@@ -25,15 +24,13 @@ class CategoryController extends Controller{
 
     protected $globalData;
 
-    protected $metaTagsCreater;
-
     /**
      * Создание нового экземпляра контроллера.
      *
      * @param  Category $categories
      * @return void
      */
-    public function __construct(Category $categories, Basket $baskets, MetaTagsCreater $metaTagsCreater, Template $template){
+    public function __construct(Category $categories, Basket $baskets, Template $template){
 
         $this->settings = Settings::getInstance();
 
@@ -47,8 +44,6 @@ class CategoryController extends Controller{
 
         $this->baskets          = $baskets;
 
-        $this->metaTagsCreater  = $metaTagsCreater;
-
     }
 
     /**
@@ -58,13 +53,13 @@ class CategoryController extends Controller{
      */
     public function index(){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.category.list');
-
-        $this->data['categories']  =  $this->categories->getCategoriesTree();
+        $this->data['shop']['category']  =  $this->categories->getCategoriesTree();
 
         $this->data['header_page'] =  'Категории';
 
-        return view( $this->data['template']['name'] . '.components.shop.category.list', $this->globalData);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'category', 'list');
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**
@@ -98,14 +93,12 @@ class CategoryController extends Controller{
      */
     public function show(Request $request, Product $products, $id){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.category.show');
-
         $category = $this->categories->getCategory($id);
 
-        $this->data['category']            = $category;
-        $this->data['children_categories'] = $this->categories->getActiveChildrenCategories($id);
+        $this->data['shop']['category']            = $category;
+        $this->data['shop']['children_categories'] = $this->categories->getActiveChildrenCategories($id);
+        $this->data['shop']['parameters']          = [];
         $this->data['header_page']         = $category[0]->name;
-        $this->data['parameters']          = [];
 
         if( count( $request->query ) > 0 ){
 
@@ -113,20 +106,17 @@ class CategoryController extends Controller{
 
             $routeData = ['category' => $id];
 
-            $this->data['products'] = $products->getFilteredProducts($routeData, $filterData);
+            $this->data['shop']['products'] = $products->getFilteredProducts($routeData, $filterData);
 
-            $this->data['parameters'] = $request->toArray();
-
+            $this->data['shop']['parameters'] = $request->toArray();
 
         }else{
-
-            $this->data['products'] = $products->getActiveProductsFromCategory($id);
-
+            $this->data['shop']['products'] = $products->getActiveProductsFromCategory($id);
         }
 
-        $this->data['metatags'] = $this->metaTagsCreater->getTagsForPage($this->data);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'category', 'show', $id);
 
-        return view( $this->data['template']['name'] . '.components.shop.category.show', $this->globalData);
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**

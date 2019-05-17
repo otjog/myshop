@@ -1,7 +1,7 @@
 @php
     $template = $global_data['template']['schema']['current']['footer'];
 @endphp
-<footer id="footer-area">
+<footer id="footer-area" class="mt-3">
     <!-- Footer Links Starts -->
     <div class="footer-links">
         <!-- Container Starts -->

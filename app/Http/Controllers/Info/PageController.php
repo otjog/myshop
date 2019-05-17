@@ -78,11 +78,11 @@ class PageController extends Controller{
      */
     public function show($id){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('info.page.show');
+        $this->data['info']['page']  = $this->pages->getPageIfActive($id);
 
-        $this->data['page']  = $this->pages->getPageIfActive($id);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'info', 'page', 'show', $id);
 
-        return view($this->data['template']['name'] . '.components.info.page.show', $this->globalData);
+        return view( $this->data['template']['viewKey'], $this->globalData);
 
     }
 

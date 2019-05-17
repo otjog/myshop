@@ -92,13 +92,13 @@ class OrderController extends Controller{
 
         $token = $request->session()->get('_token');
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.order.create');
+        $this->data['shop']['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
 
-        $this->data['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
+        $this->data['shop']['payments'] = $payments->getActiveMethods();
 
-        $this->data['payments'] = $payments->getActiveMethods();
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'order', 'create');
 
-        return view( $this->data['template']['name'] . '.components.shop.order.create', $this->globalData);
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**
@@ -109,11 +109,11 @@ class OrderController extends Controller{
      */
     public function show(Product $products, $id){
 
-        $this->data['template']['schema'] = $this->template->getTemplateWithContent('shop.order.show');
+        $this->data['shop']['order']    = $this->orders->getOrderById($products, $id);
 
-        $this->data['order']    = $this->orders->getOrderById($products, $id);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'order', 'show');
 
-        return view( $this->data['template']['name'] . '.components.shop.order.show', $this->globalData);
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**

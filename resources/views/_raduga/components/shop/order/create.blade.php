@@ -3,8 +3,8 @@
 @section('component')
 
     <?php
-        $basket =& $global_data['basket'];
-        $payments =& $global_data['payments'];
+        $basket =& $global_data['shop']['basket'];
+        $payments =& $global_data['shop']['payments'];
     ?>
 
     <div class="container">

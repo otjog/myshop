@@ -3,9 +3,9 @@
 @section('component')
 
     <?php
-        $category =& $global_data['category'];
-        $products =& $global_data['products'];
-        $parameters =& $global_data['parameters'];
+        $category =& $global_data['shop']['category'];
+        $products =& $global_data['shop']['products'];
+        $parameters =& $global_data['shop']['parameters'];
     ?>
 
     <!-- Main Heading Starts -->

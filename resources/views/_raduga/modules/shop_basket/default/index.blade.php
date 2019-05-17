@@ -1,6 +1,6 @@
 
 <div id="cart" class="btn-group btn-block">
-    <button type="button" data-toggle="dropdown" class="btn btn-block dropdown-toggle">
+    <button type="button" data-toggle="dropdown" class="btn btn-block dropdown-toggle text-center">
         <i class="fa fa-shopping-cart"></i>
         <span id="cart-total">
 
