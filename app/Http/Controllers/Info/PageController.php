@@ -80,7 +80,7 @@ class PageController extends Controller{
 
         $this->data['info']['page']  = $this->pages->getPageIfActive($id);
 
-        $this->data['template'] = $this->template->getTemplateData($this->data, 'info', 'page', 'show');
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'info', 'page', 'show', $id);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
 

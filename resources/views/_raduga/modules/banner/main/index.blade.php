@@ -1,4 +1,4 @@
-<div class="slider">
+<div class="slider d-none d-md-block">
     <div id="main-carousel" class="carousel slide carousel-fade" data-ride="carousel">
         <!-- Wrapper For Slides Starts -->
         <div class="carousel-inner">

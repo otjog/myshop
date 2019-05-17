@@ -4,11 +4,11 @@
 
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="csrf-token" content="{{ csrf_token() }}">
+		<meta name="csrf-token" content="{{csrf_token()}}">
 
-		<title>{{$global_data['template']['metatags']['title']}}</title>
-		<meta name="description"    content=" {{$global_data['template']['metatags']['description']}} ">
-		<meta name="keywords"       content=" {{$global_data['template']['metatags']['keywords']}} ">
+		<title>{{$global_data['template']['metatags']['title'] or ''}}</title>
+		<meta name="description" content="{{$global_data['template']['metatags']['description'] or ''}}">
+		<meta name="keywords" content="{{$global_data['template']['metatags']['keywords'] or ''}}">
 
 		<!-- Google Web Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300italic,400italic,700italic,400,300,700" rel="stylesheet" type="text/css">

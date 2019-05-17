@@ -114,7 +114,7 @@ class CategoryController extends Controller{
             $this->data['shop']['products'] = $products->getActiveProductsFromCategory($id);
         }
 
-        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'category', 'show');
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'category', 'show', $id);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }

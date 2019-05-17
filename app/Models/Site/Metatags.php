@@ -31,9 +31,12 @@ class Metatags extends Model{
 
         $configData = $this->getConfigData($contentKey, $metatagsKey);
 
-        $this->replaceData($configData, $resourceData);
+        if($configData !== null)
+            $configData = $this->replaceData($configData, $resourceData);
+        else
+            $configData = $this->searchData();
 
-        return $this->getMetaTags($configData);
+        return $configData;
     }
 
     private function getResourceName(){
@@ -67,7 +70,9 @@ class Metatags extends Model{
 
         $configData = array_replace_recursive($defaultConfigData, $resourceConfigData, $individualConfigData);
 
-        return $configData;
+        if(count($configData)>0)
+            return $configData;
+        return null;
     }
 
     private function replaceData($configData, $resourceData){
@@ -97,17 +102,32 @@ class Metatags extends Model{
 
         $this->replace[] = env('APP_NAME');
 
-    }
-
-    private function getMetaTags($configTags){
 
         $resultTags = [];
 
-        foreach ($configTags as $nameTag => $strTag) {
-            $resultTags[$nameTag] = str_replace($this->search, $this->replace, $configTags[$nameTag]);
+        foreach ($configData as $nameTag => $strTag) {
+            $resultTags[$nameTag] = str_replace($this->search, $this->replace, $configData[$nameTag]);
         }
 
         return $resultTags;
+
+    }
+
+    private function searchData(){
+
+        $title =& $metatags['title'];
+
+        $resource = array_get($this->data, $this->data['template']['componentKey']);
+
+        $title = env('APP_NAME');
+
+        if(isset($resource[0]))
+            $title .= ' - ' . $resource[0]['name'];
+        else
+            $title .= ' - ' . $resource['name'];
+
+        return $metatags;
+
     }
 
     private function getMetaTagsFromDB($metatagsKey){

@@ -17,7 +17,9 @@ class Template extends Model
 
     protected $metatags;
 
-    public function getTemplateData($globalData, $component, $model=null, $view=null, $id=null, $schemaName='default'){
+    public function getTemplateData($globalData, $component, $model=null, $view=null, $id=null){
+
+        $schemaName = env('SITE_TEMPLATE_SCHEMA', 'default');
 
         $globalData['template'] =& $this->data;
 
