@@ -7,6 +7,15 @@ use App\Models\Settings;
 
 class Category extends Model{
 
+    protected $moduleMethods = [
+        'index' => 'getCategoriesTree',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     protected $fillable = ['active', 'name'];
 
     protected $settings;

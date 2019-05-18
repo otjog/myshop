@@ -7,6 +7,15 @@ use App\Models\Shop\Product\Product;
 
 class Offer extends Model{
 
+    protected $moduleMethods = [
+        'show' => 'getActiveOfferByName',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     protected $table = 'shop_offers';
 
     public function products(){
@@ -18,6 +27,42 @@ class Offer extends Model{
 
         $offers = $this->getActiveOffers();
 
+        return $this->addProductsToOffers($offers, $take);
+
+    }
+
+    //TODO поле name сделать уникальным
+    public function getActiveOffers(){
+
+        return self::select(
+            'id',
+            'name',
+            'header',
+            'related'
+        )
+            ->where('active', 1)
+            ->get();
+
+    }
+
+    public function getActiveOfferByName($name, $take=6){
+
+        $offers = self::select(
+            'id',
+            'name',
+            'header',
+            'related'
+        )
+            ->where('active', 1)
+            ->where('name', $name)
+            ->get();
+
+        return $this->addProductsToOffers($offers, $take);
+
+    }
+
+    protected function addProductsToOffers($offers, $take)
+    {
         $newOffers = collect();
 
         $products = new Product();
@@ -39,33 +84,5 @@ class Offer extends Model{
         }
         unset($offers);
         return $newOffers;
-    }
-
-    //TODO поле name сделать уникальным
-    public function getActiveOffers(){
-
-        return self::select(
-            'id',
-            'name',
-            'header',
-            'related'
-        )
-            ->where('active', 1)
-            ->get();
-
-    }
-
-    public function getActiveOfferByName($name){
-
-        return self::select(
-            'id',
-            'name',
-            'header',
-            'related'
-        )
-            ->where('active', 1)
-            ->where('name', $name)
-            ->get();
-
     }
 }

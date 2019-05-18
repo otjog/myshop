@@ -42,13 +42,6 @@ class Template extends Model
 
         $this->data['schema'] = $this->getTemplateSchema();
 
-        /* * * MODULES * * */
-        $this->modules = new Modules();
-
-        $this->data['modules'] = $this->modules->getModules($this->data['schema']);
-        /* * END MODULES * */
-
-
         /* * * METATAGS * * */
         $this->metatags = new Metatags();
 

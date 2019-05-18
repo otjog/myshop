@@ -1,5 +1,6 @@
 @php
     $template = $global_data['template']['schema']['current']['content'];
+    $modules = $global_data['modules'];
 @endphp
 
 <div id="main-container-home" class="container">

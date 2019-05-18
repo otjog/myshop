@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Settings;
+use App\Models\Site\Module;
 use App\Models\Site\Template;
 
 class HomeController extends Controller{
-
-    protected $categories;
 
     protected $data;
 
@@ -17,9 +16,13 @@ class HomeController extends Controller{
 
     protected $settings;
 
-    public function __construct(Template $template){
+    protected $module;
+
+    public function __construct(Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
+
+        $this->module = $module;
 
         $this->globalData = $this->settings->getParameters();
 
@@ -32,6 +35,8 @@ class HomeController extends Controller{
     public function index(){
 
         $this->data['template'] = $this->template->getTemplateData($this->data,'home');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['name'] . '.index', $this->globalData);
     }

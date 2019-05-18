@@ -7,6 +7,15 @@ use App\Models\Shop\Product\Product;
 
 class Banner extends Model{
 
+    protected $moduleMethods = [
+        'index' => 'getActiveBanners',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     public function getActiveBanners(){
         $banners = self::select(
             'id',
