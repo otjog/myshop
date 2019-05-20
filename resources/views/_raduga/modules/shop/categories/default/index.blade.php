@@ -2,12 +2,15 @@
     $categories = $modules[$module['resource']];
 @endphp
 @if(isset($categories) && $categories !== null)
+    <hr>
+    <h2 class="text-uppercase text-center">Категории</h2>
+    <hr>
     <div class="container">
-        <div class="card-deck mb-3">
+        <div class="card-deck">
             @foreach($categories->chunk($global_data['components']['shop']['chunk_categories']) as $item_row)
                 <div class="row">
                     @foreach($item_row as $item)
-                        <div class="card mt-4 rounded-0">
+                        <div class="card mb-4 rounded-0">
                             <a href="{{Route('categories.show', $item['id'])}}">
                                 <img
                                         src="{{route('models.sizes.images.show', ['category', 's', $item['img']])}}"

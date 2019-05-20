@@ -37,6 +37,16 @@ $(document).ready(function() {
         pagination : false,
         navigationText : ["<span class='fa fa-chevron-left'></span>","<span class='fa fa-chevron-right'></span>"]
     });
+    $('.owl-banner').owlCarousel({
+        loop:true,
+        autoWidth:true,
+        autoPlay: false, //Set AutoPlay to 3 seconds
+        items : 2,
+        stopOnHover : true,
+        navigation : true, // Show next and prev buttons
+        pagination : false,
+        navigationText : ["<span class='fa fa-chevron-left'></span>","<span class='fa fa-chevron-right'></span>"]
+    });
 
     // TABS
     $('.nav-tabs a').click(function (e) {
