@@ -22,14 +22,18 @@ class Module extends Model
 
                         if(isset($module['resource']) && $module['resource'] !== null){
 
-                            if(!isset($this->data[$module['resource']]) ||  $this->data[$module['resource']] === null)
+                            if(!isset($this->data[$module['resource']]) ||  $this->data[$module['resource']] === null){
+
                                 $this->data[$module['resource']] = $this->getModelData($module['resource']);
+
+                            }
 
                         }
 
                     }
 
                 }
+
             }
 
         }
@@ -59,12 +63,17 @@ class Module extends Model
 
         }
 
+        if(!class_exists($class['name']))
+            $class = null;
         return $class;
     }
 
     protected function getModelData($resourceKey)
     {
         $classData = $this->getClassData($resourceKey);
+
+        if($classData === null)
+            return null;
 
         $model = new $classData['name']();
 

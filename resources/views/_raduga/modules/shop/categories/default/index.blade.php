@@ -3,7 +3,7 @@
 @endphp
 @if(isset($categories) && $categories !== null)
     <div class="container">
-        <div class="card-deck">
+        <div class="card-deck mb-3">
             @foreach($categories->chunk($global_data['components']['shop']['chunk_categories']) as $item_row)
                 <div class="row">
                     @foreach($item_row as $item)
