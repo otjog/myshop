@@ -629,12 +629,12 @@ hr { border-color:#8c8f92; }
 		}	
 		.owl-carousel .owl-controls .owl-buttons .owl-prev,
 		.owl-carousel .owl-controls .owl-buttons .owl-next {
-			top: -61px;
+			top: 200px;
 			color: #fff;
 		}
 		.owl-carousel .owl-controls .owl-buttons .owl-prev {
-			right: 60px;
-		}	 
+			left: 20px;
+		}
 		.owl-carousel .owl-controls .owl-buttons .owl-next {
 			right: 20px;
 		}		
