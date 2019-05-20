@@ -1,5 +1,6 @@
 @php
     $template = $global_data['template']['schema']['current']['footer'];
+    $modules = $global_data['modules'];
 @endphp
 <footer id="footer-area" class="mt-3">
     <!-- Footer Links Starts -->

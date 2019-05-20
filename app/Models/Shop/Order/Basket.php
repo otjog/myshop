@@ -7,7 +7,16 @@ use App\Models\Shop\Product\Product;
 use Illuminate\Support\Facades\DB;
 use App\Libraries\Helpers\DeclesionsOfWord;
 
-class Basket extends Model{
+class Basket extends Model
+{
+    protected $moduleMethods = [
+        'show' => 'getActiveBasketWithProductsAndRelations',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
 
     protected $table = 'shop_baskets';
 
@@ -51,8 +60,13 @@ class Basket extends Model{
             ->first();
     }
 
-    public function getActiveBasketWithProductsAndRelations(Product $products, $token)
+    public function getActiveBasketWithProductsAndRelations($token = null)
     {
+        $products = new Product();
+
+        if($token === null)
+            $token = session('_token');
+
         $basket = $this->getActiveBasket( $token );
 
         if( $basket !== null ){

@@ -1,8 +1,8 @@
-@if( isset($offers[$offer_name]) && $offers[$offer_name] !== null)
-    @if( isset($offers[$offer_name]->products) && count($offers[$offer_name]->products) > 0)
-        <h3 class="side-heading">{{$offers[$offer_name]->header}}</h3>
+@foreach($offers as $offer)
+    @if( isset($offer->products) && count($offer->products) > 0)
+        <h3 class="side-heading">{{$offer->header}}</h3>
         <ul class="side-products-list">
-        @foreach($offers[$offer_name]->products as $product)
+        @foreach($offer->products as $product)
             <!-- Special Product Starts -->
                 <li class="clearfix">
                     <a href="{{ route( 'products.show', $product->id ) }}">
@@ -51,4 +51,4 @@
             @endforeach
         </ul>
     @endif
-@endif
+@endforeach

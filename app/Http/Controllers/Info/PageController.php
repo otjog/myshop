@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Info;
 
+use App\Models\Site\Module;
 use App\Models\Site\Page;
 use App\Models\Site\Template;
 use Illuminate\Http\Request;
@@ -20,13 +21,15 @@ class PageController extends Controller{
 
     protected $template;
 
+    protected $module;
+
     /**
      * Создание нового экземпляра контроллера.
      *
      * @param  Page $pages
      * @return void
      */
-    public function __construct(Page $pages, Template $template){
+    public function __construct(Page $pages, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
@@ -35,6 +38,8 @@ class PageController extends Controller{
         $this->data =& $this->globalData['global_data'];
 
         $this->template = $template;
+
+        $this->module = $module;
 
         $this->pages = $pages;
 
@@ -81,6 +86,8 @@ class PageController extends Controller{
         $this->data['info']['page']  = $this->pages->getPageIfActive($id);
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'info', 'page', 'show', $id);
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
 

@@ -8,6 +8,7 @@ use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Settings;
+use App\Models\Site\Module;
 
 class BasketController extends Controller{
 
@@ -19,9 +20,11 @@ class BasketController extends Controller{
 
     protected $template;
 
+    protected $module;
+
     protected $settings;
 
-    public function __construct(Basket $baskets, Template $template){
+    public function __construct(Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
@@ -30,6 +33,8 @@ class BasketController extends Controller{
         $this->data =& $this->globalData['global_data'];
 
         $this->template = $template;
+
+        $this->module = $module;
 
         $this->baskets = $baskets;
 
@@ -87,9 +92,11 @@ class BasketController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $products, $token){
+    public function edit($token){
 
-        $basket = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
+        $products = new Product();
+
+        $basket = $this->baskets->getActiveBasketWithProductsAndRelations($token);
 
         if($basket->order_id === null){
 
@@ -98,6 +105,8 @@ class BasketController extends Controller{
             $this->data['shop']['parcels'] = $products->getParcelParameters($basket->products);
 
             $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'basket', 'edit');
+
+            $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
             return view( $this->data['template']['viewKey'], $this->globalData);
 

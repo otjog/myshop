@@ -12,6 +12,7 @@ use App\Models\Shop\Order\Basket;
 use App\Models\Shop\Order\Order;
 use App\Models\Shop\Product\Product;
 use App\Models\Settings;
+use App\Models\Site\Module;
 
 class OrderController extends Controller{
 
@@ -27,7 +28,9 @@ class OrderController extends Controller{
 
     protected $template;
 
-    public function __construct(Order $orders, Basket $baskets, Template $template){
+    protected $module;
+
+    public function __construct(Order $orders, Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
@@ -36,6 +39,8 @@ class OrderController extends Controller{
         $this->data =& $this->globalData['global_data'];
 
         $this->template = $template;
+
+        $this->module = $module;
 
         $this->orders   = $orders;
 
@@ -66,7 +71,7 @@ class OrderController extends Controller{
 
         if($payment[0]->alias === 'online'){
 
-            $basket = $this->baskets->getActiveBasketWithProductsAndRelations($products, $token );
+            $basket = $this->baskets->getActiveBasketWithProductsAndRelations();
 
             return $paymentService->send($request, $basket);
 
@@ -88,15 +93,15 @@ class OrderController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, Product $products, Payment $payments){
+    public function create(Payment $payments){
 
-        $token = $request->session()->get('_token');
-
-        $this->data['shop']['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations( $products, $token );
+        $this->data['shop']['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations();
 
         $this->data['shop']['payments'] = $payments->getActiveMethods();
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'order', 'create');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }
@@ -112,6 +117,8 @@ class OrderController extends Controller{
         $this->data['shop']['order']    = $this->orders->getOrderById($products, $id);
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'order', 'show');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }

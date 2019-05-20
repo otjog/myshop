@@ -14,10 +14,6 @@ class ViewComposerServiceProvider extends ServiceProvider{
     public function boot(){
         $template = env('SITE_TEMPLATE');
         View::composers([
-            'App\Http\ViewComposers\BannerComposer'         => $template . '.modules.banner.index',
-            'App\Http\ViewComposers\ModelMenuComposer'         => $template . '.modules.menu.index',
-            'App\Http\ViewComposers\Shop\Product\ShopOffersComposer' => $template . '.modules.offers.index',
-            'App\Http\ViewComposers\ShopBasketComposer'     => $template . '.modules.shop_basket.index',
             'App\Http\ViewComposers\ProductFilterComposer'  => $template . '.modules.product_filter.index',
             'App\Http\ViewComposers\Shop\Delivery\DeliveryOffersComposer' => $template . '.modules.shipment.index',
         ]);

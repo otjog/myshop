@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Order\Basket;
+use App\Models\Site\Module;
 use Illuminate\Http\Request;
 use App\Models\Shop\Category\Category;
 use App\Models\Shop\Product\Product;
@@ -20,6 +21,8 @@ class CategoryController extends Controller{
 
     protected $template;
 
+    protected $module;
+
     protected $data;
 
     protected $globalData;
@@ -30,7 +33,7 @@ class CategoryController extends Controller{
      * @param  Category $categories
      * @return void
      */
-    public function __construct(Category $categories, Basket $baskets, Template $template){
+    public function __construct(Category $categories, Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
@@ -38,11 +41,13 @@ class CategoryController extends Controller{
 
         $this->data =& $this->globalData['global_data'];
 
-        $this->template         = $template;
+        $this->template = $template;
 
-        $this->categories       = $categories;
+        $this->module = $module;
 
-        $this->baskets          = $baskets;
+        $this->categories = $categories;
+
+        $this->baskets = $baskets;
 
     }
 
@@ -58,6 +63,8 @@ class CategoryController extends Controller{
         $this->data['header_page'] =  'Категории';
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'category', 'list');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }
@@ -115,6 +122,8 @@ class CategoryController extends Controller{
         }
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'category', 'show', $id);
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }

@@ -5,7 +5,7 @@
         $categories =& $global_data['shop']['category'];
     ?>
     <h1>{{$global_data['header_page']}}</h1>
-    <div class="card-columns">
+    <div class="card-deck">
 
         @foreach($categories->chunk($global_data['components']['shop']['chunk_categories']) as $categories_row)
 

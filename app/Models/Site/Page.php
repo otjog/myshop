@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Page extends Model{
 
+    protected $moduleMethods = [
+        'show' => 'getPageIfActive',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     public function page_menus(){
         return $this->belongsToMany('App\Models\Site\PageMenu', 'page_menu_has_page')->withTimestamps();
     }

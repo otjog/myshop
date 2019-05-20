@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Search;
 
+use App\Models\Site\Module;
 use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,6 +19,8 @@ class SearchController extends Controller{
 
     protected $template;
 
+    protected $module;
+
     protected $settings;
 
     protected $products;
@@ -31,7 +34,7 @@ class SearchController extends Controller{
      *
      * @return void
      */
-    public function __construct(Request $request, Product $products, Basket $baskets, Template $template){
+    public function __construct(Request $request, Product $products, Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
@@ -40,6 +43,8 @@ class SearchController extends Controller{
         $this->data =& $this->globalData['global_data'];
 
         $this->template = $template;
+
+        $this->module = $module;
 
         $this->products = $products;
 
@@ -67,6 +72,8 @@ class SearchController extends Controller{
         }
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'search', 'show');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }
