@@ -15,19 +15,21 @@ class Module extends Model
     {
         foreach ($schema['current'] as $nameMainPosition => $sidePositions) {
 
-            foreach ($sidePositions as $nameSidePosition => $modules) {
+            if($sidePositions !== null) {
+                foreach ($sidePositions as $nameSidePosition => $modules) {
 
-                foreach ($modules as $key=>$module) {
+                    foreach ($modules as $key=>$module) {
 
-                    if(isset($module['resource']) && $module['resource'] !== null){
+                        if(isset($module['resource']) && $module['resource'] !== null){
 
-                        if(!isset($this->data[$module['resource']]) ||  $this->data[$module['resource']] === null)
-                            $this->data[$module['resource']] = $this->getModelData($module['resource']);
+                            if(!isset($this->data[$module['resource']]) ||  $this->data[$module['resource']] === null)
+                                $this->data[$module['resource']] = $this->getModelData($module['resource']);
+
+                        }
 
                     }
 
                 }
-
             }
 
         }

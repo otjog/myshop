@@ -8,6 +8,15 @@ use App\Models\Site\Page;
 
 class Menu extends Model
 {
+    protected $moduleMethods = [
+        'show' => 'getActiveMenu',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     public function models(){
         return $this->belongsToMany('App\Models\Site\MenuModel', 'menu_has_model')->withTimestamps();
     }
@@ -28,6 +37,24 @@ class Menu extends Model
 
         return $this->addRelationToEachMenu($menus);
 
+    }
+
+    public function getActiveMenu($menuName)
+    {
+        $menus = self::select(
+            'menus.id',
+            'menus.header',
+            'menus.name'
+        )
+            ->with(['models' => function ($query) {
+                $query->select('name', 'menu_has_model.ids', 'menu_has_model.header', 'menu_has_model.view')
+                    ->orderBy('sort', 'asc');
+            }])
+            ->where('active', 1)
+            ->where('name', $menuName)
+            ->get();
+
+        return $this->addRelationToEachMenu($menus);
     }
 
     private function addRelationToEachMenu($menus){

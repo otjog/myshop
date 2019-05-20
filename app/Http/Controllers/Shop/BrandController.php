@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Models\Shop\Product\Brand;
+use App\Models\Site\Module;
 use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -24,12 +25,14 @@ class BrandController extends Controller{
 
     protected $template;
 
+    protected $module;
+
     /**
      * Создание нового экземпляра контроллера.
      *
      * @return void
      */
-    public function __construct(Brand $brands, Basket $baskets, Template $template)
+    public function __construct(Brand $brands, Basket $baskets, Template $template, Module $module)
     {
 
         $this->settings = Settings::getInstance();
@@ -39,6 +42,8 @@ class BrandController extends Controller{
         $this->data =& $this->globalData['global_data'];
 
         $this->template = $template;
+
+        $this->module = $module;
 
         $this->brands = $brands;
 
@@ -58,6 +63,8 @@ class BrandController extends Controller{
         $this->data['header_page'] =  'Бренды';
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'list');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }
@@ -109,6 +116,8 @@ class BrandController extends Controller{
         }
 
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'show');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Order\Basket;
+use App\Models\Site\Module;
 use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Models\Shop\Product\Product;
@@ -22,6 +23,8 @@ class ProductController extends Controller{
 
     protected $template;
 
+    protected $module;
+
     protected $globalData;
 
     /**
@@ -30,7 +33,7 @@ class ProductController extends Controller{
      * @param  Product $products
      * @return void
      */
-    public function __construct(Product $products, Basket $baskets, Template $template ){
+    public function __construct(Product $products, Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
@@ -39,6 +42,8 @@ class ProductController extends Controller{
         $this->data =& $this->globalData['global_data'];
 
         $this->template = $template;
+
+        $this->module = $module;
 
         $this->products = $products;
 
@@ -89,6 +94,8 @@ class ProductController extends Controller{
         $this->data['photo360'] = $photo360->getPhotos($this->data['shop']['product']['scu']);
 
         $this->data['template'] = $this->template->getTemplateData($this->data,'shop', 'product', 'show', $id);
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
         return view( $this->data['template']['viewKey'], $this->globalData);
 

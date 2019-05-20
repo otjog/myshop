@@ -1,1 +1,1 @@
-@include('_raduga.modules.' . $module['module'] . '.' . $module['template'] . '.index', $module['attach'])
+@include('_raduga.modules.' . $module['module'] . '.' . $module['template'] . '.index', ['menus' => $modules[$module['resource']]])
