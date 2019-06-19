@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Order\Basket;
+use App\Models\Site\Module;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Models\Shop\Product\Product;
-use App\Models\Seo\MetaTagsCreater;
 use App\Models\Settings;
+use App\Models\Site\Photo360;
 
 class ProductController extends Controller{
 
@@ -15,11 +17,15 @@ class ProductController extends Controller{
 
     protected $baskets;
 
-    protected $metaTagsCreater;
-
     protected $settings;
 
-    protected $data = [];
+    protected $data;
+
+    protected $template;
+
+    protected $module;
+
+    protected $globalData;
 
     /**
      * Создание нового экземпляра контроллера.
@@ -27,20 +33,22 @@ class ProductController extends Controller{
      * @param  Product $products
      * @return void
      */
-    public function __construct(Product $products, Basket $baskets, MetaTagsCreater $metaTagsCreater ){
+    public function __construct(Product $products, Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
+
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
+
+        $this->module = $module;
 
         $this->products = $products;
 
         $this->baskets = $baskets;
 
-        $this->metaTagsCreater = $metaTagsCreater;
-
-        $this->data['template'] = [
-            'component' => 'shop',
-            'resource'  => 'product'
-        ];
     }
 
     /**
@@ -79,17 +87,17 @@ class ProductController extends Controller{
      */
     public function show($id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $photo360 = new Photo360();
 
-        $this->data['template']['view'] = 'show';
+        $this->data['shop']['product'] = $this->products->getActiveProduct($id);
 
-        $this->data['template']['custom'][] = 'shop-icons';
+        $this->data['photo360'] = $photo360->getPhotos($this->data['shop']['product']['scu']);
 
-        $this->data['data']['product']  = $this->products->getActiveProduct($id);
+        $this->data['template'] = $this->template->getTemplateData($this->data,'shop', 'product', 'show', $id);
 
-        $this->data['meta'] = $this->metaTagsCreater->getMetaTags($this->data);
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
 
-        return view( 'templates.default', $this->data);
+        return view( $this->data['template']['viewKey'], $this->globalData);
 
     }
 

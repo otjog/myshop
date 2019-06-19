@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shipment extends Model{
 
+    protected $moduleMethods = [
+        'index' => 'getShipmentServices',
+        'show' => 'getShipmentServiceByAlias',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     public function shopOrders(){
         return $this->hasMany('App\Models\Shop\Order\Order');
     }
@@ -22,7 +32,7 @@ class Shipment extends Model{
             ->get();
     }
 
-    public function getDeliveryServices(){
+    public function getShipmentServices(){
         return self::select(
             'id',
             'alias',
@@ -34,7 +44,6 @@ class Shipment extends Model{
             ->where('is_service', 1)
             ->get();
     }
-
 
     public function getDefaultShipments(){
         return self::select(

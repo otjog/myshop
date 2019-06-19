@@ -2,17 +2,26 @@
 
 namespace App\Http\Controllers\Info;
 
+use App\Models\Site\Module;
 use App\Models\Site\Page;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Settings;
+
 class PageController extends Controller{
 
     protected $pages;
 
     protected $settings;
 
-    protected $data = [];
+    protected $data;
+
+    protected $globalData;
+
+    protected $template;
+
+    protected $module;
 
     /**
      * Создание нового экземпляра контроллера.
@@ -20,16 +29,20 @@ class PageController extends Controller{
      * @param  Page $pages
      * @return void
      */
-    public function __construct(Page $pages){
+    public function __construct(Page $pages, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
 
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
+
+        $this->module = $module;
+
         $this->pages = $pages;
 
-        $this->data['template'] = [
-            'component' => 'info',
-            'resource'  => 'page'
-        ];
     }
 
     /**
@@ -38,12 +51,6 @@ class PageController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function index(){
-
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
-        $this->data['data']['pages']  = $this->pages->getAllPages();
-
-        return view('components.info.page.index', $this->data);
 
     }
 
@@ -76,12 +83,13 @@ class PageController extends Controller{
      */
     public function show($id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['info']['page']  = $this->pages->getPageIfActive($id);
 
-        $this->data['template']['view'] = 'show';
-        $this->data['data']['page']  = $this->pages->getPageIfActive($id);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'info', 'page', 'show', $id);
 
-        return view( 'templates.default', $this->data);
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
 
     }
 
@@ -93,11 +101,6 @@ class PageController extends Controller{
      */
     public function edit($id){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
-        $this->data['data']['page']  = $this->pages->getPage($id);
-
-        return view($this->data['template_name'] . 'components.info.page.edit', $this->data);
     }
 
     /**
@@ -108,10 +111,6 @@ class PageController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id){
-
-        $this->pages->updatePage($id, $request->all());
-
-        return redirect()->route('pages.index');
 
     }
 

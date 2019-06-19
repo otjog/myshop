@@ -38,43 +38,53 @@ class Product extends Model{
 
     }
 
-    public function images(){
-        return $this->belongsToMany('App\Models\Site\Image', 'product_has_image')->withTimestamps();
+    public function images()
+    {
+        return $this->morphToMany('App\Models\Site\Image', 'imageable');
     }
 
-    public function category(){
+    public function category()
+    {
         return $this->belongsTo(    'App\Models\Shop\Category\Category');
     }
 
-    public function manufacturer(){
+    public function manufacturer()
+    {
         return $this->belongsTo(    'App\Models\Shop\Product\Manufacturer');
     }
 
-    public function prices(){
+    public function prices()
+    {
         return $this->belongsToMany('App\Models\Shop\Price\Price', 'product_has_price')->withPivot('value', 'currency_id')->withTimestamps();
     }
 
-    public function discounts(){
+    public function discounts()
+    {
         return $this->belongsToMany('App\Models\Shop\Price\Discount', 'product_has_discount')->withPivot('value')->withTimestamps();
     }
 
-    public function parameters(){
+    public function parameters()
+    {
         return $this->belongsToMany('App\Models\Shop\Parameter\Parameter', 'product_has_parameter', 'product_id', 'parameter_id')->withPivot('id', 'value')->withTimestamps();
 }
 
-    public function basket_parameters(){
-        return $this->belongsToMany('App\Models\Shop\Parameter\Parameter', 'product_has_parameter', 'product_id', 'parameter_id')->withPivot('id', 'value')->withTimestamps();
+    public function basket_parameters()
+    {
+        return $this->belongsToMany('App\Models\Shop\Parameter\Parameter', 'product_has_parameter', 'product_id', 'parameter_id')->withPivot('id', 'value', 'basket_value')->withTimestamps();
     }
 
-    public function baskets(){
+    public function baskets()
+    {
         return $this->belongsToMany('App\Models\Shop\Order\Basket', 'shop_basket_has_product', 'product_id', 'basket_id')->withPivot('quantity', 'order_attributes')->withTimestamps();
     }
 
-    public function offers(){
+    public function offers()
+    {
         return $this->belongsToMany('App\Models\Shop\Offer\Offer', 'shop_offer_has_product', 'product_id', 'offer_id')->withTimestamps();
     }
 
-    public function orders(){
+    public function orders()
+    {
         return $this->belongsToMany('App\Models\Shop\Order\Order', 'shop_order_has_product', 'product_id', 'order_id')
             ->withPivot('quantity', 'price_id', 'currency_id', 'price_value', 'order_attributes')
             ->withTimestamps();
@@ -137,7 +147,7 @@ class Product extends Model{
 
     public function getActiveProductsWithFilterParameters($routeData){
 
-        $products =  self::select(
+        $products = self::select(
             'products.id',
             'product_has_price.value        as price|pivot|value',
             'manufacturers.id               as manufacturer|id',
@@ -295,7 +305,8 @@ class Product extends Model{
             ->addSelect(
                 'product_parameters.name        as parameters|name',
                 'product_parameters.alias       as parameters|alias',
-                'product_has_parameter.value    as parameters|pivot|value'
+                'product_has_parameter.value    as parameters|pivot|value',
+                'product_has_parameter.basket_value    as parameters|pivot|basket_value'
             )
             ->where('products.active', 1)
 
@@ -336,9 +347,7 @@ class Product extends Model{
 
         $productsQuery = $this->getListProductQuery();
 
-        $products =  $productsQuery
-
-        ->addSelect(
+        $products =  $productsQuery->addSelect(
             'products.weight',
             'products.length',
             'products.width',
@@ -348,7 +357,6 @@ class Product extends Model{
             'shop_basket_has_product.quantity           as pivot|quantity',
             'shop_basket_has_product.order_attributes   as pivot|order_attributes'
         )
-
             ->where('products.active', 1)
 
             /************IN_BASKET**************/
@@ -362,12 +370,13 @@ class Product extends Model{
 
             ->get();
 
-        return $this->addRelationCollections($products);
+        $products = $this->addRelationCollections($products);
 
+        return $this->addSelectedOrderAttributeToPivot($products, 'basket');
     }
 
-    public function getProductsFromOrder($order_id){
-
+    public function getProductsFromOrder($order_id)
+    {
         $products =  self::select(
             'products.id',
             'products.manufacturer_id',
@@ -420,7 +429,9 @@ class Product extends Model{
 
             ->get();
 
-        return $this->addRelationCollections($products);
+        $products = $this->addRelationCollections($products);
+
+        return $this->addSelectedOrderAttributeToPivot($products, 'order');
 
     }
 
@@ -645,8 +656,6 @@ class Product extends Model{
                 $products = $productQuery
                     ->where('products.active', 1)
 
-                    ->where('products.created_at', '>=', date('Y-m-d', strtotime('-1 week')))
-
                     ->orderBy('products.created_at')
 
                     ->take($take)
@@ -656,5 +665,41 @@ class Product extends Model{
                 return $this->addRelationCollections($products);
         }
 
+    }
+
+    private function addSelectedOrderAttributeToPivot($products, $model)
+    {
+        foreach($products as $key => $product){
+
+            $attributes = explode(',', $product['pivot']['order_attributes']);
+
+            $parameters = $product->basket_parameters;
+
+            $temporary = [];
+
+            foreach($attributes as $attribute){
+
+                foreach($parameters as $parameter){
+                    if($parameter->pivot->id === (int)$attribute){
+                        $temporary[] = $parameter;
+                        switch ($model) {
+                            case 'basket' :
+                                $product['price|value'] += $parameter->pivot->basket_value;
+                                $product->price['value'] += $parameter->pivot->basket_value;
+                                break;
+                            case 'order' :
+                                break;
+                        }
+
+                    }
+                }
+
+            }
+
+            $product['pivot']['order_attributes_collection'] = $temporary;
+
+            $product->quantity = $product['pivot']['quantity'];
+        }
+        return $products;
     }
 }

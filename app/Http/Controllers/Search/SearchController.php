@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Search;
 
+use App\Models\Site\Module;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
@@ -11,7 +13,13 @@ use App\Models\Settings;
 
 class SearchController extends Controller{
 
-    protected $data = [];
+    protected $globalData;
+
+    protected $data;
+
+    protected $template;
+
+    protected $module;
 
     protected $settings;
 
@@ -26,21 +34,25 @@ class SearchController extends Controller{
      *
      * @return void
      */
-    public function __construct(Request $request, Product $products, Basket $baskets){
+    public function __construct(Request $request, Product $products, Basket $baskets, Template $template, Module $module){
 
         $this->settings = Settings::getInstance();
+
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
+
+        $this->module = $module;
 
         $this->products = $products;
 
         $this->baskets  = $baskets;
 
-        $this->queryString    = $request->search;
+        $this->queryString = $request->search;
 
-        $this->data['template']     = [
-            'component'     => 'shop',
-            'resource'      => 'search',
-        ];
-        $this->data['data']['parameters']  = $request->toArray();
+        $this->data['shop']['parameters']  = $request->toArray();
 
 
     }
@@ -51,19 +63,19 @@ class SearchController extends Controller{
 
         $searchIdResult = $sphinx->search($this->queryString, env( 'SPHINXSEARCH_INDEX' ))->query();
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
-        $this->data['template'] ['view']        = 'show';
-
-        $this->data['data']     ['products']    = [];
-        $this->data['data']     ['query']       = $this->queryString;
-        $this->data['data']     ['header_page'] = 'Результаты поиска по запросу: ' . $this->queryString;
+        $this->data['shop']['products']    = [];
+        $this->data['query'] = $this->queryString;
+        $this->data['header_page'] = 'Результаты поиска по запросу: ' . $this->queryString;
 
         if( isset( $searchIdResult[ 'matches' ] ) && count( $searchIdResult[ 'matches' ] ) > 0 ){
-            $this->data['data'] ['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
+            $this->data['shop']['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
         }
 
-        return view( 'templates.default', $this->data);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'search', 'show');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
 }

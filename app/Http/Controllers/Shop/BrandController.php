@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Models\Shop\Product\Brand;
-use App\Models\Seo\MetaTagsCreater;
+use App\Models\Site\Module;
+use App\Models\Site\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
@@ -18,30 +19,35 @@ class BrandController extends Controller{
 
     protected $settings;
 
-    protected $data = [];
+    protected $data;
 
-    protected $metaTagsCreater;
+    protected $globalData;
+
+    protected $template;
+
+    protected $module;
 
     /**
      * Создание нового экземпляра контроллера.
      *
      * @return void
      */
-    public function __construct(Brand $brands, Basket $baskets, MetaTagsCreater $metaTagsCreater)
+    public function __construct(Brand $brands, Basket $baskets, Template $template, Module $module)
     {
 
         $this->settings = Settings::getInstance();
 
+        $this->globalData = $this->settings->getParameters();
+
+        $this->data =& $this->globalData['global_data'];
+
+        $this->template = $template;
+
+        $this->module = $module;
+
         $this->brands = $brands;
 
         $this->baskets = $baskets;
-
-        $this->metaTagsCreater = $metaTagsCreater;
-
-        $this->data['template'] = [
-            'component'     => 'shop',
-            'resource'      => 'brand',
-        ];
 
     }
 
@@ -52,13 +58,15 @@ class BrandController extends Controller{
      */
     public function index(){
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
+        $this->data['shop']['brands']  = $this->brands->getActiveBrands();
 
-        $this->data['template'] ['view']    = 'list';
-        $this->data['data']     ['brands']  = $this->brands->getActiveBrands();
-        $this->data['data']     ['header_page'] =  'Бренды';
+        $this->data['header_page'] =  'Бренды';
+            //dd($this->data);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'list');
 
-        return view( 'templates.default', $this->data);
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**
@@ -92,16 +100,9 @@ class BrandController extends Controller{
 
         $brand = $this->brands->getBrand($name);
 
-        $this->data['global_data']['project_data'] = $this->settings->getParameters();
-
-        $this->data['template'] ['view']        = 'show';
-        $this->data['template'] ['sidebar']     = 'product_filter';
-        $this->data['template'] ['filter-tags'] = 'filter-tags';
-        $this->data['data']     ['brand']       = $brand;
-        $this->data['data']     ['header_page'] = 'Товары бренда ' . $brand[0]->name;
-        $this->data['data']     ['parameters']  = [];
-
-        $this->data['template']['custom'][] = 'shop-icons';
+        $this->data['shop']['brand']       = $brand;
+        $this->data['shop']['parameters']  = [];
+        $this->data['header_page'] = 'Товары бренда ' . $brand[0]->name;
 
         if (count($request->query) > 0) {
 
@@ -109,14 +110,16 @@ class BrandController extends Controller{
 
             $filterData = $request->toArray();
 
-            $this->data['data']['products'] = $products->getFilteredProducts($routeData, $filterData);
+            $this->data['shop']['products'] = $products->getFilteredProducts($routeData, $filterData);
         } else {
-            $this->data['data']['products'] = $products->getActiveProductsOfBrand($name);
+            $this->data['shop']['products'] = $products->getActiveProductsOfBrand($name);
         }
 
-        $this->data['meta'] = $this->metaTagsCreater->getMetaTags($this->data);
-//dd($this->data);
-        return view( 'templates.default', $this->data);
+        $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'show');
+
+        $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);
+
+        return view( $this->data['template']['viewKey'], $this->globalData);
     }
 
     /**

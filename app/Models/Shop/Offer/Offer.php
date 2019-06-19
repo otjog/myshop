@@ -7,6 +7,15 @@ use App\Models\Shop\Product\Product;
 
 class Offer extends Model{
 
+    protected $moduleMethods = [
+        'show' => 'getActiveOfferByName',
+    ];
+
+    public function getModuleMethods($moduleMethod)
+    {
+        return $this->moduleMethods[$moduleMethod];
+    }
+
     protected $table = 'shop_offers';
 
     public function products(){
@@ -14,8 +23,48 @@ class Offer extends Model{
             ->withTimestamps();
     }
 
-    public function getProductsOffer($take = 100){
+    public function getProductsOffers($take = 10){
+
         $offers = $this->getActiveOffers();
+
+        return $this->addProductsToOffers($offers, $take);
+
+    }
+
+    //TODO поле name сделать уникальным
+    public function getActiveOffers(){
+
+        return self::select(
+            'id',
+            'name',
+            'header',
+            'related'
+        )
+            ->where('active', 1)
+            ->get();
+
+    }
+
+    public function getActiveOfferByName($name, $take=6){
+
+        $offers = self::select(
+            'id',
+            'name',
+            'header',
+            'related'
+        )
+            ->where('active', 1)
+            ->where('name', $name)
+            ->get();
+
+        return $this->addProductsToOffers($offers, $take);
+
+    }
+
+    protected function addProductsToOffers($offers, $take)
+    {
+        $newOffers = collect();
+
         $products = new Product();
 
         foreach($offers as $offer){
@@ -30,36 +79,10 @@ class Offer extends Model{
 
                 $offer->relations = ['products' => $offerProducts];
             }
+
+            $newOffers->put($offer->name, $offer);
         }
-
-        return $offers;
+        unset($offers);
+        return $newOffers;
     }
-
-    public function getSliceProductOffer($take = 6, $mainOfferName = 'deal-week'){
-
-        $offers = $this->getProductsOffer($take);
-
-        $mainOffer = $offers->first(function ($value, $key) use ($mainOfferName, $offers) {
-            if($value->name === $mainOfferName){
-                $offers->forget($key);
-            }
-            return $value->name === $mainOfferName;
-        });
-
-        return ['mainOffer' => $mainOffer, 'offers' => $offers];
-
-    }
-
-    //TODO поле name сделать уникальным
-    public function getActiveOffers(){
-        return self::select(
-            'id',
-            'name',
-            'header',
-            'related'
-        )
-            ->where('active', 1)
-            ->get();
-    }
-
 }

@@ -27,8 +27,8 @@ class RenameSrcInImagesTable extends Migration
     public function down()
     {
         Schema::table('images', function (Blueprint $table) {
-            $table->renameColumn('alias', 'name');
             $table->renameColumn('name', 'src');
+            $table->renameColumn('alias', 'name');
         });
     }
 }
