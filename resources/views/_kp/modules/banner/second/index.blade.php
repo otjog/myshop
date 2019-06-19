@@ -1,7 +1,7 @@
 <!-- Banner -->
 
 <div class="banner_2">
-    <div class="banner_2_background" style="background-image:url(images/banner_2_background.jpg)"></div>
+    <div class="banner_2_background" style="background-image:url({{asset('storage/_kp/images/banner_2_background.jpg')}})"></div>
     <div class="banner_2_container">
         <div class="banner_2_dots"></div>
         <!-- Banner 2 Slider -->

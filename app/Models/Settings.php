@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Shop\Price\Currency;
 use App\Models\Shop\Price\Price;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Geo\GeoData;
 
 class Settings {
 
@@ -29,7 +30,11 @@ class Settings {
 
         $this->price = new Price();
 
+        $this->geoData = new GeoData();
+
         $this->data = config('global-data');
+
+        $this->data['global_data']['geo'] = $this->geoData->getGeoData();
 
         $this->data['global_data']['components']['shop']['currency'] =
             Cache::rememberForever('config:general:components:shop:currency', function()  {
@@ -54,12 +59,12 @@ class Settings {
 
         $max = count($nameArray)-1;
         if ($max === 0) {
-            $this->data[$name] = $value;
+            $this->data['global_data'][$name] = $value;
         } else {
             $result = array($nameArray[$max] => $value);
             for($i=$max-1; $i>0; $result = array($nameArray[$i--] => $result));
 
-            $this->data[$nameArray[0]] = $result;
+            $this->data['global_data'][$nameArray[0]] = $result;
         }
 
     }

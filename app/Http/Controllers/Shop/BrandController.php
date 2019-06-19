@@ -61,7 +61,7 @@ class BrandController extends Controller{
         $this->data['shop']['brands']  = $this->brands->getActiveBrands();
 
         $this->data['header_page'] =  'Бренды';
-
+            //dd($this->data);
         $this->data['template'] = $this->template->getTemplateData($this->data, 'shop', 'brand', 'list');
 
         $this->data['modules'] = $this->module->getModulesData($this->data['template']['schema']);

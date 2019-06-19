@@ -1,7 +1,7 @@
 <!-- Banner -->
 
 <div class="banner">
-    <div class="banner_background" style="background-image:url(images/banner_background.jpg)"></div>
+    <div class="banner_background" style="background-image:url({{asset('storage/_kp/images/banner_background.jpg')}})"></div>
     <div class="container fill_height">
         <div class="row fill_height">
             <div class="banner_product_image"><img src="{{asset('storage/_kp/images/banner_product.png')}}" alt=""></div>

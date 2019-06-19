@@ -2,14 +2,14 @@
 <!-- Trends -->
 
 <div class="trends">
-    <div class="trends_background" style="background-image:url(images/trends_background.jpg)"></div>
+    <div class="trends_background" style="background-image:url({{asset('storage/_kp/images/trends_background.jpg')}})"></div>
     <div class="trends_overlay"></div>
     <div class="container">
         <div class="row">
 
             <!-- Trends Content -->
             <div class="col-lg-3">
-                <div class="trends_container">
+                <div         class="trends_container">
                     <h2 class="trends_title">Trends 2018</h2>
                     <div class="trends_text"><p>Lorem ipsum dolor sit amet, consectetur adipiscing Donec et.</p></div>
                     <div class="trends_slider_nav">

@@ -1411,7 +1411,7 @@ select option
 	justify-content: center;
 	align-items: center;
 	position: relative;
-	width: 20%;
+	width: 33%;
 	background: #FFFFFF;
 	cursor: pointer;
 	padding-top: 40px;
@@ -1428,27 +1428,8 @@ select option
 	height: calc(100% - 71px);
 	background: #e5e5e5;
 }
-.shop .product_image
-{
-	width: 100%;
-	height: 115px;
-}
-.shop .product_image img
-{
-	display: block;
-	position: relative;
-	max-width: 100%;
-}
-.shop .product_content
-{
-	width: 100%;
-}
-.shop .product_price
-{
-	font-size: 16px;
-	font-weight: 500;
-	margin-top: 25px;
-}
+
+
 .shop .product_item.discount
 {
 	color: #df3b3b;
@@ -1472,73 +1453,7 @@ select option
 	background: #8d8d8d;
 	content: '';
 }
-.shop .product_name
-{
-	margin-top: 4px;
-	overflow: hidden;
-}
-.shop .product_name div
-{
-	width: 100%;
-}
-.shop .product_name div a
-{
-	font-size: 14px;
-	font-weight: 400;
-	color: #000000;
-	white-space: nowrap;
-	-webkit-transition: all 200ms ease;
-	-moz-transition: all 200ms ease;
-	-ms-transition: all 200ms ease;
-	-o-transition: all 200ms ease;
-	transition: all 200ms ease;
-}
-.shop .product_name div a:hover
-{
-	color: #0e8ce4;
-}
-.shop .product_fav
-{
-	position: absolute;
-	top: 33px;
-	right: 12px;
-	width: 36px;
-	height: 36px;
-	background: #FFFFFF;
-	box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
-	border-radius: 50%;
-	visibility: hidden;
-	opacity: 0;
-	-webkit-transition: all 200ms ease;
-	-moz-transition: all 200ms ease;
-	-ms-transition: all 200ms ease;
-	-o-transition: all 200ms ease;
-	transition: all 200ms ease;
-}
-.shop .product_fav:hover
-{
-	box-shadow: 0px 1px 5px rgba(0,0,0,0.3);
-}
-.shop .product_fav i
-{
-	display: block;
-	position: absolute;
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	-moz-transform: translateX(-50%);
-	-ms-transform: translateX(-50%);
-	-o-transform: translateX(-50%);
-	transform: translateX(-50%);
-	color: #cccccc;
-	line-height: 36px;
-	pointer-events: none;
-	z-index: 0;
-	-webkit-transition: all 200ms ease;
-	-moz-transition: all 200ms ease;
-	-ms-transition: all 200ms ease;
-	-o-transition: all 200ms ease;
-	transition: all 200ms ease;
-}
+
 .shop .product_fav.active i
 {
 	color: red;
@@ -1596,14 +1511,14 @@ select option
 5.2 Shop Page Navigation
 *********************************/
 
-.shop .shop_page_nav
+.shop_content .shop_page_nav
 {
 	width: 100%;
 	height: 50px;
 	margin-top: 80px;
 }
-.shop .page_prev,
-.shop .page_next
+.shop_content .page_prev,
+.shop_content .page_next
 {
 	width: 50px;
 	height: 100%;
@@ -1611,8 +1526,8 @@ select option
 	border-radius: 5px;
 	cursor: pointer;
 }
-.shop .page_prev i,
-.shop .page_next i
+.shop_content .page_prev i,
+.shop_content .page_next i
 {
 	font-size: 12px;
 	color: #e5e5e5;
@@ -1622,19 +1537,19 @@ select option
 	-o-transition: all 200ms ease;
 	transition: all 200ms ease;
 }
-.shop .page_prev:hover i,
-.shop .page_next:hover i
+.shop_content .page_prev:hover i,
+.shop_content .page_next:hover i
 {
 	color: #636363;
 }
-.shop .page_nav
+.shop_content .page_nav
 {
 	border: solid 1px #e5e5e5;
 	border-radius: 5px;
 	margin-left: 15px;
 	margin-right: 15px;
 }
-.shop .page_nav li
+.shop_content .page_nav li
 {
 	display: -webkit-box;
 	display: -moz-box;
@@ -1649,7 +1564,7 @@ select option
 	border-right: solid 1px #e5e5e5;
 	cursor: pointer;
 }
-.shop .page_nav li a
+.shop_content .page_nav li a
 {
 	font-weight: 500;
 	color: rgba(0,0,0,0.7);
@@ -1659,11 +1574,11 @@ select option
 	-o-transition: all 200ms ease;
 	transition: all 200ms ease;
 }
-.shop .page_nav li:hover a
+.shop_content .page_nav li:hover a
 {
 	color: #0e8ce4;
 }
-.shop .page_nav li:last-child
+.shop_content .page_nav li:last-child
 {
 	border-right: none;
 }
@@ -2153,8 +2068,11 @@ select option
 
 .footer
 {
+	margin-top: 20px;
 	padding-top: 52px;
 	padding-bottom: 40px;
+	background: #fafafa;
+	border-top: solid 1px rgba(0,0,0,0.05);
 }
 .footer .logo_container
 {
@@ -2170,7 +2088,7 @@ select option
 .footer .footer_title
 {
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 00;
 	color: #000000;
 }
 .footer .footer_phone
@@ -2292,11 +2210,6 @@ select option
 11. Single Product
 *********************************/
 
-.single_product
-{
-	padding-top: 110px;
-	padding-bottom: 140px;
-}
 .single_product .image_list li
 {
 	display: -webkit-box;
@@ -2307,7 +2220,7 @@ select option
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	height: 165px;
+	/*height: 165px;*/
 	border: solid 1px #e8e8e8;
 	box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
 	margin-bottom: 15px;
@@ -2343,7 +2256,7 @@ select option
 	justify-content: center;
 	align-items: center;
 	width: calc(100% + 15px);
-	height: 525px;
+	/*height: 525px;*/
 	-webkit-transform: translateX(-15px);
 	-moz-transform: translateX(-15px);
 	-ms-transform: translateX(-15px);
@@ -2586,14 +2499,15 @@ select option
 .single_product .product_price
 {
 	display: inline-block;
-	font-size: 24px;
-	font-weight: 500;
-	margin-top: 75px;
+	font-size: 40px;
+	font-weight: 900;
+	/* margin-top: 75px; */
 	clear: left;
+	color: red;
 }
 .single_product .button_container
 {
-	margin-top: 43px;
+	float: left;
 }
 .single_product .cart_button
 {
@@ -3134,7 +3048,6 @@ select option
 {
 	font-size: 16px;
 	font-weight: 500;
-	margin-top: 25px;
 }
 .product_price.discount
 {
@@ -3162,7 +3075,6 @@ select option
 	font-size: 14px;
 	font-weight: 400;
 	color: #000000;
-	white-space: nowrap;
 	-webkit-transition: all 200ms ease;
 	-moz-transition: all 200ms ease;
 	-ms-transition: all 200ms ease;
@@ -3937,26 +3849,7 @@ select option
 {
 	box-shadow: 0px 1px 5px rgba(0,0,0,0.3);
 }
-.new_arrivals .product_fav i
-{
-	display: block;
-	position: absolute;
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	-moz-transform: translateX(-50%);
-	-ms-transform: translateX(-50%);
-	-o-transform: translateX(-50%);
-	transform: translateX(-50%);
-	color: #cccccc;
-	line-height: 36px;
-	pointer-events: none;
-	z-index: 0;
-	-webkit-transition: all 200ms ease;
-	-moz-transition: all 200ms ease;
-	-ms-transition: all 200ms ease;
-	-o-transition: all 200ms ease;
-	transition: all 200ms ease;
-}
+
 .new_arrivals .product_fav.active i
 {
 	color: red;
