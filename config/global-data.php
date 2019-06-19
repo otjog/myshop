@@ -9,23 +9,18 @@
                 'phone' => env('SITE_PHONE'),
                 'address' => env('SITE_ADDRESS'),
                 'company_name' => env('SITE_COMPANY_NAME'),
+                'app_name' => env('APP_NAME'),
             ],
-            'general' => [
-                'images' => [
-                    'path' => 'storage/img/',
-                    'const_ext' => 2 //сохранять миниатюры в jpeg
-                ]
-            ], //????????? УДАЛИТЬ
             'images' => [
                 'models' => [
                     'banner' => [
                         'size' => [
                             'main' => env('GENERAL_IMAGES_MODELS_BANNER_SIZE_MAIN')
                         ],
-                        'original_folder' => '', //со слешем, ex.: original/
-                        'path_to_default_image'  => public_path('storage/img/banners/default/no-image.jpg'),
-                        'path_to_image_folder' => public_path('storage/img/banners/'),
-                        'change' => 'fit', //обрезать изо до заданного ихображения
+                        'original_folder' => env('GENERAL_IMAGES_MODELS_BANNER_ORIGINAL_FOLDER'), //со слешем, ex.: original/
+                        'path_to_default_image'  => public_path(env('GENERAL_IMAGES_MODELS_BANNER_DEFAULT_IMAGES')),
+                        'path_to_image_folder' => public_path(env('GENERAL_IMAGES_MODELS_BANNER_IMAGES_FOLDER')),
+                        'change' => env('GENERAL_IMAGES_MODELS_BANNER_CHANGE'), //обрезать изо до заданного ихображения
                     ],
                     'product' => [
                         'size' => [
@@ -37,28 +32,28 @@
                             'm-13'  => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_M-13'), //W*1 x H*1.3
                             'l'     => env('GENERAL_IMAGES_MODELS_PRODUCT_SIZE_L'),
                         ],
-                        'original_folder' => '', //со слешем, ex.: original/
-                        'path_to_default_image'  => public_path('storage/img/shop/product/default/no-image.jpg'),
-                        'path_to_image_folder' => public_path('storage/img/shop/product/'),
-                        'change' => 'resize', //пропорционально уменьшать и добавлять белые поля
+                        'original_folder' => env('GENERAL_IMAGES_MODELS_PRODUCT_ORIGINAL_FOLDER'), //со слешем, ex.: original/
+                        'path_to_default_image'  => public_path(env('GENERAL_IMAGES_MODELS_PRODUCT_DEFAULT_IMAGES')),
+                        'path_to_image_folder' => public_path(env('GENERAL_IMAGES_MODELS_PRODUCT_IMAGES_FOLDER')),
+                        'change' => env('GENERAL_IMAGES_MODELS_PRODUCT_CHANGE'), //пропорционально уменьшать и добавлять белые поля
                     ],
                     'category' => [
                         'size' => [
                             's'     => env('GENERAL_IMAGES_MODELS_CATEGORY_SIZE_S'),
                         ],
-                        'original_folder' => '', //со слешем, ex.: original/
-                        'path_to_default_image'  => public_path('storage/img/shop/category/default/no-image.jpg'),
-                        'path_to_image_folder' => public_path('storage/img/shop/category/'),
-                        'change' => 'resize', //пропорционально уменьшать и добавлять белые поля
+                        'original_folder' => env('GENERAL_IMAGES_MODELS_CATEGORY_ORIGINAL_FOLDER'), //со слешем, ex.: original/
+                        'path_to_default_image'  => public_path(env('GENERAL_IMAGES_MODELS_CATEGORY_DEFAULT_IMAGES')),
+                        'path_to_image_folder' => public_path(env('GENERAL_IMAGES_MODELS_CATEGORY_IMAGES_FOLDER')),
+                        'change' => env('GENERAL_IMAGES_MODELS_CATEGORY_CHANGE'), //пропорционально уменьшать и добавлять белые поля
                     ],
                     'photo360' => [
                         'size' => [
                             'xxs'   => env('GENERAL_IMAGES_MODELS_PHOTO360_SIZE_XXS'),
                         ],
-                        'original_folder' => '', //со слешем, ex.: original/
-                        'path_to_default_image'  => public_path('storage/img/photo360/default/icon.jpg'),
-                        'path_to_image_folder' => public_path('storage/img/photo360/'),
-                        'change' => 'fit', //пропорционально уменьшать и добавлять белые поля
+                        'original_folder' => env('GENERAL_IMAGES_MODELS_PHOTO360_ORIGINAL_FOLDER'), //со слешем, ex.: original/
+                        'path_to_default_image'  => public_path(env('GENERAL_IMAGES_MODELS_PHOTO360_DEFAULT_IMAGES')),
+                        'path_to_image_folder' => public_path(env('GENERAL_IMAGES_MODELS_PHOTO360_IMAGES_FOLDER')),
+                        'change' => env('GENERAL_IMAGES_MODELS_PHOTO360_CHANGE'), //пропорционально уменьшать и добавлять белые поля
                     ]
                 ],
             ],

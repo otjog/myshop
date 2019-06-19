@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Libraries\Delivery\Dpd;
 use App\Libraries\Delivery\Cdek;
 use App\Libraries\Delivery\Pochta;
+use App\Libraries\Delivery\CustomDelivery;
 use App\Models\Settings;
+use App\Libraries\Helpers\DeclesionsOfWord;
 
 class Delivery extends Model{
 
@@ -27,7 +29,7 @@ class Delivery extends Model{
 
     }
 
-    public function getPrices($parcel, $shipmentServiceAlias, $destinationType){
+    public function getPrices($parcel, $shipmentServiceAlias, $destinationType, $productIds){
 
         $shipmentService = $this->shipments->getShipmentServiceByAlias($shipmentServiceAlias);
 
@@ -44,7 +46,11 @@ class Delivery extends Model{
                 break;
 
             case 'pochta'   :
-                $serviceObj = new Pochta( $this->geoData );
+                $serviceObj = new Pochta($this->geoData);
+                break;
+
+            case 'custom'   :
+                $serviceObj = new CustomDelivery($this->geoData, $productIds);
                 break;
 
             default : break; //todo сделать выход из foreach
@@ -54,6 +60,8 @@ class Delivery extends Model{
         $data = $serviceObj->getDeliveryCost($parcelParameters, $destinationType);
 
         if( count($data) > 0 ){
+
+            $data['declision'] = $this->getDeclisionOfDays($data['days']);
 
             $shipmentService[0]->offer = $data;
 
@@ -107,4 +115,14 @@ class Delivery extends Model{
 
     }
 
+    private function getDeclisionOfDays($days){
+        $daysArray = explode('-', $days);
+
+        if(count($daysArray) > 1)
+            $maxDay = (int)$daysArray[1];
+        else
+            $maxDay = (int)$daysArray[0];
+
+        return DeclesionsOfWord::make($maxDay, ['день', 'дня', 'дней']);
+    }
 }

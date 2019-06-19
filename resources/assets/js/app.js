@@ -7,7 +7,7 @@
 
 require('./bootstrap');
 require('jquery/dist/jquery');
-require('../templates/_raduga/js/app');
+require('../templates/_kp/js/app');
 
 
 //window.Vue = require('vue');

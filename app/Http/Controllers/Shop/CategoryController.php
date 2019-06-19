@@ -103,9 +103,11 @@ class CategoryController extends Controller{
         $category = $this->categories->getCategory($id);
 
         $this->data['shop']['category']            = $category;
-        $this->data['shop']['children_categories'] = $this->categories->getActiveChildrenCategories($id);
+        $this->data['shop']['childrenCategories'] = $this->categories->getActiveChildrenCategories($id);
         $this->data['shop']['parameters']          = [];
         $this->data['header_page']         = $category[0]->name;
+
+        //todo - продумать функционал для вывода во views component/shop/category/show товары из вложенных категории данной категории
 
         if( count( $request->query ) > 0 ){
 
