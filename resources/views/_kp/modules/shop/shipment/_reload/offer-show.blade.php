@@ -1,7 +1,7 @@
-@if(isset($ajax->offer) && count($ajax->offer) > 0 && $ajax->offer !== null)
+@if(isset($global_data['ajax']->offer) && count($global_data['ajax']->offer) > 0 && $global_data['ajax']->offer !== null)
     <div class="row p-2 border-bottom">
         <div class="col-2">
-            <img src="{{ '/storage/img/elements/delivery/' . $ajax['alias'] . '/' . $ajax['alias'] .'_logo.jpg' }}" class="img-fluid" alt="{{$ajax->name}}">
+            <img src="{{ '/storage/img/elements/delivery/' . $global_data['ajax']['alias'] . '/' . $global_data['ajax']['alias'] .'_logo.jpg' }}" class="img-fluid" alt="{{$global_data['ajax']->name}}">
         </div>
 
         <div class="col">
@@ -9,10 +9,10 @@
 
                 <div class="row">
                     <div class="col text-center">
-                        <span class="shipment-price">{{$ajax->offer['price']}}</span> {{$global_data['components']['shop']['currency']['symbol']}}
+                        <span class="shipment-price">{{$global_data['ajax']->offer['price']}}</span> {{$global_data['components']['shop']['currency']['symbol']}}
                     </div>
                     <div class="col text-center">
-                        <span class="shipment-days">{{$ajax->offer['days']}}</span> {{$ajax->offer['declision']}}
+                        <span class="shipment-days">{{$global_data['ajax']->offer['days']}}</span> {{$global_data['ajax']->offer['declision']}}
                     </div>
                 </div>
 

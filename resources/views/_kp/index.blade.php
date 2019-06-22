@@ -9,7 +9,6 @@
 	<meta name="csrf-token" content="{{csrf_token()}}">
 
 	<link rel="stylesheet" href="{{asset('css/app.css')}}">
-<!--link rel="stylesheet" type="text/css" href="{{asset('kp/styles/responsive.css')}}"-->
 
 </head>
 
