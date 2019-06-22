@@ -16,7 +16,7 @@
                     @endif
                 </div>
                 <div class="cart_content">
-                    <div class="cart_text"><a href="#">Корзина</a></div>
+                    <div class="cart_text"><a href="{{route('baskets.edit', csrf_token())}}">Корзина</a></div>
                     <div class="cart_price">
                         {{ $basket->total  or 0}}<small>{{$global_data['components']['shop']['currency']['symbol']}}</small>
                     </div>

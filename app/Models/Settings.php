@@ -6,14 +6,13 @@ use App\Models\Shop\Price\Currency;
 use App\Models\Shop\Price\Price;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Geo\GeoData;
+use App\Models\Site\Template;
+use App\Models\Site\Metatags;
+use App\Models\Site\Module;
 
 class Settings {
 
     private static $instance = null;
-
-    private $currency;
-
-    private $price;
 
     public $data;
 
@@ -24,31 +23,32 @@ class Settings {
         return self::$instance;
     }
 
-    private function __construct(){
-
-        $this->currency = new Currency();
-
-        $this->price = new Price();
-
-        $this->geoData = new GeoData();
-
+    private function __construct()
+    {
         $this->data = config('global-data');
 
-        $this->data['global_data']['geo'] = $this->geoData->getGeoData();
+        /* Add Currency */
+        $currency = new Currency();
 
-        $this->data['global_data']['components']['shop']['currency'] =
-            Cache::rememberForever('config:general:components:shop:currency', function()  {
-                return $this->currency
+        $this->data['components']['shop']['currency'] =
+            Cache::rememberForever('config:general:components:shop:currency', function() use($currency) {
+                return $currency
                     ->select('id', 'char_code', 'symbol')
                     ->where('main', '1')
                     ->first();
             });
+        /* End Currency */
 
-        $this->data['global_data']['components']['shop']['price'] =
-            $this->price
+        /* Add Price */
+        $price = new Price();
+
+        $this->data['components']['shop']['price'] =
+            $price
                 ->select('id', 'name')
                 ->where('name', 'retail')
                 ->first();
+        /* End Price */
+
     }
 
     private function __clone(){}
@@ -59,29 +59,39 @@ class Settings {
 
         $max = count($nameArray)-1;
         if ($max === 0) {
-            $this->data['global_data'][$name] = $value;
+            $this->data[$name] = $value;
         } else {
             $result = array($nameArray[$max] => $value);
             for($i=$max-1; $i>0; $result = array($nameArray[$i--] => $result));
 
-            $this->data['global_data'][$nameArray[0]] = $result;
+            $this->data[$nameArray[0]] = $result;
         }
 
     }
 
-    public function issetParameter($path){
-        return false;
+    public function pushArrayParameters($addData)
+    {
+        $this->data = $this->getParameters();
+
+        return array_merge($this->data, $addData);
     }
 
     public function getParameters(){
-       return $this->data;
+
+        /* Add Geo */
+        $geoData = new GeoData();
+
+        $this->data['geo'] = $geoData->getGeoData();
+        /* End Geo */
+
+        return $this->data;
     }
 
     public function getParameter($path){
 
-        $path =  'global_data.' . $path;
-
-        $data = $this->getParameters();
+        if ($this->data === null) {
+            $this->data = $this->getParameters();
+        }
 
         $pathArray = explode('.', $path);
 
@@ -90,7 +100,7 @@ class Settings {
         foreach( $pathArray as $key => $level ){
 
             if($key === 0)
-                $temporary = $data;
+                $temporary = $this->data;
 
             if(isset($temporary[$level])){
 
@@ -106,6 +116,26 @@ class Settings {
 
         }
 
+    }
+
+    public function getParametersForController($data, $component, $model=null, $view=null, $id=null)
+    {
+        /* Add Template */
+        $template = new Template();
+        $this->data['template'] = $template->getTemplateData($component, $model, $view, $id);
+        /* End Template */
+
+        /* Add Metatags */
+        $metatags = new Metatags();
+        $this->data['template']['metatags'] = $metatags->getTagsForPage($this->data);
+        /* End Metatags */
+
+        /* Add Modules */
+        $module = new Module();
+        $this->data['modules'] = $module->getModulesData($this->data['template']['schema']);
+        /* End Modules */
+
+        return $this->pushArrayParameters($data);
     }
 
 }
