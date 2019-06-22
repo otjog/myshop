@@ -53,11 +53,12 @@ class Settings {
 
     private function __clone(){}
 
-    public function addParameter($name, $value){
-
+    public function addParameter($name, $value)
+    {
         $nameArray = explode('.', $name);
 
         $max = count($nameArray)-1;
+
         if ($max === 0) {
             $this->data[$name] = $value;
         } else {
@@ -66,7 +67,6 @@ class Settings {
 
             $this->data[$nameArray[0]] = $result;
         }
-
     }
 
     public function pushArrayParameters($addData)
@@ -76,8 +76,8 @@ class Settings {
         return array_merge($this->data, $addData);
     }
 
-    public function getParameters(){
-
+    public function getParameters()
+    {
         /* Add Geo */
         $geoData = new GeoData();
 
@@ -87,8 +87,8 @@ class Settings {
         return $this->data;
     }
 
-    public function getParameter($path){
-
+    public function getParameter($path)
+    {
         if ($this->data === null) {
             $this->data = $this->getParameters();
         }
@@ -112,10 +112,7 @@ class Settings {
                 return null;
             }
 
-
-
         }
-
     }
 
     public function getParametersForController($data, $component, $model=null, $view=null, $id=null)

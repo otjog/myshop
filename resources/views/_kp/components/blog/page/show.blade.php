@@ -1,7 +1,7 @@
 @extends('_kp.index')
 
 @php
-    $page =& $global_data['info']['page']
+    $page =& $global_data['blog']['page']
 @endphp
 
 @section('component')

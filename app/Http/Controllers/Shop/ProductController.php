@@ -23,12 +23,11 @@ class ProductController extends Controller{
      * @param  Product $products
      * @return void
      */
-    public function __construct(Product $products){
-
+    public function __construct(Product $products)
+    {
         $this->products = $products;
 
         $this->settings = Settings::getInstance();
-
     }
 
     /**
@@ -37,8 +36,8 @@ class ProductController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id){
-
+    public function show($id)
+    {
         $photo360 = new Photo360();
 
         $data['shop']['product'] = $this->products->getActiveProduct($id);
@@ -48,7 +47,6 @@ class ProductController extends Controller{
         $globalData = $this->settings->getParametersForController($data,'shop', 'product', 'show', $id);
 
         return view($globalData['template']['viewKey'], ['global_data' => $globalData]);
-
     }
 
 }

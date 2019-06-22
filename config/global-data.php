@@ -65,5 +65,8 @@
                 'chunk_categories' => env('GENERAL_COMPONENTS_SHOP_CHUNK_CATEGORIES'),
                 'filter_prefix' => 'p_',
             ]
+        ],
+        'template' => [
+            'name' => env('SITE_TEMPLATE')
         ]
     ];

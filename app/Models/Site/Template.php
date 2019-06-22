@@ -35,7 +35,7 @@ class Template extends Model
         $this->data['metatagsKey'] = $this->data['contentKey'] . $id;
 
         $this->data['viewKey'] = $this->data['name'] . '.' . ($component==='home' ? '' : 'components.') . $this->data['componentKey'] . $view;
-        dd($this->data['componentKey']);
+
         $this->data['schema'] = $this->getTemplateSchema();
 
         return $this->data;

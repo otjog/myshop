@@ -36,6 +36,14 @@
             </ul>
         </div>
     </div>
+    @if($order->comment !== null && $order->comment !== '')
+        <hr>
+        Комментарий:
+        <p>
+            {{$order->comment}}
+        </p>
+        <hr>
+    @endif
     <div class="row">
         <div class="col-lg-12">
             Данные о товарах в заказе:

@@ -37,12 +37,11 @@ class PageController extends Controller{
      */
     public function show($id)
     {
-        $data['info']['page']  = $this->pages->getPageIfActive($id);
+        $data['blog']['page']  = $this->pages->getPageIfActive($id);
 
-        $globalData = $this->settings->getParametersForController($data, 'info', 'page', 'show', $id);
+        $globalData = $this->settings->getParametersForController($data, 'blog', 'page', 'show', $id);
 
         return view($globalData['template']['viewKey'], ['global_data' => $globalData]);
-
     }
 
 }

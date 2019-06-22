@@ -14,8 +14,8 @@ use App\Models\Shop\Product\Product;
 use App\Models\Settings;
 use App\Models\Site\Module;
 
-class OrderController extends Controller{
-
+class OrderController extends Controller
+{
     protected $orders;
 
     protected $baskets;
@@ -44,13 +44,13 @@ class OrderController extends Controller{
 
         $payment = $payments->getMethodById($request->payment_id);
 
-        if($payment[0]->alias === 'online'){
+        if ($payment[0]->alias === 'online') {
 
             $basket = $this->baskets->getActiveBasketWithProductsAndRelations();
 
             return $paymentService->send($request, $basket);
 
-        }else{
+        } else {
 
             $basket = $this->baskets->getActiveBasket( $token );
 

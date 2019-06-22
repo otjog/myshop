@@ -75,9 +75,11 @@ class Dpd {
 
     public function getDeliveryCost($parcelParameters, $destinationType){
 
+        $this->destinationType = $destinationType;
+
         $data = [];
 
-        switch($destinationType){
+        switch($this->destinationType){
             case 'toTerminal'   : $selfDelivery = true; break;
             case 'toDoor'       : $selfDelivery = false; break;
             default :   break;
