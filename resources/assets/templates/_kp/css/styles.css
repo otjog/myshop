@@ -337,10 +337,6 @@ section
 	line-height: 56px;
 	margin-right: 40px;
 }
-.top_bar_contact_item:not(:first-child)
-{
-	margin-right: 0px;
-}
 .top_bar_contact_item a
 {
 	font-size: 16px;

@@ -113,20 +113,16 @@ class AjaxController extends Controller{
 
         if($this->request['response'] === 'view'){
 
+            $data['ajax'] = $this->data;
+
             //Получаем обновленные данные из Глобального массива для передачи во фронт
             $settings = Settings::getInstance();
-            $global_data = $settings->getParameters();
+            $globalData = $settings->pushArrayParameters($data);
 
-            $global_data['ajax'] = $this->data;
-
-            $templateName = env('SITE_TEMPLATE');
-            $global_data['global_data']['template']['name'] = $templateName;
-            //todo поместить templateName в глобальный массив
-
-            $view = $templateName . '.modules.shop.' . $this->request['module'] . '._reload.' . $this->request['view'];
+            $view = $globalData['template']['name'] . '.modules.shop.' . $this->request['module'] . '._reload.' . $this->request['view'];
 
             //Добавляем к ответу Представление и обновленную переменную с данными
-            $this->response = $this->response->view($view, $global_data);
+            $this->response = $this->response->view($view, ['global_data' => $globalData]);
         }
 
         if( count($this->headers) > 0){

@@ -8,25 +8,24 @@ use App\Libraries\Delivery\Dpd;
 use App\Libraries\Delivery\Cdek;
 use App\Libraries\Delivery\Pochta;
 use App\Libraries\Delivery\CustomDelivery;
-use App\Models\Settings;
 use App\Libraries\Helpers\DeclesionsOfWord;
+use App\Models\Geo\GeoData;
 
-class Delivery extends Model{
+class Delivery extends Model
+{
+    protected $shipments;
 
-    private $geoData;
+    protected $geoData;
 
-    private $shipments;
-
-    public function __construct(array $attributes = []){
-
+    public function __construct(array $attributes = [])
+    {
         parent::__construct($attributes);
 
         $this->shipments = new Shipment();
 
-        $settings = Settings::getInstance();
+        $geo = new GeoData();
 
-        $this->geoData = $settings->getParameter('geo');
-
+        $this->geoData = $geo->getGeoData();
     }
 
     public function getPrices($parcel, $shipmentServiceAlias, $destinationType, $productIds){
@@ -35,14 +34,14 @@ class Delivery extends Model{
 
         $parcelParameters = $this->getDeliveryDataFromRequest($parcel);
 
-        switch($shipmentServiceAlias){
+        switch ($shipmentServiceAlias) {
 
             case 'dpd'      :
-                $serviceObj = new Dpd( $this->geoData );
+                $serviceObj = new Dpd($this->geoData);
                 break;
 
             case 'cdek'     :
-                $serviceObj = new Cdek( $this->geoData );
+                $serviceObj = new Cdek($this->geoData);
                 break;
 
             case 'pochta'   :
@@ -59,7 +58,7 @@ class Delivery extends Model{
 
         $data = $serviceObj->getDeliveryCost($parcelParameters, $destinationType);
 
-        if( count($data) > 0 ){
+        if ( count($data) > 0 ) {
 
             $data['declision'] = $this->getDeclisionOfDays($data['days']);
 
@@ -71,35 +70,33 @@ class Delivery extends Model{
 
     }
 
-    public function getPoints($shipmentServiceAlias){
-
+    public function getPoints($shipmentServiceAlias)
+    {
         $data = [];
 
         $serviceObj = null;
 
-        switch($shipmentServiceAlias){
+        switch ($shipmentServiceAlias) {
 
             case 'dpd'  : $serviceObj = new Dpd( $this->geoData ); break;
 
             case 'cdek' : $serviceObj = new Cdek( $this->geoData ); break;
-
         }
 
-        if($serviceObj !== null){
+        if ($serviceObj !== null) {
             $data['points'][$shipmentServiceAlias] = $serviceObj->getPointsInCity();
         }
 
         return $data;
-
     }
 
-    public function getDeliveryDataFromRequest($data){
-
-        if( count($data) > 0 ){
+    public function getDeliveryDataFromRequest($data)
+    {
+        if (count($data) > 0) {
 
             $parcels = [];
 
-            foreach($data as $name => $params) {
+            foreach ($data as $name => $params) {
 
                 $arr = explode('|', $params);
 
@@ -115,10 +112,11 @@ class Delivery extends Model{
 
     }
 
-    private function getDeclisionOfDays($days){
+    private function getDeclisionOfDays($days)
+    {
         $daysArray = explode('-', $days);
 
-        if(count($daysArray) > 1)
+        if (count($daysArray) > 1)
             $maxDay = (int)$daysArray[1];
         else
             $maxDay = (int)$daysArray[0];

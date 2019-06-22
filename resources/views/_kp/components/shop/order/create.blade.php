@@ -215,8 +215,17 @@
 
                 </div>
 
+                {{-- COMMENT --}}
+                <div class="mb-3">
+                    <label for="comment">Ваши пожелания</label>
+                    <div class="input-group">
+                        <textarea class="form-control" id="comment" name="comment"></textarea>
+                    </div>
+                </div>
+
                 <hr class="mb-4">
 
+                {{-- AGREEMENT --}}
                 <div class="form-group">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="agreeTerms" required>

@@ -71,7 +71,7 @@ class Cdek {
 
         $data = [];
 
-        switch($destinationType){
+        switch($this->destinationType){
             case 'toTerminal'   :   $tariffs = ['136', '5', '10', '15', '62', '63']; break;
             case 'toDoor'       :   $tariffs = ['137', '12', '16']; break;
             default :   break;
