@@ -20,14 +20,19 @@ class Shipment extends Model{
         return $this->hasMany('App\Models\Shop\Order\Order');
     }
 
+    public function images()
+    {
+        return $this->morphToMany('App\Models\Site\Image', 'imageable');
+    }
+
     public function getActiveMethods(){
         return self::select(
             'id',
             'alias',
             'name',
-            'description',
-            'img'
+            'description'
         )
+            ->with('images')
             ->where('active', 1)
             ->get();
     }
@@ -37,9 +42,9 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
-            'description',
-            'img'
+            'description'
         )
+            ->with('images')
             ->where('active', 1)
             ->where('is_service', 1)
             ->get();
@@ -50,9 +55,9 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
-            'description',
-            'img'
+            'description'
         )
+            ->with('images')
             ->whereIn('alias', ['self', 'delivery'])
             ->get();
     }
@@ -62,9 +67,9 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
-            'description',
-            'img'
+            'description'
         )
+            ->with('images')
             ->where('active', 1)
             ->where('is_service', 1)
             ->where('alias', $alias)

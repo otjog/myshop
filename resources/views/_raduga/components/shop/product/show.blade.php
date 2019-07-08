@@ -13,19 +13,19 @@
             <p>
                 @if( isset($product->images[0]->src) && $product->images[0]->src !== null)
                     <a
-                            href="{{route('models.sizes.images.show', ['product', 'l', $product->images[0]->src])}}"
+                            href="{{route('getImage', ['product', 'l', $product->images[0]->src])}}"
                             class="open-popup-link"
                             data-magnific-type="image"
                             title=""
                     >
                         <img
-                                src="{{route('models.sizes.images.show', ['product', 'm', $product->images[0]->src])}}"
+                                src="{{route('getImage', ['product', 'm', $product->images[0]->src])}}"
                                 alt=""
                         />
                     </a>
                 @else
                     <img
-                            src="{{route('models.sizes.images.show', ['product', 'm', 'no_image.jpg'])}}"
+                            src="{{route('getImage', ['product', 'm', 'no_image.jpg'])}}"
                             alt=""
                     />
                 @endif
@@ -35,11 +35,11 @@
                     @foreach( $product->images as $image)
                         <li class="list-inline-item">
                             <a
-                                    href="{{route('models.sizes.images.show', ['product', 'l', $image->src])}}"
+                                    href="{{route('getImage', ['product', 'l', $image->src])}}"
                                     class="open-popup-link"
                                     data-magnific-type="image"
                             >
-                                <img src="{{route('models.sizes.images.show', ['product', 'xxs', $image->src])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
+                                <img src="{{route('getImage', ['product', 'xxs', $image->src])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
                             </a>
                         </li>
                     @endforeach
@@ -52,7 +52,7 @@
                                     data-magnific-type="inline"
                                     data-magnific-src="#photo360-popup"
                             >
-                                <img src="{{route('models.sizes.images.show', ['photo360', 'xxs', 'icon'])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
+                                <img src="{{route('getImage', ['photo360', 'xxs', 'icon'])}}" alt="Image" class="img-fluid img-thumbnail rounded-0" />
                             </a>
                         </li>
                             <div id="photo360-popup" class="photo360-popup mfp-hide">

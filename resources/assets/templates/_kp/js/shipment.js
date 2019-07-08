@@ -90,23 +90,23 @@ export default function Shipment(){
 
     function getMarkerOnMap(map, json) {
 
-        for(let company in json.points){
+        for(let company in json){
 
-            if(json.points.hasOwnProperty(company)){
+            if(json.hasOwnProperty(company)){
 
-                for(let terminalType in json.points[company]){
+                for(let terminalType in json[company].points){
 
-                    if(json.points[company].hasOwnProperty(terminalType)){
+                    if(json[company].points.hasOwnProperty(terminalType)){
 
-                        for( let terminal in json.points[company][terminalType] ){
+                        for( let terminal in json[company].points[terminalType] ){
 
-                            if(json.points[company][terminalType].hasOwnProperty(terminal)){
+                            if(json[company].points[terminalType].hasOwnProperty(terminal)){
 
-                                let geoShop = json.points[company][terminalType][terminal].geoCoordinates;
+                                let geoShop = json[company].points[terminalType][terminal].geoCoordinates;
 
                                 let locationShop = {lat: +geoShop.latitude, lng: +geoShop.longitude};
 
-                                let image = 'https://myshop.loc/storage/img/elements/delivery/' + company + '/marker-' + terminalType + '.png';
+                                let image = location.origin + '/' + json[company].mapMarker;
 
                                 let marker = new google.maps.Marker({position: locationShop, map: map, icon: image});
 
