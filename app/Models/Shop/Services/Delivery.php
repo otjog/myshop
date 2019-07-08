@@ -10,46 +10,38 @@ use App\Libraries\Delivery\Pochta;
 use App\Libraries\Delivery\CustomDelivery;
 use App\Libraries\Helpers\DeclesionsOfWord;
 use App\Models\Geo\GeoData;
+use App\Models\Site\Image;
 
 class Delivery extends Model
 {
-    protected $shipments;
-
-    protected $geoData;
-
-    public function __construct(array $attributes = [])
+    public function getPrices($parcel, $shipmentServiceAlias, $destinationType, $productIds)
     {
-        parent::__construct($attributes);
-
-        $this->shipments = new Shipment();
+        $shipments = new Shipment();
 
         $geo = new GeoData();
 
-        $this->geoData = $geo->getGeoData();
-    }
+        $geoData = $geo->getGeoData();
 
-    public function getPrices($parcel, $shipmentServiceAlias, $destinationType, $productIds){
-
-        $shipmentService = $this->shipments->getShipmentServiceByAlias($shipmentServiceAlias);
+        $shipmentService = $shipments->getShipmentServiceByAlias($shipmentServiceAlias);
 
         $parcelParameters = $this->getDeliveryDataFromRequest($parcel);
 
         switch ($shipmentServiceAlias) {
 
             case 'dpd'      :
-                $serviceObj = new Dpd($this->geoData);
+                $serviceObj = new Dpd($geoData);
                 break;
 
             case 'cdek'     :
-                $serviceObj = new Cdek($this->geoData);
+                $serviceObj = new Cdek($geoData);
                 break;
 
             case 'pochta'   :
-                $serviceObj = new Pochta($this->geoData);
+                $serviceObj = new Pochta($geoData);
                 break;
 
             case 'custom'   :
-                $serviceObj = new CustomDelivery($this->geoData, $productIds);
+                $serviceObj = new CustomDelivery($geoData, $productIds);
                 break;
 
             default : break; //todo сделать выход из foreach
@@ -72,19 +64,31 @@ class Delivery extends Model
 
     public function getPoints($shipmentServiceAlias)
     {
+        $shipments = new Shipment();
+
+        $shipment = $shipments->getShipmentServiceByAlias($shipmentServiceAlias);
+
+        $geo = new GeoData();
+
+        $geoData = $geo->getGeoData();
+
+        $image = new Image();
+
         $data = [];
 
         $serviceObj = null;
 
         switch ($shipmentServiceAlias) {
 
-            case 'dpd'  : $serviceObj = new Dpd( $this->geoData ); break;
+            case 'dpd'  : $serviceObj = new Dpd($geoData); break;
 
-            case 'cdek' : $serviceObj = new Cdek( $this->geoData ); break;
+            case 'cdek' : $serviceObj = new Cdek($geoData); break;
         }
 
         if ($serviceObj !== null) {
-            $data['points'][$shipmentServiceAlias] = $serviceObj->getPointsInCity();
+            $data[$shipmentServiceAlias]['points'] = $serviceObj->getPointsInCity();
+            $data[$shipmentServiceAlias]['mapMarker'] = $image->getSrcImage('default', 'marker', $shipment[0]->images[0]->src, $shipment[0]->id, 'png');
+
         }
 
         return $data;

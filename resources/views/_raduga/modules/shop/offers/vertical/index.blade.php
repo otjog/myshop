@@ -10,13 +10,13 @@
                         @if( isset($product->images[0]->src) && $product->images[0]->src !== null )
                             <img
                                     class="img-fluid"
-                                    src="{{route('models.sizes.images.show', ['product', 's', $product->images[0]->src])}}"
+                                    src="{{route('getImage', ['product', 's', $product->images[0]->src])}}"
                                     alt="product"
                             />
                         @else
                             <img
                                     class="img-fluid"
-                                    src="{{route('models.sizes.images.show', ['product', 's', 'no_image.jpg'])}}"
+                                    src="{{route('getImage', ['product', 's', 'no_image.jpg'])}}"
                                     alt="product"
                             />
                         @endif

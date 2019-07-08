@@ -57165,15 +57165,21 @@ $(".image_selected a").click(function () {
   return false;
 }); //обрежем высоту галереи по высоте основного изображения. !!!Временное решение
 
-var mainImg = $("div.single_product div.image_selected");
-var listThumb = $("div.single_product ul.image_list");
-var mainImgOutHeight = mainImg.outerHeight();
-var listThumbOutHeight = listThumb.outerHeight();
+var mainImg = $("div.single_product div.image_selected img");
 
-if (listThumbOutHeight > mainImgOutHeight) {
-  var listThumbHeight = listThumb.height();
-  var diff = listThumbOutHeight - mainImgOutHeight;
-  listThumb.height(listThumbHeight - diff).css('overflow', 'hidden');
+if (mainImg[0] !== undefined && mainImg[0] !== null) {
+  mainImg[0].addEventListener('load', function () {
+    var mainImgWrap = $("div.single_product div.image_selected");
+    var listThumb = $("div.single_product ul.image_list");
+    var mainImgOutHeight = mainImgWrap.outerHeight();
+    var listThumbOutHeight = listThumb.outerHeight();
+
+    if (listThumbOutHeight > mainImgOutHeight) {
+      var listThumbHeight = listThumb.height();
+      var diff = listThumbOutHeight - mainImgOutHeight;
+      listThumb.height(listThumbHeight - diff).css('overflow', 'hidden');
+    }
+  });
 } //END FancyBox
 //Tabs
 
@@ -73291,18 +73297,18 @@ function Shipment() {
   }
 
   function getMarkerOnMap(map, json) {
-    for (var company in json.points) {
-      if (json.points.hasOwnProperty(company)) {
-        for (var terminalType in json.points[company]) {
-          if (json.points[company].hasOwnProperty(terminalType)) {
-            for (var terminal in json.points[company][terminalType]) {
-              if (json.points[company][terminalType].hasOwnProperty(terminal)) {
-                var geoShop = json.points[company][terminalType][terminal].geoCoordinates;
+    for (var company in json) {
+      if (json.hasOwnProperty(company)) {
+        for (var terminalType in json[company].points) {
+          if (json[company].points.hasOwnProperty(terminalType)) {
+            for (var terminal in json[company].points[terminalType]) {
+              if (json[company].points[terminalType].hasOwnProperty(terminal)) {
+                var geoShop = json[company].points[terminalType][terminal].geoCoordinates;
                 var locationShop = {
                   lat: +geoShop.latitude,
                   lng: +geoShop.longitude
                 };
-                var image = 'https://myshop.loc/storage/img/elements/delivery/' + company + '/marker-' + terminalType + '.png';
+                var image = location.origin + '/' + json[company].mapMarker;
                 var marker = new google.maps.Marker({
                   position: locationShop,
                   map: map,
