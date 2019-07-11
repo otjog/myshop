@@ -2,7 +2,17 @@
     <div class="row p-2 border-bottom">
 
         <div class="col-1">
-            <img src="{{ '/storage/img/elements/delivery/' . $global_data['ajax']['alias'] . '/' . $global_data['ajax']['alias'] .'_logo.jpg' }}" class="img-fluid">
+            @php
+                if (count($global_data['ajax']->images) > 0)
+                    $imageSrc = $global_data['ajax']->images[0]->src;
+                else
+                    $imageSrc = 'noimage';
+            @endphp
+            <img
+                    class="img-fluid"
+                    src="{{route('getImage', ['default', 'xxs', $imageSrc, $global_data['ajax']->id])}}"
+                    alt="{{$global_data['ajax']->images[0]->alt or $global_data['ajax']->name}}"
+            />
         </div>
 
         <div class="col-5">
