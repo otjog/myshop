@@ -1,4 +1,3 @@
-
 @if(isset($shipment) && count($shipment) > 0 && $shipment !== null)
     @include( $global_data['template']['name'] . '.modules.elements.progress',
                        ['msg' => 'Рассчитываем доставку..'])

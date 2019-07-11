@@ -31,8 +31,8 @@ class Image extends Model
     protected function getRelatedModelsIfNotImages($model){
         $data = [
             'category' => [
-                'modelPath' => 'App\Models\Shop\Product\Product',
-                'relatedName' => 'category'
+                'App\Models\Shop\Product\Product', //Path to Model
+                'category'  //model name (related)
             ]
         ];
 

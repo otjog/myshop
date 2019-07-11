@@ -13,7 +13,7 @@ export default function Shipment(){
 
             let queryString = setQueryString(parcelAttributes);
 
-            queryString += setQueryString(offers.qsParams, queryString);
+            queryString = setQueryString(offers.qsParams, queryString);
 
             let requests = offers.elements.wrapBlock.getElementsByClassName('reload');
 
@@ -90,30 +90,33 @@ export default function Shipment(){
 
     function getMarkerOnMap(map, json) {
 
+        console.log(json);
+
         for(let company in json){
 
             if(json.hasOwnProperty(company)){
 
-                for(let terminalType in json[company].points){
+                for(let i in json[company].points){
 
-                    if(json[company].points.hasOwnProperty(terminalType)){
+                    if(json[company].points.hasOwnProperty(i)){
 
-                        for( let terminal in json[company].points[terminalType] ){
+                        let geoShop = json[company].points[i].geoCoordinates;
 
-                            if(json[company].points[terminalType].hasOwnProperty(terminal)){
+                        let locationShop = {lat: +geoShop.latitude, lng: +geoShop.longitude};
 
-                                let geoShop = json[company].points[terminalType][terminal].geoCoordinates;
+                        let image = location.origin + '/' + json[company].mapMarker;
 
-                                let locationShop = {lat: +geoShop.latitude, lng: +geoShop.longitude};
+                        let point = json[company].points[i];
 
-                                let image = location.origin + '/' + json[company].mapMarker;
+                        let infowindow = new google.maps.InfoWindow({
+                            content: point.markerInfo
+                        });
 
-                                let marker = new google.maps.Marker({position: locationShop, map: map, icon: image});
+                        let marker = new google.maps.Marker({position: locationShop, map: map, icon: image});
 
-                            }
-
-                        }
-
+                        marker.addListener('click', function() {
+                            infowindow.open(map, marker);
+                        });
 
                     }
 
