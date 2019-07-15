@@ -88,7 +88,6 @@ class Delivery extends Model
         if ($serviceObj !== null) {
             $data[$shipmentServiceAlias]['points'] = $serviceObj->getPointsInCity();
             $data[$shipmentServiceAlias]['mapMarker'] = $image->getSrcImage('default', 'marker', $shipment[0]->images[0]->src, $shipment[0]->id, 'png');
-
         }
 
         return $data;

@@ -14,7 +14,6 @@
                     @include( $global_data['template']['name'] .'.modules.shop.shipment._reload.offer-show')
                 </div>
             @endforeach
-
         </div>
         <div class="my-4">
             <h3 class="text-center">Курьерская доставка до дверей</h3>
@@ -28,7 +27,6 @@
                     @include( $global_data['template']['name'] .'.modules.shop.shipment._reload.offer-show')
                 </div>
             @endforeach
-
         </div>
     </div>
 

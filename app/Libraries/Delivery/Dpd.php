@@ -49,6 +49,36 @@ class Dpd {
         ],
     ];
 
+    private $dpdOptions = [
+        'ОЖД' => [
+            'desc' => 'Примерка/проверка',
+            'params' => [
+                'reason_delay' => [
+                    'ПРОС' => 'Внешний осмотр',
+                    'ПРИМ' => 'С примеркой',
+                    'РАБТ' => 'Проверка работоспособности',
+                ]
+            ]
+        ],
+        'НПП' => [
+            'desc' => 'Наложенный платеж',
+            'params' => [
+                'sum_npp' => 'Макс.сумма'
+            ]
+        ],
+        'ТРМ' => [
+            'desc' => 'Температурный режим'
+        ],
+        'Payment' => [
+            'desc' => 'Оплата наличными'
+        ],
+        'PaymentByBankCard' => [
+            'desc' => 'Оплата картой'
+        ],
+        'SelfPickup' => [], // если нет значения desc, то не будет учитываться в опциях
+        'SelfDelivery' => []
+    ];
+
     private $message;
 
     private $geoData;
@@ -98,24 +128,27 @@ class Dpd {
         return $data;
     }
 
-    public function getPointsInCity(){
+    public function getPointsInCity()
+    {
+        $data = [];
 
-        $points = [];
+        $points = $this->getParcelShops();
 
-        $points['shops'] =  $this->getParcelShops();
+        foreach ($points as $point) {
 
-        $points['terminals'] =  $this->getTerminals();
+            $dataMarker = [
+                'title' => $this->getNamePoint($point->brand, $point->parcelShopType),
+                'address' => $this->getAddressPoint($point->address),
+                'timeTable' => $this->getTimeTablePoint($point->schedule),
+                'options' => $this->getOptionsPoint($point->extraService, $point->schedule),
+            ];
 
-        return $points;
-
-    }
-
-    private function getTerminals(){
-
-        $services = $this->getDpdData( 'getTerminalsSelfDelivery2' );
-
-        return $services->terminal;
-
+            $data[] = [
+                'geoCoordinates' => $point->geoCoordinates,
+                'markerInfo' => view('_kp.modules.shop.shipment._elements.marker', ['point' => $dataMarker])->render(),
+            ];
+        }
+        return $data;
     }
 
     private function getParcelShops(){
@@ -281,11 +314,117 @@ class Dpd {
 
     }
 
-    private function destinationDelivery($selfDelivery){
-        if($selfDelivery)
-            return ' до пункта выдачи';
-        else
-            return ' до адреса клиента';
+    private function getAddressPoint($addressObj)
+    {
+        $address = '';
+        if (isset($addressObj->cityName))
+            $address .= $addressObj->cityName . ', ';
+        if (isset($addressObj->streetAbbr))
+            $address .= $addressObj->streetAbbr . '.';
+        if (isset($addressObj->street))
+            $address .= $addressObj->street . ' ';
+        if (isset($addressObj->houseNo))
+            $address .= 'д.' . $addressObj->houseNo . ' ';
+        if (isset($addressObj->building))
+            $address .= 'корп.' . $addressObj->building;
+        if (isset($addressObj->structure))
+            $address .= 'стр.' . $addressObj->structure;
+        if (isset($addressObj->ownership))
+            $address .= 'влад.' . $addressObj->ownership;
+        return $address;
+
+    }
+
+    private function getTimeTablePoint($pointSchedule)
+    {
+        $timeTable = [];
+        if (is_array($pointSchedule)) {
+            $shedulesArray = $pointSchedule;
+        } else {
+            $shedulesArray[] = $pointSchedule;
+        }
+
+        foreach ($shedulesArray as $schedule) {
+            if ($schedule->operation === "SelfDelivery") {
+
+                $timeTableArray = [];
+
+                if (is_array($schedule->timetable))
+                    $timeTableArray = $schedule->timetable;
+                else
+                    $timeTableArray[] = $schedule->timetable;
+
+
+                foreach ($timeTableArray as $daysRange) {
+                    $days = explode(',', $daysRange->weekDays);
+                    foreach ($days as $day) {
+                        $timeTable[] = [
+                            'day' => $day,
+                            'time' => $daysRange->workTime
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $timeTable;
+    }
+
+    private function getOptionsPoint($services, $schedule)
+    {
+        $data = [];
+        foreach ($services as $service) {
+            $dataService = [];
+            if(is_object($service)){
+                $dataService['desc'] = $this->dpdOptions[$service->esCode]['desc'];
+                if (isset($this->dpdOptions[$service->esCode]['params'])) {
+
+                    foreach ($this->dpdOptions[$service->esCode]['params'] as $key=>$param) {
+                        if ($service->params->name === $key) {
+                            if (is_array($this->dpdOptions[$service->esCode]['params'][$key])) {
+
+                                $values = explode(', ', $service->params->value);
+
+                                foreach ($values as $value) {
+                                    $dataService['params'][] = $this->dpdOptions[$service->esCode]['params'][$key][$value];
+                                }
+
+                            } else {
+                                $dataService['params'][$param] = $service->params->value;
+                            }
+                        }
+                    }
+
+
+                }
+                $data[] = $dataService;
+            }
+        }
+
+        foreach ($schedule as $serviceSchedule) {
+            if(is_object($serviceSchedule)) {
+                if(isset($this->dpdOptions[$serviceSchedule->operation]['desc'])){
+                    $data[] = [
+                        'desc' => $this->dpdOptions[$serviceSchedule->operation]['desc']
+                    ];
+                }
+            }
+        }
+        return $data;
+    }
+
+    private function getNamePoint($brand, $type)
+    {
+        $title = 'DPD';
+        if($brand !== 'DPD'){
+            if($type === 'П')
+                $title .= ' : Постамат - '. $brand;
+            else
+                $title .= ' : Партнер - '. $brand;
+        } else {
+            $title .= ' : Основной терминал';
+        }
+        return $title;
     }
 
 }

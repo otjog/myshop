@@ -40,8 +40,8 @@ class Cdek {
 
     private $destinationType;
 
-    public function __construct($geoData){
-
+    public function __construct($geoData)
+    {
         $this->geoData = $this->prepareGeoData($geoData);
 
         $this->clientAuthData     = [
@@ -63,8 +63,8 @@ class Cdek {
 
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType){
-
+    public function getDeliveryCost($parcelParameters, $destinationType)
+    {
         $this->destinationType = $destinationType;
 
         $parcelParameters = $this->getParcelParameters($parcelParameters);
@@ -90,14 +90,27 @@ class Cdek {
         return $data;
     }
 
-    public function getPointsInCity(){
+    public function getPointsInCity()
+    {
+        $data = [];
 
-        $points = [];
+        $points = $this->getParcelShops();
 
-        $points['shops'] =  $this->getParcelShops();
+        foreach ($points as $point) {
+            $dataMarker = [
+                'title' => $this->getNamePoint($point),
+                'address' => $this->getAddressPoint($point->City, $point->Address),
+                'timeTable' => $this->getTimeTablePoint($point->WorkTime),
+                'options' => $this->getOptionsPoint($point),
+            ];
 
-        return $points;
+            $data[] = [
+                'geoCoordinates' => $this->getGeoCoordinates($point->coordX, $point->coordY),
+                'markerInfo' => view('_kp.modules.shop.shipment._elements.marker', ['point' => $dataMarker])->render(),
+            ];
+        }
 
+        return $data;
     }
 
     private function getServiceCost($parcelParameters, $tariffs){
@@ -151,7 +164,8 @@ class Cdek {
 
         foreach($rawPoints as $key=> $point){
 
-            $points[] = $this->prepareResponse($point->attributes());
+            //$points[] = $this->prepareResponse($point->attributes());
+            $points[] = $point->attributes();
 
         }
 
@@ -256,10 +270,6 @@ class Cdek {
                         $response['days'] = (string)$value;
                     }
                     break;
-
-                //Points
-                case 'coordX'   : $response['geoCoordinates']['longitude']  = json_decode($value); break;
-                case 'coordY'   : $response['geoCoordinates']['latitude']   = json_decode($value); break;
             }
         }
 
@@ -281,4 +291,106 @@ class Cdek {
         return $query;
     }
 
+    private function getAddressPoint($city, $address)
+    {
+        $address = $city . ', ' . $address;
+
+        return $address;
+    }
+
+    private function getTimeTablePoint($schedule)
+    {
+        $timeTable = [];
+
+        $timeTableArray = explode(', ', $schedule);
+
+        $weekDaysArray = [
+            'Пн' => 0,
+            'Вт' => 1,
+            'Ср' => 2,
+            'Чт' => 3,
+            'Пт' => 4,
+            'Сб' => 5,
+            'Вс' => 6,
+        ];
+
+        foreach ($timeTableArray as $rangeArray) {
+
+            list($days, $workTime) = explode(' ', $rangeArray);
+
+            $daysArray = explode('-', $days);
+
+            if (count($daysArray) === 1) {
+                $daysArray[1] = $daysArray[0];
+            }
+
+            $startDay = $daysArray[0]; //Пт
+            $endDay = $daysArray[1]; //Вс
+
+            $startIndex = $weekDaysArray[$startDay]; //4
+            $endIndex = $weekDaysArray[$endDay]; //6
+
+            for ($i = $startIndex; $i <= $endIndex; $i++) {
+
+                $dayName = array_search($i, $weekDaysArray);
+
+                $timeTable[$i] = [
+                    'day' => $dayName,
+                    'time' => $workTime
+                ];
+            }
+
+        }
+
+        if (count($timeTable) < 7) {
+            for ($i=0; $i <=6; $i++) {
+                if (!isset($timeTable[$i])) {
+                    $dayName = array_search($i, $weekDaysArray);
+                    $timeTable[$i] = [
+                        'day' => $dayName,
+                        'time' => 'Выходной'
+                    ];
+                }
+            }
+        }
+
+        return $timeTable;
+    }
+
+    private function getGeoCoordinates($coordX, $coordY)
+    {
+        return [
+            'longitude' => (string)json_decode($coordX),
+            'latitude' => (string)json_decode($coordY),
+        ];
+    }
+
+    private function getOptionsPoint($point)
+    {
+        $data = [];
+
+        if($point->isDressingRoom)
+            $data[] = ['desc'=>'Примерка/Проверка'];
+        if($point->AllowedCod)
+            $data[] = ['desc'=>'Наложенный платеж'];
+        if($point->HaveCashless)
+            $data[] = ['desc'=>'Оплата картой'];
+        $data[] = ['desc'=>'Оплата наличными'];
+
+        return $data;
+    }
+
+    private function getNamePoint($point)
+    {
+        $title = 'CDEK : ';
+        if($point->Type == 'PVZ')
+            $title .= 'Пункт выдачи ';
+        elseif($point->Type == 'POSTOMAT')
+            $title .= 'Постомат ';
+
+        if($point->ownerCode === 'InPost')
+            $title .= 'InPost ';
+
+        return $title;
+    }
 }

@@ -73246,7 +73246,7 @@ function Shipment() {
     if (offers.elements.wrapBlock !== null && offers.elements.wrapBlock !== undefined) {
       var parcelAttributes = offers.elements.wrapBlock.attributes;
       var queryString = setQueryString(parcelAttributes);
-      queryString += setQueryString(offers.qsParams, queryString);
+      queryString = setQueryString(offers.qsParams, queryString);
       var requests = offers.elements.wrapBlock.getElementsByClassName('reload');
       allRequestCount = requests.length;
 
@@ -73299,23 +73299,28 @@ function Shipment() {
   function getMarkerOnMap(map, json) {
     for (var company in json) {
       if (json.hasOwnProperty(company)) {
-        for (var terminalType in json[company].points) {
-          if (json[company].points.hasOwnProperty(terminalType)) {
-            for (var terminal in json[company].points[terminalType]) {
-              if (json[company].points[terminalType].hasOwnProperty(terminal)) {
-                var geoShop = json[company].points[terminalType][terminal].geoCoordinates;
-                var locationShop = {
-                  lat: +geoShop.latitude,
-                  lng: +geoShop.longitude
-                };
-                var image = location.origin + '/' + json[company].mapMarker;
-                var marker = new google.maps.Marker({
-                  position: locationShop,
-                  map: map,
-                  icon: image
-                });
-              }
-            }
+        for (var i in json[company].points) {
+          if (json[company].points.hasOwnProperty(i)) {
+            (function () {
+              var geoShop = json[company].points[i].geoCoordinates;
+              var locationShop = {
+                lat: +geoShop.latitude,
+                lng: +geoShop.longitude
+              };
+              var image = location.origin + '/' + json[company].mapMarker;
+              var point = json[company].points[i];
+              var infowindow = new google.maps.InfoWindow({
+                content: point.markerInfo
+              });
+              var marker = new google.maps.Marker({
+                position: locationShop,
+                map: map,
+                icon: image
+              });
+              marker.addListener('click', function () {
+                infowindow.open(map, marker);
+              });
+            })();
           }
         }
       }

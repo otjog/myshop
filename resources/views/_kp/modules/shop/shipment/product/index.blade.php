@@ -20,6 +20,4 @@
         @include($global_data['template']['name'] . '.modules.shop.shipment._elements.points')
     </div>
 
-
-
 </div>
