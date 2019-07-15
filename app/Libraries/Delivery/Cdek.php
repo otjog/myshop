@@ -374,7 +374,8 @@ class Cdek {
         if($point->AllowedCod)
             $data[] = ['desc'=>'Наложенный платеж'];
         if($point->HaveCashless)
-            $data[] = ['desc'=>'Оплата в пункте'];
+            $data[] = ['desc'=>'Оплата картой'];
+        $data[] = ['desc'=>'Оплата наличными'];
 
         return $data;
     }

@@ -90,8 +90,6 @@ export default function Shipment(){
 
     function getMarkerOnMap(map, json) {
 
-        console.log(json);
-
         for(let company in json){
 
             if(json.hasOwnProperty(company)){
@@ -402,6 +400,5 @@ export default function Shipment(){
 
         };
     }
-
 
 }

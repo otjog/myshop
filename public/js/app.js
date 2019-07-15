@@ -73297,8 +73297,6 @@ function Shipment() {
   }
 
   function getMarkerOnMap(map, json) {
-    console.log(json);
-
     for (var company in json) {
       if (json.hasOwnProperty(company)) {
         for (var i in json[company].points) {
