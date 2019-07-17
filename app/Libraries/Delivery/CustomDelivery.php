@@ -4,22 +4,19 @@ namespace App\Libraries\Delivery;
 
 use App\Models\Shop\Product\Product;
 
-class CustomDelivery {
+class CustomDelivery
+{
+    private $geoData;
 
-    protected $product;
-
-    protected $productIds;
-
-    public function __construct($geoData, $productIds)
+    public function __construct($geoData)
     {
-        $this->productIds = explode('|', $productIds);
-
-        $this->product = new Product();
-
+        $this->geoData = $geoData;
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType)
+    public function getDeliveryCost($parcelParameters, $destinationType, $productIds)
     {
+        $productIdsArray = explode('|', $productIds);
+
         /*
          * Мы создали параметр товара: Бесплатная доставка _free_ship_
          * Если у товара есть этот параметр, то:
@@ -29,7 +26,7 @@ class CustomDelivery {
          */
         if($destinationType === 'toTerminal'){
 
-            if($this->existsFreeShipProduct()){
+            if($this->existsFreeShipProduct($productIdsArray)){
                 return [
                     "type" => "toTerminal",
                     "price" => 0,
@@ -46,10 +43,12 @@ class CustomDelivery {
         return [];
     }
 
-    private function existsFreeShipProduct()
+    private function existsFreeShipProduct($productIdsArray)
     {
-        $products = $this->product
-            ->whereIn('id', $this->productIds)
+        $productModel = new Product();
+
+        $products = $productModel
+            ->whereIn('id', $productIdsArray)
             ->whereHas('parameters', function ($query) {
                 $query->where('alias', '_free_delivery_');
             })

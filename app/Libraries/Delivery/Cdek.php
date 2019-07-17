@@ -63,7 +63,7 @@ class Cdek {
 
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType)
+    public function getDeliveryCost($parcelParameters, $destinationType, $productIds)
     {
         $this->destinationType = $destinationType;
 

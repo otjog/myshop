@@ -103,26 +103,28 @@ class Dpd {
 
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType){
-
+    public function getDeliveryCost ($parcelParameters, $destinationType, $productIds)
+    {
         $this->destinationType = $destinationType;
 
         $data = [];
 
-        switch($this->destinationType){
-            case 'toTerminal'   : $selfDelivery = true; break;
-            case 'toDoor'       : $selfDelivery = false; break;
-            default :   break;
+        switch ($this->destinationType) {
+            case 'toTerminal' :
+                $selfDelivery = true;
+                break;
+            case 'toDoor' :
+                $selfDelivery = false;
+                break;
         }
 
         $services = $this->getServiceCost($parcelParameters, $selfDelivery);
 
-        if( count($services) > 0 ){
+        if ($services !== false && count($services) > 0) {
 
             $optimalService = $this->getOptimalService($services);
 
             $data = $this->prepareResponse($optimalService);
-
         }
 
         return $data;
@@ -192,8 +194,8 @@ class Dpd {
 
     }
 
-    private function connectDpd( $method_name ){
-
+    private function connectDpd($method_name)
+    {
         $service = $this->dpdServices[$method_name]['service_name'];
 
         if ( !$service ) {
@@ -401,9 +403,14 @@ class Dpd {
             }
         }
 
-        foreach ($schedule as $serviceSchedule) {
-            if(is_object($serviceSchedule)) {
-                if(isset($this->dpdOptions[$serviceSchedule->operation]['desc'])){
+        if (isset($schedule->operation))
+            $scheduleArrayService = [$schedule];
+        else
+            $scheduleArrayService = $schedule;
+
+        foreach ($scheduleArrayService as $serviceSchedule) {
+            if (is_object($serviceSchedule)) {
+                if (isset($this->dpdOptions[$serviceSchedule->operation]['desc'])) {
                     $data[] = [
                         'desc' => $this->dpdOptions[$serviceSchedule->operation]['desc']
                     ];

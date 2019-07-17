@@ -73546,6 +73546,7 @@ function Shipment() {
         },
         onreadystatechange: function onreadystatechange(self, ajaxReq) {
           var json = JSON.parse(ajaxReq.req.responseText);
+          console.log(json);
           getMarkerOnMap(self.map, json);
           self.elements.loadingBlock[0].style.display = 'none';
           self.elements.errorBlock[0].style.display = 'none';

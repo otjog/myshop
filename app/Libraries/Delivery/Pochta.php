@@ -43,7 +43,7 @@ class Pochta {
 
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType){
+    public function getDeliveryCost($parcelParameters, $destinationType, $productIds){
 
         $this->destinationType = $destinationType;
 
@@ -69,6 +69,11 @@ class Pochta {
         }else{
             return [];
         }
+    }
+
+    public function getPointsInCity()
+    {
+        return [];
     }
 
     private function getServiceCost($parcelParameters, $postalTypes){
