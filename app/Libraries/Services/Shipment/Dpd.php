@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Libraries\Delivery;
+namespace App\Libraries\Services\Shipment;
 
+use App\Libraries\Services\Shipment\Contracts\ShipmentServices;
 use SoapClient;
 use Exception;
 
-class Dpd {
-
+class Dpd implements ShipmentServices
+{
     private $soapClient;
 
     private $clientNumber;
@@ -103,7 +104,7 @@ class Dpd {
 
     }
 
-    public function getDeliveryCost ($parcelParameters, $destinationType, $productIds)
+    public function getDeliveryCost ($parcelData, $destinationType)
     {
         $this->destinationType = $destinationType;
 
@@ -118,7 +119,7 @@ class Dpd {
                 break;
         }
 
-        $services = $this->getServiceCost($parcelParameters, $selfDelivery);
+        $services = $this->getServiceCost($parcelData, $selfDelivery);
 
         if ($services !== false && count($services) > 0) {
 
@@ -169,7 +170,7 @@ class Dpd {
 
     }
 
-    private function getServiceCost($parcelParameters, $selfDelivery = true, $serviceCode = null){
+    private function getServiceCost($parcelData, $selfDelivery = true, $serviceCode = null){
 
         $data = [
             'pickup' => [
@@ -180,8 +181,8 @@ class Dpd {
             'delivery' => $this->geoData,
             'selfPickup' => true, //Доставка от терминала
             'selfDelivery' => $selfDelivery, //Доставка До терминала
-            'parcel' => $parcelParameters,
-            //'declaredValue' => 1000
+            'parcel' => $parcelData['parcel'],
+            'declaredValue' => $parcelData['declaredValue']
         ];
 
         if($serviceCode !== null){
@@ -303,7 +304,7 @@ class Dpd {
             switch($key){
                 case 'serviceCode'  : $response['service_id']   = $value; break;
                 case 'days'         : $response['days']         = $value; break;
-                case 'cost'         : $response['price']        = $value; break;
+                case 'cost'         : $response['price']        = round($value, 0); break;
             }
         }
 

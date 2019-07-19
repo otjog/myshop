@@ -2,29 +2,32 @@
 
 namespace App\Models\Shop\Services;
 
+use App\Models\Shop\Order\Basket;
+use App\Models\Shop\Order\Order;
 use App\Models\Shop\Order\Shipment;
+use App\Models\Shop\Product\Product;
 use Illuminate\Database\Eloquent\Model;
-use App\Libraries\Delivery\Dpd;
-use App\Libraries\Delivery\Cdek;
-use App\Libraries\Delivery\Pochta;
-use App\Libraries\Delivery\CustomDelivery;
+use App\Libraries\Services\Shipment\Dpd;
+use App\Libraries\Services\Shipment\Cdek;
+use App\Libraries\Services\Shipment\Pochta;
+use App\Libraries\Services\Shipment\CustomDelivery;
 use App\Libraries\Helpers\DeclesionsOfWord;
 use App\Models\Geo\GeoData;
 use App\Models\Site\Image;
 
 class ShipmentService extends Model
 {
-    public function getPrices($parcel, $shipmentServiceAlias, $destinationType, $productIds)
+    public function getPrices($shipmentData)
     {
         $shipments = new Shipment();
 
-        $shipmentService = $shipments->getShipmentServiceByAlias($shipmentServiceAlias);
+        $shipmentService = $shipments->getShipmentServiceByAlias($shipmentData['alias']);
 
-        $parcelParameters = $this->getDeliveryDataFromRequest($parcel);
+        $shipmentData['parcel_data'] = $this->getParcelParameters($shipmentData['parcel_data']);
 
-        $serviceObj = $this->getServiceObject($shipmentServiceAlias);
+        $serviceObj = $this->getServiceObject($shipmentData['alias']);
 
-        $data = $serviceObj->getDeliveryCost($parcelParameters, $destinationType, $productIds);
+        $data = $serviceObj->getDeliveryCost($shipmentData['parcel_data'], $shipmentData['type']);
 
         if ( count($data) > 0 ) {
 
@@ -123,5 +126,10 @@ class ShipmentService extends Model
             $maxDay = (int)$daysArray[0];
 
         return DeclesionsOfWord::make($maxDay, ['день', 'дня', 'дней']);
+    }
+
+    private function getParcelParameters($json)
+    {
+        return json_decode($json, true);
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Libraries\Delivery;
+namespace App\Libraries\Services\Shipment;
 
+use App\Libraries\Services\Shipment\Contracts\ShipmentServices;
 
-class Pochta {
-
+class Pochta implements ShipmentServices
+{
     private $apiToken;
 
     private $clientKey;
@@ -43,8 +44,8 @@ class Pochta {
 
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType, $productIds){
-
+    public function getDeliveryCost($parcelData, $destinationType)
+    {
         $this->destinationType = $destinationType;
 
         $data = [];
@@ -55,9 +56,9 @@ class Pochta {
                 "POSTAL_PARCEL",
             ];
 
-            $services = $this->getServiceCost( $parcelParameters, $postalTypes );
+            $services = $this->getServiceCost($parcelData, $postalTypes);
 
-            if( count($services) > 0 ){
+            if(count($services) > 0){
 
                 $optimalService = $this->getOptimalService($services);
 
@@ -76,7 +77,7 @@ class Pochta {
         return [];
     }
 
-    private function getServiceCost($parcelParameters, $postalTypes){
+    private function getServiceCost($parcelData, $postalTypes){
 
         $dimension  = [
             "height"    => 0,
@@ -85,7 +86,7 @@ class Pochta {
             "weight"    => 1
         ];
 
-        foreach($parcelParameters as $parcel){
+        foreach($parcelData['parcel'] as $parcel){
 
             $dimension['height'] += (int)$parcel['height'] * (int)$parcel['quantity'];
             $dimension['length'] += (int)$parcel['length'];
@@ -103,7 +104,7 @@ class Pochta {
         if( ($mass/1000) < $this->maxMass && $volume < $this->maxVolume ){
             $data       = [
                 "courier"               => false,
-                "declared-value"        => 0,
+                "declared-value"        => (int)$parcelData['declaredValue']*100,
                 "dimension"             => $dimension,
                 "fragile"               => false,
                 "index-from"            => $this->indexFrom,
@@ -112,7 +113,7 @@ class Pochta {
                 "mass"                  => $mass,
                 "payment-method"        => "CASHLESS",
                 "with-order-of-notice"  => false,
-                "with-simple-notice"    => false
+                "with-simple-notice"    => false,
             ];
 
             foreach ($postalTypes as $postalType){

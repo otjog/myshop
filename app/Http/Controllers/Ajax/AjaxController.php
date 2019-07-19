@@ -37,7 +37,7 @@ class AjaxController extends Controller{
 
                     $ds = new ShipmentService();
 
-                    $this->data = $ds->getPrices($this->request['parcel'], $this->request['alias'], $this->request['type'], $this->request['product_ids']);
+                    $this->data = $ds->getPrices($this->request);
 
                     break;
 

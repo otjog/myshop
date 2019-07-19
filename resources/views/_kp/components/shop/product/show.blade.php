@@ -4,6 +4,7 @@
 
     <?php
         $product =& $global_data['shop']['product'];
+        $parcelData =& $global_data['shop']['parcelData'];
     ?>
 
     <div class="single_product">
