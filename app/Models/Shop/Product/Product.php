@@ -94,7 +94,6 @@ class Product extends Model{
 
             if( isset($products[0])){
                 $products = $this->addRelationCollections($products);
-
                 return $products[0];
             }else{
                 return null;
@@ -432,31 +431,34 @@ class Product extends Model{
 
     }
 
-    public function getParcelParameters($products){
+    public function getJsonParcelParameters($products)
+    {
+        $parcelData = [
+            'products_id' => [],
+            'parcel' => [],
+            'declaredValue' => 0
+        ];
 
-        $parameters = [];
-
-        foreach($products as $key=>$product){
-
-            $parameters[] = $this->getParametersForParcel($product);
-
+        foreach ($products as $product) {
+            $parcelData['products_id'][] = $product->id;
+            $parcelData['parcel'][] = $this->getParametersForParcel($product);
+            $parcelData['declaredValue'] += $product->price['value'];
         }
 
-        return $parameters;
+        return json_encode($parcelData);
     }
 
-    private function getParametersForParcel($product, $quantity = 1){
+    private function getParametersForParcel($product){
 
-        if( isset($product->baskets['pivot']['quantity']) ){
-            $quantity = $product->baskets['pivot']['quantity'];
-        }
+        if(!isset($product->quantity) && $product->quantity === null)
+            $product->quantity = 1;
 
         return [
-            'weight'    => $product['weight'],
-            'length'    => $product['length'],
-            'width'     => $product['width'],
-            'height'    => $product['height'],
-            'quantity'  => $quantity,
+            'weight'    => $product->weight,
+            'length'    => $product->length,
+            'width'     => $product->width,
+            'height'    => $product->height,
+            'quantity'  => $product->quantity,
 
         ];
     }

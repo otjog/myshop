@@ -8,8 +8,9 @@
             @foreach($shipment as $service)
                 <div class="reload"
                      data-alias="{{$service['alias']}}"
+                     data-view="offer-checkbox"
+                     data-parcel_data="{{$parcelData}}"
                      data-type="toTerminal"
-                     data-product_ids="{{$productIds}}"
                 >
                     @include( $global_data['template']['name'] .'.modules.shop.shipment._reload.offer-checkbox')
                 </div>
@@ -21,8 +22,9 @@
             @foreach($shipment as $service)
                 <div class="reload"
                      data-alias="{{$service['alias']}}"
+                     data-view="offer-checkbox"
+                     data-parcel_data="{{$parcelData}}"
                      data-type="toDoor"
-                     data-product_ids="{{$productIds}}"
                 >
                     @include( $global_data['template']['name'] .'.modules.shop.shipment._reload.offer-checkbox')
                 </div>

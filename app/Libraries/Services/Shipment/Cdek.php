@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Libraries\Delivery;
+namespace App\Libraries\Services\Shipment;
 
+use App\Libraries\Services\Shipment\Contracts\ShipmentServices;
 use SimpleXMLElement;
 
-class Cdek {
-
+class Cdek implements ShipmentServices
+{
     private $test;
 
     private $clientAuthData;
@@ -63,21 +64,24 @@ class Cdek {
 
     }
 
-    public function getDeliveryCost($parcelParameters, $destinationType)
+    public function getDeliveryCost($parcelData, $destinationType)
     {
         $this->destinationType = $destinationType;
 
-        $parcelParameters = $this->getParcelParameters($parcelParameters);
+        $parcelData['parcel'] = $this->getParcelParameters($parcelData['parcel']);
 
         $data = [];
 
         switch($this->destinationType){
-            case 'toTerminal'   :   $tariffs = ['136', '5', '10', '15', '62', '63']; break;
-            case 'toDoor'       :   $tariffs = ['137', '12', '16']; break;
-            default :   break;
+            case 'toTerminal' :
+                $tariffs = ['136', '5', '10', '15', '62', '63'];
+                break;
+            case 'toDoor' :
+                $tariffs = ['137', '12', '16'];
+                break;
         }
 
-        $services = $this->getServiceCost($parcelParameters, $tariffs);
+        $services = $this->getServiceCost($parcelData, $tariffs);
 
         if( count($services) > 0 ){
 
@@ -113,7 +117,7 @@ class Cdek {
         return $data;
     }
 
-    private function getServiceCost($parcelParameters, $tariffs){
+    private function getServiceCost($parcelData, $tariffs){
 
         $date = date('Y-m-d');
 
@@ -126,8 +130,14 @@ class Cdek {
             "secure"                => md5($date . '&' . $clientAuthData['Secure_password']),
             "senderCityPostCode"    => $this->senderCityPostCode,
             "receiverCityPostCode"  => $this->geoData['cityPostCode'],
-            "goods"                 => $parcelParameters,
-
+            "goods"                 => $parcelData['parcel'],
+            "services"              =>
+                [
+                    [
+                        "id" => "2",
+                        "param"=> $parcelData['declaredValue']
+                    ]
+                ]
         ];
 
         $services = [];
@@ -212,8 +222,8 @@ class Cdek {
 
     }
 
-    private function getParcelParameters($parcelParameters){
-
+    private function getParcelParameters($parcelParameters)
+    {
         $data = [];
 
         foreach($parcelParameters as $scuItem){
@@ -226,9 +236,7 @@ class Cdek {
             }
 
         }
-
         return $data;
-
     }
 
     private function prepareGeoData($geoData){

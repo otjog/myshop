@@ -9,11 +9,7 @@ export default function Shipment(){
 
         if(offers.elements.wrapBlock !== null && offers.elements.wrapBlock !== undefined){
 
-            let parcelAttributes = offers.elements.wrapBlock.attributes;
-
-            let queryString = setQueryString(parcelAttributes);
-
-            queryString = setQueryString(offers.qsParams, queryString);
+            let queryString = setQueryString(offers.qsParams);
 
             let requests = offers.elements.wrapBlock.getElementsByClassName('reload');
 
@@ -126,6 +122,13 @@ export default function Shipment(){
 
     }
 
+    /**
+     * Добавляет или создает новую строку запроса с переданными параметрами
+     *
+     * @param {Object} attributes - атрибуты для добавления параметров
+     * @param {String} [queryString] - строка, к которой нужно добавить параметры. Не обязательный параметр
+     * @returns {string}
+     */
     function setQueryString(attributes, queryString = ''){
 
         if(attributes.length !== undefined && attributes.length !== null && attributes.length > 0 ){

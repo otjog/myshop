@@ -73244,9 +73244,7 @@ function Shipment() {
     var offers = getOffersRequestData();
 
     if (offers.elements.wrapBlock !== null && offers.elements.wrapBlock !== undefined) {
-      var parcelAttributes = offers.elements.wrapBlock.attributes;
-      var queryString = setQueryString(parcelAttributes);
-      queryString = setQueryString(offers.qsParams, queryString);
+      var queryString = setQueryString(offers.qsParams);
       var requests = offers.elements.wrapBlock.getElementsByClassName('reload');
       allRequestCount = requests.length;
 
@@ -73326,6 +73324,14 @@ function Shipment() {
       }
     }
   }
+  /**
+   * Добавляет или создает новую строку запроса с переданными параметрами
+   *
+   * @param {Object} attributes - атрибуты для добавления параметров
+   * @param {String} [queryString] - строка, к которой нужно добавить параметры. Не обязательный параметр
+   * @returns {string}
+   */
+
 
   function setQueryString(attributes) {
     var queryString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';

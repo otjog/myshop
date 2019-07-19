@@ -38,7 +38,7 @@ class Shipment extends Model{
     }
 
     public function getShipmentServices(){
-        return self::select(
+        $services =  self::select(
             'id',
             'alias',
             'name',
@@ -48,6 +48,11 @@ class Shipment extends Model{
             ->where('active', 1)
             ->where('is_service', 1)
             ->get();
+
+        if (count($services) === 0)
+            return $this->getDefaultShipments();
+
+        return $services;
     }
 
     public function getDefaultShipments(){

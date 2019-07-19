@@ -74,6 +74,10 @@ class OrderController extends Controller
 
         $data['shop']['payments'] = $payments->getActiveMethods();
 
+        $products = new Product();
+
+        $data['shop']['parcelData'] = $products->getJsonParcelParameters($data['shop']['basket']->products);
+
         $globalData = $this->settings->getParametersForController($data, 'shop', 'order', 'create');
 
         return view($globalData['template']['viewKey'], ['global_data' => $globalData]);

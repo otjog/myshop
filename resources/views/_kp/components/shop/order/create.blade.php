@@ -3,6 +3,7 @@
 @php
     $basket =& $global_data['shop']['basket'];
     $payments =& $global_data['shop']['payments'];
+    $parcelData =& $global_data['shop']['parcelData'];
 @endphp
 
 @section('component')
@@ -25,18 +26,7 @@
                     <span class="badge badge-secondary badge-pill">{{count($basket->products)}}</span>
                 </h4>
                 <ul class="list-group mb-3">
-                    @php
-                        $parcels = [
-                            'weight'    => '',
-                            'length'    => '',
-                            'width'     => '',
-                            'height'    => '',
-                            'quantity'  => ''
-                        ];
-                        $productIds = '';
-                //todo расчет суммы корзины и параметров посылки расчитывать в моделях, а не во views
 
-                    @endphp
                     @foreach( $basket->products as $product )
 
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
@@ -50,22 +40,7 @@
                                 <small>руб</small>
                             </span>
                         </li>
-                        @php
 
-                            foreach($parcels as $param => $value){
-                            //todo сделать дефолтные значения, для отсутствующих параметров
-                                if( $parcels[$param] !== ''){
-                                     $parcels[$param] .= '|';
-                                }
-                                $parcels[$param] .= $product[$param];
-                            }
-
-                            if($productIds !== ''){
-                                $productIds .= '|';
-                            }
-                            $productIds .= $product->id;
-
-                        @endphp
                     @endforeach
 
                     <li class="list-group-item d-flex justify-content-between bg-light">

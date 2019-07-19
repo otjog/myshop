@@ -4,7 +4,6 @@
 
     <?php
         $basket =& $global_data['shop']['basket'];
-        $parcels =& $global_data['shop']['parcels'];
     ?>
 
     @if( isset($basket->products) )
