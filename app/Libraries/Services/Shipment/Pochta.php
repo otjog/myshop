@@ -27,6 +27,10 @@ class Pochta implements ShipmentServices
 
     private $destinationType;
 
+    private $postalTypeOfAllDestination = [
+        'toTerminal' => ["PARCEL_CLASS_1", "POSTAL_PARCEL"],
+        'toDoor' => []
+    ];
 
     public function __construct($geoData){
 
@@ -50,26 +54,19 @@ class Pochta implements ShipmentServices
 
         $data = [];
 
-        if($destinationType === 'toTerminal'){
-            $postalTypes = [
-                "PARCEL_CLASS_1",
-                "POSTAL_PARCEL",
-            ];
+        $postalTypes = $this->postalTypeOfAllDestination[$destinationType];
 
-            $services = $this->getServiceCost($parcelData, $postalTypes);
+        $services = $this->getServiceCost($parcelData, $postalTypes);
 
-            if(count($services) > 0){
+        if(count($services) > 0){
 
-                $optimalService = $this->getOptimalService($services);
+            $optimalService = $this->getOptimalService($services);
 
-                $data = $this->prepareResponse($optimalService);
+            $data = $this->prepareResponse($optimalService);
 
-            }
-
-            return $data;
-        }else{
-            return [];
         }
+
+        return $data;
     }
 
     public function getPointsInCity()
@@ -116,49 +113,102 @@ class Pochta implements ShipmentServices
                 "with-simple-notice"    => false,
             ];
 
-            foreach ($postalTypes as $postalType){
+            if (count($postalTypes) > 0)
+                $services = $this->getPochtaData('calculate', $data, $postalTypes);
 
-                $data["mail-type"] = $postalType;
-
-                $rawResult = $this->getPochtaData('calculate', $data);
-
-                $service = json_decode($rawResult);
-
-                if( isset($service->{"total-rate"}) && $service->{"total-rate"} !== 0 ){
-                    $service->postal_type = $postalType;
-
-                    $services[] = $service;
-                }
-
-
-            }
         }
 
         return $services;
 
     }
 
-    private function getPochtaData($service_name, $data = []){
+    private function getPochtaData ($service_name, $data = [], $iterationData = [])
+    {
 
-        $ch = curl_init($this->pochtaHost . $this->pochtaServices[ $service_name ]);
+        if (count($iterationData) > 0)
+            return $this->getMultiData($service_name, $data, $iterationData);
+        else
+            return$this->getOnceData($service_name, $data);
+    }
 
-        curl_setopt($ch, CURLOPT_POST, 1);
+    private function getOnceData ($service_name, $data = [])
+    {
+        return [];
+    }
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: AccessToken '   . $this->apiToken,
-            'X-User-Authorization: Basic '  . $this->clientKey,
-            'Content-Type: application/json;charset=UTF-8'
-        ));
+    private function getMultiData ($service_name, $data = [], $iterationData)
+    {
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        /**
+         * Массив для созданных десрипторов Curl'a
+         */
+        $curls = [];
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        /**
+         * Массив для результатов каждого тарифа
+         */
+        $services = [];
 
-        $result = curl_exec($ch);
+        $mh = curl_multi_init();
 
-        curl_close($ch);
+        foreach($iterationData as $postalType){
 
-        return $result;
+            $data["mail-type"] = $postalType;
+
+            $curls[$postalType] = curl_init($this->pochtaHost . $this->pochtaServices[ $service_name ]);
+
+            curl_setopt($curls[$postalType], CURLOPT_POST, 1);
+
+            curl_setopt($curls[$postalType], CURLOPT_HTTPHEADER, array(
+                'Authorization: AccessToken '   . $this->apiToken,
+                'X-User-Authorization: Basic '  . $this->clientKey,
+                'Content-Type: application/json;charset=UTF-8'
+            ));
+
+            curl_setopt($curls[$postalType], CURLOPT_RETURNTRANSFER, true);
+
+            curl_setopt($curls[$postalType], CURLOPT_POSTFIELDS, json_encode($data));
+
+            /**
+             * Добавляем текущий механизм к числу работающих параллельно
+             */
+            curl_multi_add_handle($mh, $curls[$postalType]);
+
+        }
+
+        /**
+         * Инициируем число работающих процессов.
+         */
+        $running = null;
+
+        /**
+         * curl_mult_exec запишет в переменную running количество еще не завершившихся процессов.
+         * Пока они есть - продолжаем выполнять запросы.
+         */
+        do { curl_multi_exec($mh, $running); } while($running > 0);
+
+        /**
+         * Собираем из всех созданных механизмов результаты, а сами механизмы удаляем
+         */
+        foreach ($curls as $data) {
+            $result = curl_multi_getcontent($data);
+            $result = json_decode($result, true);
+
+            if( isset($result["total-rate"]) && $result["total-rate"] !== 0 ){
+                $result['postal_type'] = $postalType;
+
+                $services[] = $result;
+            }
+
+            curl_multi_remove_handle($mh, $data);
+        }
+
+        /**
+         * Освобождаем память от механизма мультипотоков
+         */
+        curl_multi_close($mh);
+
+        return $services;
     }
 
     private function prepareGeoData($geoData){
@@ -192,10 +242,10 @@ class Pochta implements ShipmentServices
                     $response['price'] = (int)($value / 100);
                     break;
                 case 'delivery-time'  :
-                    if(isset($value->{"min-days"}) && $value->{"min-days"} !== $value->{"max-days"} )
-                        $response['days'] = $value->{"min-days"} . '-' . $value->{"max-days"};
+                    if(isset($value["min-days"]) && $value["min-days"] !== $value["max-days"] )
+                        $response['days'] = $value["min-days"] . '-' . $value["max-days"];
                     else
-                        $response['days'] = $value->{"max-days"};
+                        $response['days'] = $value["max-days"];
                     break;
             }
         }

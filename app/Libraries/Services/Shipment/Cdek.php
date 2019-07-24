@@ -17,7 +17,7 @@ class Cdek implements ShipmentServices
         //расчет стоимости доставки по параметрам посылок по России и странам ТС.
         'calculate'      => [
             'host'      => 'https://api.cdek.ru',
-            'url'       => '/calculator/calculate_price_by_json.php',
+            'url'       => '/calculator/calculate_tarifflist.php',
             'method'    => 'POST'
         ],
         //список пунктов выдачи заказов
@@ -40,6 +40,26 @@ class Cdek implements ShipmentServices
     private $geoData;
 
     private $destinationType;
+
+    private $tariffsOfAllDestination = [
+        'toTerminal' => [
+            ['id' => '136'],
+            ['id' => '5'],
+            ['id' => '10'],
+            ['id' => '15'],
+            ['id' => '62'],
+            ['id' => '63'],
+            ['id' => '234'],
+            ['id' => '291'],
+        ],
+        'toDoor' => [
+            ['id' => '137'],
+            ['id' => '12'],
+            ['id' => '16'],
+            ['id' => '233'],
+            ['id' => '294'],
+        ],
+    ];
 
     public function __construct($geoData)
     {
@@ -72,20 +92,13 @@ class Cdek implements ShipmentServices
 
         $data = [];
 
-        switch($this->destinationType){
-            case 'toTerminal' :
-                $tariffs = ['136', '5', '10', '15', '62', '63'];
-                break;
-            case 'toDoor' :
-                $tariffs = ['137', '12', '16'];
-                break;
-        }
+        $tariffList = $this->tariffsOfAllDestination[$this->destinationType];
 
-        $services = $this->getServiceCost($parcelData, $tariffs);
+        $services = $this->getServiceCost($parcelData, $tariffList);
 
         if( count($services) > 0 ){
 
-            $optimalService = $services[0];
+            $optimalService = $this->getOptimalService($services);
 
             $data = $this->prepareResponse($optimalService);
 
@@ -117,7 +130,7 @@ class Cdek implements ShipmentServices
         return $data;
     }
 
-    private function getServiceCost($parcelData, $tariffs){
+    private function getServiceCost($parcelData, $tariffList){
 
         $date = date('Y-m-d');
 
@@ -131,6 +144,7 @@ class Cdek implements ShipmentServices
             "senderCityPostCode"    => $this->senderCityPostCode,
             "receiverCityPostCode"  => $this->geoData['cityPostCode'],
             "goods"                 => $parcelData['parcel'],
+            'tariffList'            => $tariffList,
             "services"              =>
                 [
                     [
@@ -142,18 +156,18 @@ class Cdek implements ShipmentServices
 
         $services = [];
 
-        foreach($tariffs as $tariffId){
+        $rawResult = $this->getCdekData('calculate', $data);
 
-            $data["tariffId"] = $tariffId;
+        $results = json_decode($rawResult, true);
 
-            $rawResult = $this->getCdekData('calculate', $data);
+        if ($results !== null) {
+            foreach($results['result'] as $service){
 
-            $result = json_decode($rawResult);
+                if ($service['status']) {
+                    $services[] = $service['result'];
+                }
 
-            if( isset( $result->result ) ){
-                $services[] = $result->result;
             }
-
         }
 
         return $services;
@@ -172,11 +186,8 @@ class Cdek implements ShipmentServices
 
         $points = [];
 
-        foreach($rawPoints as $key=> $point){
-
-            //$points[] = $this->prepareResponse($point->attributes());
+        foreach ($rawPoints as $key=> $point) {
             $points[] = $point->attributes();
-
         }
 
         return $points;
@@ -265,10 +276,14 @@ class Cdek implements ShipmentServices
         foreach($data as $key => $value){
             switch($key){
                 //Calculate
-                case 'tariffId'             : $response['service_id']   = $value; break;
-                case 'price'                : $response['price']        = (int)$value; break;
-                case 'deliveryPeriodMin'    :
-                case 'deliveryPeriodMax'    :
+                case 'tariffId' :
+                    $response['service_id'] = $value;
+                    break;
+                case 'priceByCurrency' :
+                    $response['price'] = round($value, 0);
+                    break;
+                case 'deliveryPeriodMin' :
+                case 'deliveryPeriodMax' :
                     if( isset($response['days']) ){
                         if($response['days'] !== (string)$value){
 
@@ -276,6 +291,11 @@ class Cdek implements ShipmentServices
                         }
                     }else{
                         $response['days'] = (string)$value;
+                    }
+                    break;
+                case 'services' :
+                    foreach ($value as $service) {
+                        $response['price'] += round($service['price'],0);
                     }
                     break;
             }
@@ -400,5 +420,14 @@ class Cdek implements ShipmentServices
             $title .= 'InPost ';
 
         return $title;
+    }
+
+    private function getOptimalService($services){
+
+        $cost = array_column($services, 'priceByCurrency');
+
+        array_multisort($cost, SORT_ASC, $services);
+
+        return $services[0];
     }
 }
