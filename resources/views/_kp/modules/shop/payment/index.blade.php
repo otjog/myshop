@@ -1,1 +1,1 @@
-@include('_kp.modules.shop.shipment.' . $module['template'] . '.index')
+@include('_kp.modules.shop.payment.' . $module['template'] . '.index')

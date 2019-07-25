@@ -23,6 +23,11 @@ class Image extends Model
         return $this->morphedByMany('App\Models\Shop\Order\Shipment', 'imageable')->withTimestamps();
     }
 
+    public function payments()
+    {
+        return $this->morphedByMany('App\Models\Shop\Order\Payment', 'imageable')->withTimestamps();
+    }
+
     public function banner_slides()
     {
         return $this->morphedByMany('App\Models\Site\BannerSlide', 'imageable')->withTimestamps();

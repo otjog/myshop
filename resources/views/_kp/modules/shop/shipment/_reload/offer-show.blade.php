@@ -2,7 +2,7 @@
     <div class="row p-2 border-bottom">
         <div class="col-2">
             @php
-                if (count($global_data['ajax']->images) > 0)
+                if (isset($global_data['ajax']->images) && count($global_data['ajax']->images) > 0)
                     $imageSrc = $global_data['ajax']->images[0]->src;
                 else
                     $imageSrc = 'noimage';
