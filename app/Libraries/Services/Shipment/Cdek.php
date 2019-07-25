@@ -90,8 +90,6 @@ class Cdek implements ShipmentServices
 
         $parcelData['parcel'] = $this->getParcelParameters($parcelData['parcel']);
 
-        $data = [];
-
         $tariffList = $this->tariffsOfAllDestination[$this->destinationType];
 
         $services = $this->getServiceCost($parcelData, $tariffList);
@@ -100,11 +98,11 @@ class Cdek implements ShipmentServices
 
             $optimalService = $this->getOptimalService($services);
 
-            $data = $this->prepareResponse($optimalService);
+            return $this->prepareResponse($optimalService);
 
         }
 
-        return $data;
+        return null;
     }
 
     public function getPointsInCity()
@@ -270,6 +268,7 @@ class Cdek implements ShipmentServices
     private function prepareResponse($data){
 
         $response = [
+            'id_response' => 'cdek_' . $this->destinationType,
             'type' => $this->destinationType
         ];
 
@@ -280,26 +279,30 @@ class Cdek implements ShipmentServices
                     $response['service_id'] = $value;
                     break;
                 case 'priceByCurrency' :
-                    $response['price'] = round($value, 0);
+                    $response['price'][] = round($value, 0);
                     break;
                 case 'deliveryPeriodMin' :
                 case 'deliveryPeriodMax' :
                     if( isset($response['days']) ){
-                        if($response['days'] !== (string)$value){
+                        if($response['days'][0] !== (string)$value){
 
-                            $response['days'] .= '-' . $value;
+                            $response['days'][0] .= '-' . $value;
                         }
                     }else{
-                        $response['days'] = (string)$value;
+                        $response['days'][] = (string)$value;
                     }
                     break;
                 case 'services' :
                     foreach ($value as $service) {
-                        $response['price'] += round($service['price'],0);
+                        $response['price'][0] += round($service['price'],0);
                     }
                     break;
             }
         }
+
+        $response['message'] = 'CDEK ' . $this->destinationType
+            . ' Срок доставки: ' . $response['days'][0]
+            . ' Стоимость доставки: ' . $response['price'][0];
 
         return $response;
     }

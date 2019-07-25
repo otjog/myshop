@@ -26,7 +26,7 @@ export default function Shipment(){
                         let offerAttributes = requests[i].attributes;
 
                         requestData.queryString = setQueryString(offerAttributes, queryString);
-                        requestData.requestName = setRequestName(offerAttributes, requestData.requestName);
+                        requestData.requestName += offerAttributes['data-alias']['nodeValue'] + '_' + offerAttributes['data-type']['nodeValue'];
                         requestData.reloadBlock = requests[i];
 
                     sendRequest(requestData);
@@ -133,24 +133,24 @@ export default function Shipment(){
 
         if(attributes.length !== undefined && attributes.length !== null && attributes.length > 0 ){
         //для атрибутов ДОМ-Элемента
-            for(let i = 0; i < attributes.length; i++){
+            for (let i = 0; i < attributes.length; i++) {
 
-                if(queryString !== ''){
-                    queryString += '&';
-                }
+                if (attributes[i].name !== 'id' && attributes[i].name !== 'class' && attributes[i].name !== 'style') {
 
-                if(attributes[i].name !== 'id' && attributes[i].name !== 'class' && attributes[i].name !== 'style'){
+                    if (queryString !== '') {
+                        queryString += '&';
+                    }
 
                     queryString += attributes[i].name.replace('data-', '');
                     queryString += '=';
                     queryString += attributes[i].nodeValue;
-
                 }
             }
 
-        }else{
+        } else {
             //для нашего объекта
-            for(let attribute in attributes){
+            for (let attribute in attributes)
+            {
 
                 if(queryString !== ''){
                     queryString += '&';
@@ -165,27 +165,6 @@ export default function Shipment(){
         return queryString;
     }
 
-    function setRequestName(attributes, string = ''){
-
-        if(attributes.length > 0 ){
-
-            for(let i = 0; i < attributes.length; i++){
-
-                if(attributes[i].name !== 'id' && attributes[i].name !== 'class'){
-
-                    string += attributes[i].nodeValue;
-
-                    if(i !== attributes.length - 1){
-                        string += '_';
-                    }
-                }
-            }
-
-        }
-
-        return string;
-    }
-
     function getOffersRequestData() {
         return {
             method : 'GET',
@@ -197,6 +176,10 @@ export default function Shipment(){
             elements : {
                 wrapBlock : document.getElementById('shipment-offers'),
                 shipmentBestOfferWrap   : document.getElementById('shipment-best-offer'),
+                shipmentDefaultMethods  : {
+                    'toTerminal'    : document.querySelector('[data-alias="toTerminal"]'),
+                    'toDoor'        : document.querySelector('[data-alias="toDoor"]'),
+                }
             },
             functions : {
                 onloadstart : function (self) {
@@ -228,7 +211,14 @@ export default function Shipment(){
                 },
                 onreadystatechange :function(self, ajaxReq) {
 
-                    self.reloadBlock.innerHTML = String(ajaxReq.req.responseText);
+                    let result = String(ajaxReq.req.responseText);
+                    if(result !== ''){
+                        self.reloadBlock.innerHTML = result;
+                        if (self.requestName !== 'shipment_toDoor_toDoor' && self.requestName !== 'shipment_toTerminal_toTerminal') {
+                            self.elements.shipmentDefaultMethods.toDoor.style.display = 'none';
+                            self.elements.shipmentDefaultMethods.toTerminal.style.display = 'none';
+                        }
+                    }
 
                     sendRequestCount++;
                     if(sendRequestCount === allRequestCount){

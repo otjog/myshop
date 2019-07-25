@@ -15,13 +15,13 @@
             />
         </div>
 
-        <div class="col-4">
+        <div class="col-5">
             <div class="custom-control custom-radio">
                 <input
-                        id="shipment_{{$global_data['ajax']->offer['id_response']}}"
+                        id="shipment_{{$global_data['ajax']['alias'] }}_{{$global_data['ajax']->offer['type']}}"
                         class="custom-control-input"
                         name="shipment_id"
-                        value="{{$global_data['ajax']->offer['message']}}"
+                        value="{{$global_data['ajax']['id']}}_{{$global_data['ajax']->offer['type']}}_{{$global_data['ajax']->offer['price']}}_{{$global_data['ajax']->offer['days']}}"
                         type="radio"
                         required="">
 
@@ -37,18 +37,12 @@
             <div class="blur">
 
                 <div class="row">
-                    @if(isset($global_data['ajax']->offer['error']))
-                        <div class="col text-left">
-                            <span class="shipment-message">{{$global_data['ajax']->offer['message']}}</span>
-                        </div>
-                    @else
-                        <div class="col text-center">
-                            <span class="shipment-price">{{$global_data['ajax']->offer['price'][0]}}</span> {{$global_data['ajax']->offer['price'][1]}}
-                        </div>
-                        <div class="col text-center">
-                            <span class="shipment-days">{{$global_data['ajax']->offer['days'][0]}}</span> {{$global_data['ajax']->offer['days'][1]}}
-                        </div>
-                    @endif
+                    <div class="col text-center">
+                        <span class="shipment-price">{{$global_data['ajax']->offer['price']}}</span> {{$global_data['components']['shop']['currency']['symbol']}}
+                    </div>
+                    <div class="col text-center">
+                        <span class="shipment-days">{{$global_data['ajax']->offer['days']}}</span> {{$global_data['ajax']->offer['declision']}}
+                    </div>
                 </div>
 
             </div>

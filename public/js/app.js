@@ -73254,7 +73254,7 @@ function Shipment() {
             var requestData = Object.assign({}, offers);
             var offerAttributes = requests[i].attributes;
             requestData.queryString = setQueryString(offerAttributes, queryString);
-            requestData.requestName = setRequestName(offerAttributes, requestData.requestName);
+            requestData.requestName += offerAttributes['data-alias']['nodeValue'] + '_' + offerAttributes['data-type']['nodeValue'];
             requestData.reloadBlock = requests[i];
             sendRequest(requestData);
           }
@@ -73339,11 +73339,11 @@ function Shipment() {
     if (attributes.length !== undefined && attributes.length !== null && attributes.length > 0) {
       //для атрибутов ДОМ-Элемента
       for (var i = 0; i < attributes.length; i++) {
-        if (queryString !== '') {
-          queryString += '&';
-        }
-
         if (attributes[i].name !== 'id' && attributes[i].name !== 'class' && attributes[i].name !== 'style') {
+          if (queryString !== '') {
+            queryString += '&';
+          }
+
           queryString += attributes[i].name.replace('data-', '');
           queryString += '=';
           queryString += attributes[i].nodeValue;
@@ -73365,24 +73365,6 @@ function Shipment() {
     return queryString;
   }
 
-  function setRequestName(attributes) {
-    var string = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-    if (attributes.length > 0) {
-      for (var i = 0; i < attributes.length; i++) {
-        if (attributes[i].name !== 'id' && attributes[i].name !== 'class') {
-          string += attributes[i].nodeValue;
-
-          if (i !== attributes.length - 1) {
-            string += '_';
-          }
-        }
-      }
-    }
-
-    return string;
-  }
-
   function getOffersRequestData() {
     return {
       method: 'GET',
@@ -73393,7 +73375,11 @@ function Shipment() {
       requestName: 'shipment_',
       elements: {
         wrapBlock: document.getElementById('shipment-offers'),
-        shipmentBestOfferWrap: document.getElementById('shipment-best-offer')
+        shipmentBestOfferWrap: document.getElementById('shipment-best-offer'),
+        shipmentDefaultMethods: {
+          'toTerminal': document.querySelector('[data-alias="toTerminal"]'),
+          'toDoor': document.querySelector('[data-alias="toDoor"]')
+        }
       },
       functions: {
         onloadstart: function onloadstart(self) {
@@ -73420,7 +73406,17 @@ function Shipment() {
           }
         },
         onreadystatechange: function onreadystatechange(self, ajaxReq) {
-          self.reloadBlock.innerHTML = String(ajaxReq.req.responseText);
+          var result = String(ajaxReq.req.responseText);
+
+          if (result !== '') {
+            self.reloadBlock.innerHTML = result;
+
+            if (self.requestName !== 'shipment_toDoor_toDoor' && self.requestName !== 'shipment_toTerminal_toTerminal') {
+              self.elements.shipmentDefaultMethods.toDoor.style.display = 'none';
+              self.elements.shipmentDefaultMethods.toTerminal.style.display = 'none';
+            }
+          }
+
           sendRequestCount++;
 
           if (sendRequestCount === allRequestCount) {

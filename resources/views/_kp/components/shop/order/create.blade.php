@@ -177,12 +177,11 @@
 
                     {{-- SHIPMENT --}}
                     @if(isset($global_data['modules']['shop.order.shipment.index']))
-                        @php $module['template'] = 'order'; @endphp
                         @include(
                             $global_data['template']['name']. '.modules.shop.shipment.index',
                                 [
-                                    'shipment' => $global_data['modules']['shop.order.shipment.index'],
-                                    'module' => $module
+                                    'shipments' => $global_data['modules']['shop.order.shipment.index'],
+                                    'module' => ['template' =>'order']
                                 ]
                         )
                     @endif

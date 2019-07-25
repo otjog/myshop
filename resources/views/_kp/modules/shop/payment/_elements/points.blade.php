@@ -6,10 +6,10 @@
 @php
     $aliasesString = '';
 
-    foreach($shipments as $key => $service){
+    foreach($shipment as $key => $service){
         $aliasesString .= $service->alias;
 
-        if($key + 1 !== count($shipments)){
+        if($key + 1 !== count($shipment)){
             $aliasesString .= "|";
         }
     }
