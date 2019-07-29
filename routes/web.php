@@ -64,14 +64,5 @@
     //Ajax
     Route::match(['get', 'post'], '/ajax', 'Ajax\AjaxController@index');
 
-    /************************Админка*************************************************/
-
-    Route::group(['prefix' => 'admin'], function () {
-        Voyager::routes();
-    });
-
-
-    /******************Конец*Админка*************************************************/
-
     Route::get('/parse/{from}', 'Parse\ParseController@load');
     Route::get('/curs', 'Price\CurrencyController@getCur');
