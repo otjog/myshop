@@ -194,7 +194,7 @@ class Image extends Model
         $imageSettings['current_size']['string'] = $size;
 
         list($imageSettings['current_size']['width'], $imageSettings['current_size']['height']) = explode('x', $imageSettings['size'][$size]);
-
+        
         return $imageSettings;
     }
 
