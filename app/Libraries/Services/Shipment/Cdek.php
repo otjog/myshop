@@ -164,7 +164,7 @@ class Cdek implements ShipmentServices
 
         $results = json_decode($rawResult, true);
 
-        if ($results !== null) {
+        if ($results !== null && isset($results['result'])) {
             foreach($results['result'] as $service){
 
                 if ($service['status']) {
