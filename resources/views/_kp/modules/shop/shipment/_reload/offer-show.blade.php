@@ -20,7 +20,7 @@
                 <div class="row">
                     @if(isset($global_data['ajax']->offer['error']))
                         <div class="col text-center">
-                            <span class="shipment-message">{{$global_data['ajax']->offer['error']['message']}}</span>
+                            <span class="shipment-message">{{$global_data['ajax']->offer['message']}}</span>
                         </div>
                     @else
                         <div class="col text-center">

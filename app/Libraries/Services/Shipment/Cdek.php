@@ -31,7 +31,12 @@ class Cdek implements ShipmentServices
             'host'      => 'https://integration.cdek.ru',
             'url'       => '/v1/location/regions',
             'method'    => 'GET'
-        ]
+        ],
+        'cities'      => [
+            'host'      => 'https://integration.cdek.ru',
+            'url'       => '/v1/location/cities/json',
+            'method'    => 'GET'
+        ],
 
     ];
 
@@ -128,8 +133,8 @@ class Cdek implements ShipmentServices
         return $data;
     }
 
-    private function getServiceCost($parcelData, $tariffList){
-
+    private function getServiceCost($parcelData, $tariffList)
+    {
         $date = date('Y-m-d');
 
         $clientAuthData = $this->clientAuthData[ $this->test ];
@@ -140,7 +145,8 @@ class Cdek implements ShipmentServices
             "authLogin"             => $clientAuthData['Account'],
             "secure"                => md5($date . '&' . $clientAuthData['Secure_password']),
             "senderCityPostCode"    => $this->senderCityPostCode,
-            "receiverCityPostCode"  => $this->geoData['cityPostCode'],
+            "receiverCityPostCode"  => $this->geoData['receiverCityPostCode'],
+            "receiverCityId"        => $this->geoData['receiverCityId'],
             "goods"                 => $parcelData['parcel'],
             'tariffList'            => $tariffList,
             "services"              =>
@@ -200,7 +206,19 @@ class Cdek implements ShipmentServices
 
         $region = $regions->xpath("//Region[@regionCodeExt=" . $this->geoData['regionCodeExt'] ."]");
 
-        return $region[0]['regionCode'];
+        if (isset($region[0]['regionCode']))
+            return $region[0]['regionCode'];
+        return null;
+    }
+
+    private function getCityCdekId($cdekGeoData)
+    {
+        $jsonData = $this->getCdekData('cities', $cdekGeoData);
+        $cityParam = json_decode($jsonData);
+
+        if (isset($cityParam[0]->cityCode))
+            return $cityParam[0]->cityCode;
+        return null;
     }
 
     private function getCdekData($service_name, $data = []){
@@ -255,11 +273,23 @@ class Cdek implements ShipmentServices
         foreach($geoData as $paramName => $paramValue){
 
             switch($paramName){
-                case 'postal_code'  : $data['cityPostCode']   = $paramValue; break;
-                case 'region_code'  : $data['regionCodeExt']  = $paramValue; break;
+                case 'postal_code'  :
+                    $data['receiverCityPostCode'] = $paramValue;
+                    break;
+                case 'region_code'  :
+                    $data['regionCodeExt'] = $paramValue;
+                    break;
+                case 'city_name'  :
+                    $data['cityName'] = $paramValue;
+                    break;
+                case 'country_code'  :
+                    $data['countryCode'] = $paramValue;
+                    break;
             }
 
         }
+
+        $data['receiverCityId'] = $this->getCityCdekId($data);
 
         return $data;
 
@@ -312,10 +342,12 @@ class Cdek implements ShipmentServices
 
         foreach($parameters as $key => $value){
 
-            if($query !== '?')
-                $query .= '&';
+            if ($value !== '' && $value !== null) {
+                if($query !== '?')
+                    $query .= '&';
 
-            $query .= $key . '=' . urlencode($value);
+                $query .= $key . '=' . urlencode($value);
+            }
 
         }
 

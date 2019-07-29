@@ -21,14 +21,14 @@
                         id="shipment_{{$global_data['ajax']->offer['id_response']}}"
                         class="custom-control-input"
                         name="shipment_id"
-                        value="{{$global_data['ajax']->offer['message']}}"
+                        value="{{$global_data['ajax']->id}}_{{$global_data['ajax']->offer['message']}}"
                         type="radio"
                         required="">
 
                 <label
-                        for="shipment_{{$global_data['ajax']['alias'] }}_{{$global_data['ajax']->offer['type']}}"
+                        for="shipment_{{$global_data['ajax']->offer['id_response']}}"
                         class="custom-control-label">
-                    {{$global_data['ajax']['name']}}
+                    {{$global_data['ajax']['description']}}
                 </label>
             </div>
         </div>

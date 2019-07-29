@@ -43,7 +43,7 @@ class ShipmentService extends Model
     {
         $shipments = new Shipment();
 
-        $shipmentService = $shipments->getShipmentServiceByAlias($shipmentServiceAlias);
+        $shipmentService = $shipments->getShipmentMethodByAlias($shipmentServiceAlias);
 
         $image = new Image();
 

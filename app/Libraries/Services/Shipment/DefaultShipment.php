@@ -29,6 +29,6 @@ class DefaultShipment implements ShipmentServices
 
     public function getPointsInCity()
     {
-        return null;
+        return [];
     }
 }

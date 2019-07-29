@@ -1,5 +1,7 @@
 import Ajax from './ajax';
 import InitMap from './googlemap';
+import MarkerClusterer from '@google/markerclusterer/src/markerclusterer';
+
 
 export default function Shipment(){
 
@@ -84,9 +86,15 @@ export default function Shipment(){
 
     }
 
-    function getMarkerOnMap(map, json) {
+    function getMarkerOnMap(map, json, controls = null) {
+
+        let markers = [];
+
+        let companyAlias = '';
 
         for(let company in json){
+
+            companyAlias = company;
 
             if(json.hasOwnProperty(company)){
 
@@ -108,6 +116,8 @@ export default function Shipment(){
 
                         let marker = new google.maps.Marker({position: locationShop, map: map, icon: image});
 
+                        markers.push(marker);
+
                         marker.addListener('click', function() {
                             infowindow.open(map, marker);
                         });
@@ -120,6 +130,29 @@ export default function Shipment(){
 
         }
 
+        let markerCluster = new MarkerClusterer(map, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
+        if (controls !== null) {
+            let input = controls.querySelector("input[type=checkbox][value=" + companyAlias + "]");
+
+            if(input !== null && input !== undefined){
+
+                if(markers.length > 0){
+                    input.removeAttribute('disabled');
+                    input.setAttribute('checked', 'checked');
+                }
+                input.addEventListener('change', function(e) {
+                    if(input.checked){
+                        markerCluster.addMarkers(markers);
+                    }else{
+                        for (let i = 0; i < markers.length; i++) {
+                            markerCluster.removeMarker(markers[i]);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -214,10 +247,16 @@ export default function Shipment(){
                     let result = String(ajaxReq.req.responseText);
                     if(result !== ''){
                         self.reloadBlock.innerHTML = result;
-                        if (self.requestName !== 'shipment_toDoor_toDoor' && self.requestName !== 'shipment_toTerminal_toTerminal') {
+
+                        let arrayReqName = self.requestName.split('_');
+
+                        if (arrayReqName[arrayReqName.length -1 ] === 'toDoor' && arrayReqName[arrayReqName.length - 2 ] !== 'toDoor') {
                             self.elements.shipmentDefaultMethods.toDoor.style.display = 'none';
+
+                        } else if (arrayReqName[arrayReqName.length -1 ] === 'toTerminal' && arrayReqName[arrayReqName.length - 2 ] !== 'toTerminal') {
                             self.elements.shipmentDefaultMethods.toTerminal.style.display = 'none';
                         }
+
                     }
 
                     sendRequestCount++;
@@ -305,6 +344,7 @@ export default function Shipment(){
             },
             elements    : {
                 wrapBlock : document.getElementById('map'),
+                wrapCheckbox : document.getElementById('mapShipmentCheckbox')
             },
             functions : {
                 onloadstart : function (self) {},
@@ -318,7 +358,16 @@ export default function Shipment(){
 
                     points.elements.wrapBlock = self.elements.wrapBlock.parentElement;
 
-                    points.map = InitMap(json, 12);
+                    let zoom = 4;
+
+                    if (json.region_code !== undefined && json.region_code !== null)
+                        zoom = 12;
+                    if (json.street_name !== undefined && json.street_name !== null)
+                        zoom = 15;
+                    if (json.house_number !== undefined && json.house_number !== null)
+                        zoom = 18;
+
+                    points.map = InitMap(json, zoom);
 
                     if(self.elements.wrapBlock.hasAttribute('data-alias')){
 
@@ -359,39 +408,38 @@ export default function Shipment(){
             },
             queryString : '',
             requestName : 'points_',
-            elements    : {},
+            elements    : {
+                wrapCheckbox : document.getElementById('mapShipmentCheckbox')
+            },
             functions : {
-                onloadstart : function (self) {
-                    self.elements = {
-                        loadingBlock    : self.elements.wrapBlock.getElementsByClassName('loading'),
-                        errorBlock      : self.elements.wrapBlock.getElementsByClassName('error'),
-                        contentBlock    : self.elements.wrapBlock.getElementsByClassName('blur'),
-                    };
+                onloadstart : function (self)
+                {
+                    self.elements.loadingBlock = self.elements.wrapBlock.getElementsByClassName('loading');
+                    self.elements.errorBlock = self.elements.wrapBlock.getElementsByClassName('error');
+                    self.elements.contentBlock = self.elements.wrapBlock.getElementsByClassName('blur');
                     self.elements.loadingBlock[0].style.display = 'block';
                     self.elements.errorBlock[0].style.display = 'none';
                     self.elements.contentBlock[0].style.opacity = 0.75;
 
                 },
-                ontimeout : function (self) {
-
+                ontimeout : function (self)
+                {
                     self.elements.loadingBlock[0].style.display = 'none';
                     self.elements.errorBlock[0].style.display = 'block';
                 },
-                onreadystatechange :function(self, ajaxReq) {
-
+                onreadystatechange :function(self, ajaxReq)
+                {
                     let json  = JSON.parse(ajaxReq.req.responseText);
 
-                    getMarkerOnMap(self.map, json);
+                    getMarkerOnMap(self.map, json, self.elements.wrapCheckbox);
 
                     self.elements.loadingBlock[0].style.display   = 'none';
                     self.elements.errorBlock[0].style.display = 'none';
                     self.elements.contentBlock[0].style.opacity = 1;
-
 
                 },
             },
 
         };
     }
-
 }
