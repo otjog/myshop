@@ -151,42 +151,19 @@
                 {{-- PAY & SHIPMENT --}}
                 <div class="row">
 
-                    {{-- PAY --}}
-                    @if( isset( $payments ) && count( $payments ) > 0 )
-
-                        <div class="col-lg-12">
-
-                            <h4 class="mb-3">Способ оплаты</h4>
-
-                            @foreach( $payments->chunk(3) as $payments_row )
-
-                                <div class="row">
-                                    @foreach( $payments_row as $payment)
-                                        <div class="col-lg-{{12 / 3}} form-check form-check-inline mb-3 mr-0">
-                                            <div class="custom-control custom-radio mx-3">
-                                                <input id="payment_{{ $payment->id }}" name="payment_id" value="{{ $payment->id }}" type="radio" class="custom-control-input" >
-                                                <label class="custom-control-label" for="payment_{{ $payment->id }}">{{ $payment->name }}</label>
-                                            </div>
-                                        </div>
-
-                                    @endforeach
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
+                    {{-- PAYMENT --}}
+                    @include($global_data['template']['name']. '.modules.shop.payment.index',
+                                [
+                                    'shipments' => $payments,
+                                    'module' => ['template' =>'order']
+                                ])
 
                     {{-- SHIPMENT --}}
-                    @if(isset($global_data['modules']['shop.order.shipment.index']))
-                        @php $module['template'] = 'order'; @endphp
-                        @include(
-                            $global_data['template']['name']. '.modules.shop.shipment.index',
+                    @include($global_data['template']['name']. '.modules.shop.shipment.index',
                                 [
-                                    'shipment' => $global_data['modules']['shop.order.shipment.index'],
-                                    'module' => $module
-                                ]
-                        )
-                    @endif
-
+                                    'shipments' => $global_data['modules']['shop.order.shipment.index'],
+                                    'module' => ['template' =>'order']
+                                ])
 
                 </div>
 

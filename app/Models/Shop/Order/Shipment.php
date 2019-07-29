@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Shipment extends Model{
 
     protected $moduleMethods = [
-        'index' => 'getShipmentServices',
+        'index' => 'getActiveShipmentMethods',
         'show' => 'getShipmentServiceByAlias',
     ];
 
@@ -25,12 +25,13 @@ class Shipment extends Model{
         return $this->morphToMany('App\Models\Site\Image', 'imageable');
     }
 
-    public function getActiveMethods(){
+    public function getActiveShipmentMethods(){
         return self::select(
             'id',
             'alias',
             'name',
-            'description'
+            'description',
+            'is_service'
         )
             ->with('images')
             ->where('active', 1)
@@ -42,7 +43,8 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
-            'description'
+            'description',
+            'is_service'
         )
             ->with('images')
             ->where('active', 1)
@@ -60,7 +62,8 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
-            'description'
+            'description',
+            'is_service'
         )
             ->with('images')
             ->whereIn('alias', ['self', 'delivery'])
@@ -72,11 +75,26 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
-            'description'
+            'description',
+            'is_service'
         )
             ->with('images')
             ->where('active', 1)
             ->where('is_service', 1)
+            ->where('alias', $alias)
+            ->get();
+    }
+
+    public function getShipmentMethodByAlias($alias){
+        return self::select(
+            'id',
+            'alias',
+            'name',
+            'description',
+            'is_service'
+        )
+            ->with('images')
+            ->where('active', 1)
             ->where('alias', $alias)
             ->get();
     }

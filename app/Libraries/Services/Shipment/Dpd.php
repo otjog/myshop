@@ -108,8 +108,6 @@ class Dpd implements ShipmentServices
     {
         $this->destinationType = $destinationType;
 
-        $data = [];
-
         switch ($this->destinationType) {
             case 'toTerminal' :
                 $selfDelivery = true;
@@ -125,10 +123,10 @@ class Dpd implements ShipmentServices
 
             $optimalService = $this->getOptimalService($services);
 
-            $data = $this->prepareResponse($optimalService);
+            return $this->prepareResponse($optimalService);
         }
 
-        return $data;
+        return null;
     }
 
     public function getPointsInCity()
@@ -151,6 +149,7 @@ class Dpd implements ShipmentServices
                 'markerInfo' => view('_kp.modules.shop.shipment._elements.marker', ['point' => $dataMarker])->render(),
             ];
         }
+
         return $data;
     }
 
@@ -297,14 +296,24 @@ class Dpd implements ShipmentServices
     private function prepareResponse($data){
 
         $response = [
+            'id_response' => 'dpd_' . $this->destinationType,
+            'message' => 'DPD' . $this->destinationType,
             'type' => $this->destinationType
         ];
 
         foreach($data as $key => $value){
             switch($key){
-                case 'serviceCode'  : $response['service_id']   = $value; break;
-                case 'days'         : $response['days']         = $value; break;
-                case 'cost'         : $response['price']        = round($value, 0); break;
+                case 'serviceCode' :
+                    $response['service_id'] = $value;
+                    break;
+                case 'days' :
+                    $response['days'][] = $value;
+                    $response['message'] .= ' Срок доставки: ' . $value;
+                    break;
+                case 'cost' :
+                    $response['price'][] = round($value, 0);
+                    $response['message'] .= ' Стоимость доставки: ' . $value;
+                    break;
             }
         }
 

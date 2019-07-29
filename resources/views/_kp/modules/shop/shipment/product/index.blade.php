@@ -10,5 +10,4 @@
     <div class="col-12 col-lg-6">
         @include($global_data['template']['name'] . '.modules.shop.shipment._elements.points')
     </div>
-
 </div>

@@ -52,8 +52,6 @@ class Pochta implements ShipmentServices
     {
         $this->destinationType = $destinationType;
 
-        $data = [];
-
         $postalTypes = $this->postalTypeOfAllDestination[$destinationType];
 
         $services = $this->getServiceCost($parcelData, $postalTypes);
@@ -62,11 +60,11 @@ class Pochta implements ShipmentServices
 
             $optimalService = $this->getOptimalService($services);
 
-            $data = $this->prepareResponse($optimalService);
+            return $this->prepareResponse($optimalService);
 
         }
 
-        return $data;
+        return null;
     }
 
     public function getPointsInCity()
@@ -230,6 +228,7 @@ class Pochta implements ShipmentServices
     private function prepareResponse($data){
 
         $response = [
+            'id_response' => 'pochta_' . $this->destinationType,
             'type' => $this->destinationType
         ];
 
@@ -239,19 +238,24 @@ class Pochta implements ShipmentServices
                     $response['service_id'] = $value;
                     break;
                 case 'total-rate'   :
-                    $response['price'] = (int)($value / 100);
+                    $response['price'][] = (int)($value / 100);
                     break;
                 case 'delivery-time'  :
                     if(isset($value["min-days"]) && $value["min-days"] !== $value["max-days"] )
-                        $response['days'] = $value["min-days"] . '-' . $value["max-days"];
+                        $response['days'][] = $value["min-days"] . '-' . $value["max-days"];
                     else
-                        $response['days'] = $value["max-days"];
+                        $response['days'][] = $value["max-days"];
                     break;
             }
         }
 
+        $response['message'] = 'Pochta ' . $this->destinationType
+            . ' Стоимость доставки: ' . $response['price'][0];
+
         if( !isset($response['days']))
-            $response['days'] = null;
+            $response['days'][] = '~';
+        else
+            $response['message'] .= ' Срок доставки: ' . $response['days'][0];
 
         return $response;
     }

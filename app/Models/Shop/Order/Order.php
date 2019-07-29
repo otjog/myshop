@@ -136,10 +136,6 @@ class Order extends Model{
             'comment'           => '',
         ];
 
-        //todo удалить, когда исправим отображение сервисов доставки
-        if (!isset($data['shipment_id']))
-            $data['shipment_id'] = 1;
-
         foreach($data as $key => $value){
             switch($key){
                 case 'payment_id'       :

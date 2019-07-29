@@ -23,6 +23,11 @@ class Image extends Model
         return $this->morphedByMany('App\Models\Shop\Order\Shipment', 'imageable')->withTimestamps();
     }
 
+    public function payments()
+    {
+        return $this->morphedByMany('App\Models\Shop\Order\Payment', 'imageable')->withTimestamps();
+    }
+
     public function banner_slides()
     {
         return $this->morphedByMany('App\Models\Site\BannerSlide', 'imageable')->withTimestamps();
@@ -111,7 +116,7 @@ class Image extends Model
                         $radius = $size['width']/1.4142*2-1;
 
                         $sizedImg->circle($radius, $size['width']/2, $size['width']/2, function ($draw) {
-                            $draw->border(1, '#DCDCDC');
+                            $draw->border(1, '#FFCC99');
                         });
 
                         break;
@@ -122,7 +127,7 @@ class Image extends Model
 
                         $canvas->circle($radius, $radius/2, $radius/2, function ($draw) {
                             $draw->background('#ffffff');
-                            $draw->border(1, '#DCDCDC');
+                            $draw->border(1, '#FFCC99');
                         });
 
                         $canvas->insert($sizedImg, 'center');
