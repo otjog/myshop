@@ -5,8 +5,8 @@
             <a href="{{asset('/')}}">
                 <img
                         class="img-fluid"
-                        src="{{route('getImage',['default', 'logo-l', 'storage/_aq/img/elements/aquatechnica_logo.png', 1])}}"
-                        alt="Aquatechnica Logo"
+                        src="{{route('getImage',['default', 'logo-l', $global_data['info']['logotype'], 1])}}"
+                        alt="{{$global_data['info']['logotype']}} Logo"
                 />
             </a>
         </div>
