@@ -74731,9 +74731,9 @@ function Shipment() {
         },
         onreadystatechange: function onreadystatechange(self, ajaxReq) {
           var result = String(ajaxReq.req.responseText);
+          self.reloadBlock.innerHTML = result;
 
           if (result !== '') {
-            self.reloadBlock.innerHTML = result;
             var arrayReqName = self.requestName.split('_');
 
             if (arrayReqName[arrayReqName.length - 1] === 'toDoor' && arrayReqName[arrayReqName.length - 2] !== 'toDoor') {
@@ -74838,7 +74838,6 @@ function Shipment() {
 
             for (var i = 0; i < aliasesArray.length; i++) {
               var requestData = Object.assign({}, points);
-              console.log(points);
               requestData.requestName += aliasesArray[i];
               requestData.qsParams.alias = aliasesArray[i];
               requestData.queryString = setQueryString(requestData.qsParams);

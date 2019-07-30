@@ -245,8 +245,8 @@ export default function Shipment(){
                 onreadystatechange :function(self, ajaxReq) {
 
                     let result = String(ajaxReq.req.responseText);
+                    self.reloadBlock.innerHTML = result;
                     if(result !== ''){
-                        self.reloadBlock.innerHTML = result;
 
                         let arrayReqName = self.requestName.split('_');
 
