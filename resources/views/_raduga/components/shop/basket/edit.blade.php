@@ -48,13 +48,13 @@
                             @if( isset($product->images[0]->src) && $product->images[0]->src !== null )
                                 <img
                                         class='img-fluid mx-auto my-auto d-block'
-                                        src="{{route('models.sizes.images.show', ['product', 'xs', $product->images[0]->src])}}"
+                                        src="{{route('getImage', ['product', 'xs', $product->images[0]->src])}}"
                                         alt=""
                                 />
                             @else
                                 <img
                                         class='img-fluid mx-auto my-auto d-block'
-                                        src="{{route('models.sizes.images.show', ['product', 'xs', 'no_image.jpg'])}}"
+                                        src="{{route('getImage', ['product', 'xs', 'no_image.jpg'])}}"
                                         alt=""
                                 />
                             @endif
