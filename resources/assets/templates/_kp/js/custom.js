@@ -131,21 +131,21 @@ if (mainImg[0] !== undefined && mainImg[0] !== null) {
 let tabs = document.getElementById('tabs');
 
 if(tabs !== null && tabs !== undefined){
-    let activeTab       = tabs.getElementsByClassName('active');
+
+    let activeTab       = tabs.getElementsByClassName('nav-link')[0];
+    activeTab.className += ' active';
     let content         = document.getElementById('tab-data');
     let contentDatas    = content.getElementsByClassName('tab-data');
 
-    if(activeTab[0].nodeName === 'A'){
+    if(activeTab.nodeName === 'A'){
 
-        let tabIndex = activeTab[0].dataset.tabindex;
+        let tabIndex = activeTab.dataset.tabindex;
 
         if(tabIndex !== undefined && tabIndex !== null) {
-            toogelDisplayStyle(content, contentDatas, activeTab[0].dataset.tabindex);
+            toogelDisplayStyle(content, contentDatas, activeTab.dataset.tabindex);
         }
 
     }
-
-
 
     tabs.addEventListener('click', function (e) {
 
@@ -157,7 +157,7 @@ if(tabs !== null && tabs !== undefined){
 
             if(tabIndex !== undefined && tabIndex !== null){
                 //включаем у вкладки класс active
-                activeTab[0].classList.toggle('active');
+                activeTab.classList.toggle('active');
 
                 e.target.classList.toggle('active');
 

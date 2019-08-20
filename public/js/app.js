@@ -58476,15 +58476,17 @@ if (mainImg[0] !== undefined && mainImg[0] !== null) {
 var tabs = document.getElementById('tabs');
 
 if (tabs !== null && tabs !== undefined) {
-  var activeTab = tabs.getElementsByClassName('active');
+  console.log(tabs);
+  var activeTab = tabs.getElementsByClassName('nav-link')[0];
+  activeTab.className += ' active';
   var content = document.getElementById('tab-data');
   var contentDatas = content.getElementsByClassName('tab-data');
 
-  if (activeTab[0].nodeName === 'A') {
-    var tabIndex = activeTab[0].dataset.tabindex;
+  if (activeTab.nodeName === 'A') {
+    var tabIndex = activeTab.dataset.tabindex;
 
     if (tabIndex !== undefined && tabIndex !== null) {
-      toogelDisplayStyle(content, contentDatas, activeTab[0].dataset.tabindex);
+      toogelDisplayStyle(content, contentDatas, activeTab.dataset.tabindex);
     }
   }
 
@@ -58497,7 +58499,7 @@ if (tabs !== null && tabs !== undefined) {
 
       if (_tabIndex !== undefined && _tabIndex !== null) {
         //включаем у вкладки класс active
-        activeTab[0].classList.toggle('active');
+        activeTab.classList.toggle('active');
         e.target.classList.toggle('active');
         toogelDisplayStyle(content, contentDatas, _tabIndex);
       }
