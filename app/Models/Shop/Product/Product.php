@@ -87,8 +87,8 @@ class Product extends Model
             ->get();
     }
 
-    public function getActiveProduct($id){
-
+    public function getActiveProduct($id)
+    {
         $productsQuery = $this->getOneProductQuery();
 
         $products = $productsQuery
@@ -98,13 +98,11 @@ class Product extends Model
 
             ->get();
 
-            if( isset($products[0])){
+            if (isset($products[0])) {
                 $products = $this->addRelationCollections($products);
                 return $products[0];
-            }else{
-                return null;
             }
-
+            return null;
     }
 
     public function getActiveProductsFromCategory($category_id)
@@ -229,6 +227,8 @@ class Product extends Model
 
         $pagination = $settings->getParameter('components.shop.pagination');
 
+        $filter_prefix = $settings->getParameter('components.shop.filter_prefix');
+
         $productsQuery = $this->getListProductQuery();
 
         $products = $productsQuery
@@ -275,8 +275,8 @@ class Product extends Model
             /************PARAMETERS*************/
             foreach($filterData as $key => $parameter){
 
-                if(strpos($key, 'p_') === 0){
-                    $key = str_replace('p_', '', $key);
+                if(strpos($key, $filter_prefix) === 0){
+                    $key = str_replace($filter_prefix, '', $key);
 
                     $products = $products->whereHas('parameters', function($query) use ($parameter, $key) {
                         $query->where('product_parameters.alias', '=', $key)
@@ -474,8 +474,8 @@ class Product extends Model
         ];
     }
 
-    private function addRelationCollections($products){
-
+    private function addRelationCollections($products)
+    {
         foreach ( $products as $product){
 
             foreach ($product->original as $key => $value){
