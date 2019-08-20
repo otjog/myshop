@@ -614,7 +614,11 @@ class Product extends Model
             }])
 
             /************STORES*****************/
-            ->with('stores')
+            ->with(['stores' => function ($query) {
+                $query->where('shop_stores.active', '=', 1)
+                    ->where('shop_store_has_product.active', '=', 1)
+                    ->where('shop_store_has_product.quantity', '>', 0);
+            }])
 
             /************CATEGORY***************/
             ->leftJoin('categories', 'categories.id', '=', 'products.category_id');

@@ -51,11 +51,23 @@
                             @endif
 
                             <div class="product_price clearfix">
-                                {{ $product->price['value'] }}
-                                <small>{{$global_data['components']['shop']['currency']['symbol']}}</small>
+                                @if($product->price['value'] !== 0.00)
+                                    {{ $product->price['value'] }}
+                                    <small>{{$global_data['components']['shop']['currency']['symbol']}}</small>
+                                @else
+                                    <span class="text-muted m-0">Цена не установлена</span>
+                                @endif
+                            </div>
+                            <div>
+                                @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
+                                    <small class="text-success">В наличии</small>
+                                @else
+                                    <small class="text-muted">Нет в наличии</small>
+                                @endif
                             </div>
 
-                            <div class="my-2 d-flex flex-row">
+                            @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
+                                <div class="my-1 d-flex flex-row">
                                 <form id="buy-form" method="post" role="form" action="{{route('baskets.store')}}">
 
                                     <div class="product_quantity">
@@ -110,6 +122,7 @@
 
                                 </form>
                             </div>
+                            @endif
 
                         @else
                             <div class="alert alert-warning">
@@ -119,7 +132,9 @@
 
 
                         {{-- Best Shipment Offer --}}
-                        @include($global_data['template']['name']. '.modules.shop.shipment._elements.best-offer')
+                        <div id="shipment-best-offer" class="py-1">
+                            @include($global_data['template']['name']. '.modules.shop.shipment._elements.best-offer')
+                        </div>
 
                     </div>
                 </div>
