@@ -10,6 +10,23 @@
     <div class="single_product">
         <div class="container">
             <div class="row">
+
+                <h1 class="product_name">
+                    @isset($product->manufacturer['name'])
+                        {{ $product->manufacturer['name'] . ' ' }}
+                    @endisset
+
+                    {{ $product->name }}
+
+                    @if( isset($product->brands) && count($product->brands) > 0 && $product->brands !== null)
+
+                        @foreach($product->brands as $brand)
+                            {{ ' | ' . $brand->name}}
+                        @endforeach
+
+                    @endif
+                </h1>
+
                 <!-- Images -->
                 <div class="col-lg-7">
                     <div class="row">
@@ -20,23 +37,8 @@
                 <!-- Right Column -->
                 <div class="col-lg-5 order-3">
                     <div class="product_description">
-                        <div class="product_category">{{$product->category['name']}}</div>
-                        <div class="product_scu">Артикул: {{$product->scu}}</div>
-                        <h1 class="product_name">
-                            @isset($product->manufacturer['name'])
-                                {{ $product->manufacturer['name'] . ' ' }}
-                            @endisset
-
-                            {{ $product->name }}
-
-                            @if( isset($product->brands) && count($product->brands) > 0 && $product->brands !== null)
-
-                                @foreach($product->brands as $brand)
-                                    {{ ' | ' . $brand->name}}
-                                @endforeach
-
-                            @endif
-                        </h1>
+                        <div>Категория: <span class="text-muted">{{$product->category['name']}}</span></div>
+                        <div>Артикул: <span class="text-muted">{{$product->scu}}</span></div>
 
                         @if( isset($product->price['value']) && $product->price['value'] !== null)
 
@@ -130,7 +132,6 @@
                             </div>
                         @endif
 
-
                         {{-- Best Shipment Offer --}}
                         <div id="shipment-best-offer" class="py-1">
                             @include($global_data['template']['name']. '.modules.shop.shipment._elements.best-offer')
@@ -147,6 +148,9 @@
                             <a class="nav-link active" data-tabIndex="description">Описание</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" data-tabIndex="parameters">Характеристики</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" data-tabIndex="shipment">Доставка</a>
                         </li>
                     </ul>
@@ -156,24 +160,40 @@
                         {{-- Description Tab --}}
                         <div class="tab-data data-description">
                             @if(isset( $product->description ))
-                                <p>{{ $product->description }}</p>
+                                <p>{!! $product->description  !!}</p>
                             @endif
+                        </div>
+
+                        {{-- Parameters Tab --}}
+                        <div class="tab-data data-parameters">
 
                             @if( isset($product->parameters) && count($product->parameters) > 0)
+                                @php $product->parameters = $product->parameters->groupBy('alias'); @endphp
+                                <div class="container">
+                                    @foreach($product->parameters as $currentParameters)
 
-                                <ul class="list-unstyled">
-                                    @foreach($product->parameters as $key => $parameter)
+                                        @if(count($currentParameters) > 0)
+                                            <div class="row">
+                                                @foreach($currentParameters as $key => $parameter)
+                                                    @if($loop->first)
+                                                        <div class="col col-lg-3 pl-0 ml-2 product_parameter_name">
+                                                            <span>{{$parameter->name}}:</span>
+                                                        </div>
+                                                        <div class="col col-lg-3 text-muted pl-1">
+                                                            @endif
+                                                            <span>{{$parameter->pivot->value}}</span>
+                                                            @if($loop->last)
+                                                        </div>
+                                                    @else
+                                                        <span> | </span>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        @endif
 
-                                        <li>
-                                            @if($key === 0 || $product->parameters[$key -1]->name !== $parameter->name)
-                                                <strong>{{$parameter->name}}: </strong>
-                                            @endif
-
-                                            <span class="text-muted">{{$parameter->pivot->value}}</span>
-                                        </li>
 
                                     @endforeach
-                                </ul>
+                                </div>
 
                             @endif
                         </div>
@@ -190,7 +210,6 @@
                                 )
                             @endif
                         </div>
-
                     </div>
 
                 </div>

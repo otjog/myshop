@@ -46,7 +46,7 @@ class Filter extends Model{
 
         $routeData = request()->route()->parameters;
 
-        $old_values     = request()->toArray();
+        $old_values = request()->toArray();
 
         $productsOfRoute = $products->getActiveProductsWithFilterParameters($routeData);
 

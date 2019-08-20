@@ -87,8 +87,8 @@ class Product extends Model
             ->get();
     }
 
-    public function getActiveProduct($id){
-
+    public function getActiveProduct($id)
+    {
         $productsQuery = $this->getOneProductQuery();
 
         $products = $productsQuery
@@ -98,13 +98,11 @@ class Product extends Model
 
             ->get();
 
-            if( isset($products[0])){
+            if (isset($products[0])) {
                 $products = $this->addRelationCollections($products);
                 return $products[0];
-            }else{
-                return null;
             }
-
+            return null;
     }
 
     public function getActiveProductsFromCategory($category_id)
@@ -207,7 +205,11 @@ class Product extends Model
             })
 
             /************PARAMETER***************/
-            ->with('parameters')
+            ->with(['parameters' => function($query)
+            {
+                $query->orderBy('product_has_parameter.value', 'desc');
+
+            }])
 
             /************MANUFACTURER***********/
             ->leftJoin('manufacturers', 'manufacturers.id', '=', 'products.manufacturer_id')
@@ -474,8 +476,8 @@ class Product extends Model
         ];
     }
 
-    private function addRelationCollections($products){
-
+    private function addRelationCollections($products)
+    {
         foreach ( $products as $product){
 
             foreach ($product->original as $key => $value){
