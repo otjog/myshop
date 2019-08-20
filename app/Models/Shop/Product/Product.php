@@ -205,11 +205,7 @@ class Product extends Model
             })
 
             /************PARAMETER***************/
-            ->with(['parameters' => function($query)
-            {
-                $query->orderBy('product_has_parameter.value', 'desc');
-
-            }])
+            ->with('parameters')
 
             /************MANUFACTURER***********/
             ->leftJoin('manufacturers', 'manufacturers.id', '=', 'products.manufacturer_id')
@@ -230,6 +226,8 @@ class Product extends Model
         $settings = Settings::getInstance();
 
         $pagination = $settings->getParameter('components.shop.pagination');
+
+        $filter_prefix = $settings->getParameter('components.shop.filter_prefix');
 
         $productsQuery = $this->getListProductQuery();
 
@@ -277,8 +275,8 @@ class Product extends Model
             /************PARAMETERS*************/
             foreach($filterData as $key => $parameter){
 
-                if(strpos($key, 'p_') === 0){
-                    $key = str_replace('p_', '', $key);
+                if(strpos($key, $filter_prefix) === 0){
+                    $key = str_replace($filter_prefix, '', $key);
 
                     $products = $products->whereHas('parameters', function($query) use ($parameter, $key) {
                         $query->where('product_parameters.alias', '=', $key)

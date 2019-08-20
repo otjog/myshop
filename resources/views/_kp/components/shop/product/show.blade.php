@@ -144,12 +144,16 @@
                 <div class="col-lg-12 order-4 my-4">
 
                     <ul class="nav nav-tabs" id="tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-tabIndex="description">Описание</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-tabIndex="parameters">Характеристики</a>
-                        </li>
+                        @if(isset($product->description) && $product->description !== '')
+                            <li class="nav-item">
+                                <a class="nav-link" data-tabIndex="description">Описание</a>
+                            </li>
+                        @endif
+                        @if( isset($product->parameters) && count($product->parameters) > 0)
+                            <li class="nav-item">
+                                <a class="nav-link" data-tabIndex="parameters">Характеристики</a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a class="nav-link" data-tabIndex="shipment">Доставка</a>
                         </li>

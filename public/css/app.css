@@ -26678,6 +26678,10 @@ ul {
   margin-bottom: 0px;
 }
 
+a {
+  cursor: pointer;
+}
+
 p a {
   display: inline;
   position: relative;
