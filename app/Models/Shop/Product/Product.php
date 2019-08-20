@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use JustBetter\PaginationWithHavings\PaginationWithHavings;
 use App\Models\Settings;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model{
 
@@ -129,7 +130,12 @@ class Product extends Model{
 
         $today = $settings->getParameter('today');
 
-        $price_id = $settings->getParameter('components.shop.price.id');
+        $customer = Auth::user();
+
+        if($customer === null)
+            $price_id = $settings->getParameter('components.shop.price.id');
+        else
+            $price_id = $customer->price_id;
 
         $products = self::select(
             'products.id',
@@ -537,7 +543,12 @@ class Product extends Model{
 
         $today = $settings->getParameter('today');
 
-        $price_id = $settings->getParameter('components.shop.price.id');
+        $customer = Auth::user();
+
+        if($customer === null)
+            $price_id = $settings->getParameter('components.shop.price.id');
+        else
+            $price_id = $customer->price_id;
 
         return self::select(
             'products.id',
