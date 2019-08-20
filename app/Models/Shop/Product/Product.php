@@ -8,8 +8,8 @@ use JustBetter\PaginationWithHavings\PaginationWithHavings;
 use App\Models\Settings;
 use Illuminate\Support\Facades\Auth;
 
-class Product extends Model{
-
+class Product extends Model
+{
     use PaginationWithHavings;
 
     protected $fillable = ['brand_id', 'category_id', 'manufacturer_id', 'active', 'name', 'scu'];
@@ -32,6 +32,11 @@ class Product extends Model{
     public function prices()
     {
         return $this->belongsToMany('App\Models\Shop\Price\Price', 'product_has_price')->withPivot('value', 'currency_id')->withTimestamps();
+    }
+
+    public function stores()
+    {
+        return $this->belongsToMany('App\Models\Shop\Store\Store', 'shop_store_has_product')->withPivot('quantity')->withTimestamps();
     }
 
     public function discounts()
@@ -617,6 +622,13 @@ class Product extends Model{
             /************PARAMETERS*************/
             ->with(['basket_parameters' => function ($query) {
                 $query->where('product_parameters.order_attr', '=', 1);
+            }])
+
+            /************STORES*****************/
+            ->with(['stores' => function ($query) {
+                $query->where('shop_stores.active', '=', 1)
+                    ->where('shop_store_has_product.active', '=', 1)
+                    ->where('shop_store_has_product.quantity', '>', 0);
             }])
 
             /************CATEGORY***************/
