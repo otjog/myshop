@@ -38,7 +38,7 @@
                                 <span class="text-muted">{{ $product->price['value'] }}</span>
                                 <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
 
-                                <!-- Атрибуты -->
+                                {{-- Атрибуты --}}
 
                                 @if( isset($product['pivot']['order_attributes_collection']) && count( $product['pivot']['order_attributes_collection'] ) > 0)
                                     <br>

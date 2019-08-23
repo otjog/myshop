@@ -1,7 +1,7 @@
-<!-- Wishlist -->
+{{-- Wishlist --}}
 <div class="col-lg-3 col-6 order-lg-3 order-2 text-lg-left text-right">
     <div class="wishlist_cart d-flex flex-row align-items-center justify-content-end">
-        <!-- Cart -->
+        {{-- Cart --}}
         <div class="cart">
             <div class="cart_container d-flex flex-row align-items-center justify-content-end">
                 <div class="cart_icon">

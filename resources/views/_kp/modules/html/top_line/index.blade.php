@@ -1,4 +1,4 @@
-<!-- Top Bar -->
+{{-- Top Bar --}}
 <div class="top_bar">
     <div class="container">
         <div class="row">
