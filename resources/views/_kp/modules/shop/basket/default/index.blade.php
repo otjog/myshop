@@ -1,5 +1,5 @@
 {{-- Wishlist --}}
-<div class="col-lg-3 col-6 order-lg-3 order-2 text-lg-left text-right">
+<div class="col-2 col-lg-3 order-3 text-lg-left text-right">
     <div class="wishlist_cart d-flex flex-row align-items-center justify-content-end">
         {{-- Cart --}}
         <div class="cart">
@@ -23,7 +23,7 @@
                             <span>Корзина</span>
                         @endif
                     </div>
-                    <div class="cart_price">
+                    <div class="cart_price d-none d-md-block">
                         {{ $basket->total  or 0}}<small>{{$global_data['components']['shop']['currency']['symbol']}}</small>
                     </div>
                 </div>

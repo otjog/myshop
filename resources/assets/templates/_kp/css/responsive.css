@@ -145,7 +145,7 @@
 {
 	.top_bar
 	{
-		/*display: none;*/
+
 	}
 	.header_search
 	{
@@ -404,7 +404,7 @@
 {
 	.header_search
 	{
-		display: none;
+
 	}
 	.page_menu_search
 	{
@@ -529,7 +529,7 @@
 	p{font-size: 13px;}
 	.top_bar
 	{
-		display: none;
+
 	}
 	.logo_container, .wishlist_cart
 	{
@@ -620,7 +620,7 @@
 	}
 	.header_search
 	{
-		display: none;
+
 	}
 	.main_nav
 	{
