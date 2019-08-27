@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Shop\CustomerGroup;
 use App\Models\Shop\Price\Currency;
-use App\Models\Shop\Price\Price;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Geo\GeoData;
 use App\Models\Site\Template;
 use App\Models\Site\Metatags;
 use App\Models\Site\Module;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class Settings {
 
@@ -46,16 +47,6 @@ class Settings {
             });
         /* End Currency */
 
-        /* Add Price */
-        $price = new Price();
-
-        $this->data['components']['shop']['price'] =
-            $price
-                ->select('id', 'name')
-                ->where('name', 'retail')
-                ->first();
-        /* End Price */
-
     }
 
     private function __clone(){}
@@ -91,14 +82,27 @@ class Settings {
         $this->data['geo'] = $geoData->getGeoData();
         /* End Geo */
 
+        /* Add Customer If Exist */
+        $customer = Auth::user();
+
+        $this->data['components']['shop']['customer'] = $customer;
+
+        $customerGroup = new CustomerGroup();
+
+        $this->data['components']['shop']['default_customer_group'] = $customerGroup->getDefaultCustomerGroup();
+
+        if($customer !== null)
+            $this->data['components']['shop']['customer_group'] = $customer->customer_group;
+        else
+            $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['default_customer_group'];
+        /* End Customer */
+
         return $this->data;
     }
 
     public function getParameter($path)
     {
-        if ($this->data === null) {
-            $this->data = $this->getParameters();
-        }
+        $this->data = $this->getParameters();
 
         $pathArray = explode('.', $path);
 
