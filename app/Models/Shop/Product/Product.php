@@ -133,12 +133,7 @@ class Product extends Model
 
         $today = $settings->getParameter('today');
 
-        $customer = Auth::user();
-
-        if($customer === null)
-            $price_id = $settings->getParameter('components.shop.price.id');
-        else
-            $price_id = $customer->price_id;
+        $price_id = $settings->getParameter('components.shop.customer_group.price_id');
 
         $products = self::select(
             'products.id',
@@ -548,12 +543,7 @@ class Product extends Model
 
         $today = $settings->getParameter('today');
 
-        $customer = Auth::user();
-
-        if($customer === null)
-            $price_id = $settings->getParameter('components.shop.price.id');
-        else
-            $price_id = $customer->price_id;
+        $price_id = $settings->getParameter('components.shop.customer_group.price_id');
 
         return self::select(
             'products.id',

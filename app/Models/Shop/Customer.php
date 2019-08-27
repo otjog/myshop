@@ -18,7 +18,7 @@ class Customer extends Authenticatable{
         'full_name',
         'email',
         'phone',
-        'price_id',
+        'shop_customer_group_id',
         'address',
         'full_name_json',
         'address_json',
@@ -31,7 +31,7 @@ class Customer extends Authenticatable{
 
     public function customer_group()
     {
-        return $this->belongsTo(    'App\Models\Shop\CustomerGroup');
+        return $this->belongsTo(    'App\Models\Shop\CustomerGroup', 'shop_customer_group_id');
     }
 
     public function shopOrders()
@@ -111,7 +111,7 @@ class Customer extends Authenticatable{
 
         $settings = Settings::getInstance();
 
-        $data_customer['price_id'] = $settings->getParameter('components.shop.price.id');
+        $data_customer['shop_customer_group_id'] = $settings->getParameter('components.shop.default_customer_group.id');
 
         if(!isset($data_customer['password']))
             $data_customer['password'] = Hash::make($this->getRandomPassword());

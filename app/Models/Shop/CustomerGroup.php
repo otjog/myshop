@@ -17,4 +17,18 @@ class CustomerGroup extends Model
     {
         return $this->belongsTo(    'App\Models\Shop\Price\Price');
     }
+
+    public function getDefaultCustomerGroup()
+    {
+        return self::select(
+            'id',
+            'active',
+            'alias',
+            'name',
+            'price_id',
+            'default'
+        )
+            ->where('default', '=',1)
+            ->first();
+    }
 }
