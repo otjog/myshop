@@ -70,7 +70,6 @@ class Product extends Model
             ->withPivot('quantity', 'price_id', 'currency_id', 'price_value', 'order_attributes')
             ->withTimestamps();
     }
-
     /***Function***/
     public function getAllProducts(){
         return self::select(
@@ -512,9 +511,9 @@ class Product extends Model
         return $products;
     }
 
-    private function getOneProductQuery($shop_customer_group = null){
+    private function getOneProductQuery(){
 
-        $productsQuery = $this->getDefaultProductQuery($shop_customer_group);
+        $productsQuery = $this->getDefaultProductQuery();
 
         return $productsQuery
             ->addSelect(
@@ -533,31 +532,27 @@ class Product extends Model
             }]);
     }
 
-    private function getListProductQuery($shop_customer_group = null){
+    private function getListProductQuery(){
 
-        $productsQuery = $this->getDefaultProductQuery($shop_customer_group);
+        $productsQuery = $this->getDefaultProductQuery();
 
         return $productsQuery
         /************IMAGES*****************/
         ->with('images');
     }
 
-    private function getDefaultProductQuery($shop_customer_group){
+    private function getDefaultProductQuery(){
 
         $settings = Settings::getInstance();
 
         $today = $settings->getParameter('today');
 
-        if ($shop_customer_group === null) {
-            $customer = Auth::user();
+        $customer = Auth::user();
 
-            if($customer === null)
-                $price_id = $settings->getParameter('components.shop.price.id');
-            else
-                $price_id = $customer->price_id;
-        } else {
-            $price_id = $shop_customer_group['price_id'];
-        }
+        if($customer === null)
+            $price_id = $settings->getParameter('components.shop.price.id');
+        else
+            $price_id = $customer->price_id;
 
         return self::select(
             'products.id',
@@ -640,9 +635,9 @@ class Product extends Model
 
     }
 
-    public function getCustomProductsOffer($offer_id, $take, $shop_customer_group){
+    public function getCustomProductsOffer($offer_id, $take){
 
-        $productsQuery = $this->getListProductQuery($shop_customer_group);
+        $productsQuery = $this->getListProductQuery();
 
         $products = $productsQuery
 
@@ -663,11 +658,11 @@ class Product extends Model
         return $this->addRelationCollections($products);
     }
 
-    public function getProductsPrepareOffer($offer_name, $take, $shop_customer_group){
+    public function getProductsPrepareOffer($offer_name, $take){
 
         switch($offer_name){
             case 'sale' :
-                $productQuery = $this->getListProductQuery($shop_customer_group);
+                $productQuery = $this->getListProductQuery();
 
                 $products = $productQuery
                     ->where('products.active', 1)

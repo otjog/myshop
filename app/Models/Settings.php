@@ -70,7 +70,7 @@ class Settings {
             $this->data[$name] = $value;
         } else {
             $result = array($nameArray[$max] => $value);
-            for($i=$max-1; $i>0; $result = array($nameArray[$i--] => $result));
+            for($i = $max-1; $i > 0; $result = array($nameArray[$i--] => $result));
 
             $this->data[$nameArray[0]] = $result;
         }

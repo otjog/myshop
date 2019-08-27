@@ -37,13 +37,11 @@ class SendMailForRegister
 
         $data['mailling'] = $event->mailling;
 
-        $shop_customer_group = [
-            'price_id' => 4
-        ];
+        $data['shop']['offers'] = $offers->getActiveOfferByName('sale', 10);
 
-        $data['shop']['offers'] = $offers->getActiveOfferByName('sale', 10, $shop_customer_group);
+        $globalData = $settings->pushArrayParameters($data);
 
-        $globalData = $settings->getParametersForController($data,'shop', 'offer', 'show', 'sale');
+        dd($globalData);
 
         foreach ($globalData['mailling'][0]->mailList as $mailData) {
             Mail::to($mailData['email'], $mailData['name'])

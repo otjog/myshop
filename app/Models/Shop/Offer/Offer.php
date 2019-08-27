@@ -38,15 +38,15 @@ class Offer extends Model{
 
     }
 
-    public function getProductsOffers($take = 10, $shop_customer_group = null)
+    public function getProductsOffers($take = 10)
     {
         $offers = $this->getActiveOffers();
 
-        return $this->addProductsToOffers($offers, $take, $shop_customer_group);
+        return $this->addProductsToOffers($offers, $take);
 
     }
 
-    public function getActiveOfferByName($name, $take = 6, $shop_customer_group = null){
+    public function getActiveOfferByName($name, $take = 6){
 
         $offers = self::select(
             'id',
@@ -58,11 +58,11 @@ class Offer extends Model{
             ->where('name', $name)
             ->get();
 
-        return $this->addProductsToOffers($offers, $take, $shop_customer_group);
+        return $this->addProductsToOffers($offers, $take);
 
     }
 
-    protected function addProductsToOffers($offers, $take, $shop_customer_group)
+    protected function addProductsToOffers($offers, $take)
     {
         $newOffers = collect();
 
@@ -72,13 +72,13 @@ class Offer extends Model{
 
             if($offer->related){
                 /*Выводит товары из предложения созданного нами*/
-                $offerProducts = $products->getCustomProductsOffer($offer->id, $take, $shop_customer_group);
+                $offerProducts = $products->getCustomProductsOffer($offer->id, $take);
 
                 $offer->relations = ['products' => $offerProducts];
 
             }else{
                 /*Выводит товары из предложения созданного автоматически*/
-                $offerProducts = $products->getProductsPrepareOffer($offer->name, $take, $shop_customer_group);
+                $offerProducts = $products->getProductsPrepareOffer($offer->name, $take);
 
                 $offer->relations = ['products' => $offerProducts];
             }
