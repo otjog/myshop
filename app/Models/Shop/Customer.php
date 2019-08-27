@@ -29,6 +29,11 @@ class Customer extends Authenticatable{
         'password', 'remember_token',
     ];
 
+    public function customer_group()
+    {
+        return $this->belongsTo(    'App\Models\Shop\CustomerGroup');
+    }
+
     public function shopOrders()
     {
         return $this->hasMany('App\Order');
