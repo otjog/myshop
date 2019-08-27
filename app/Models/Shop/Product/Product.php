@@ -70,7 +70,6 @@ class Product extends Model
             ->withPivot('quantity', 'price_id', 'currency_id', 'price_value', 'order_attributes')
             ->withTimestamps();
     }
-
     /***Function***/
     public function getAllProducts(){
         return self::select(
