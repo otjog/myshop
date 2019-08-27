@@ -18,17 +18,10 @@ class Offer extends Model{
 
     protected $table = 'shop_offers';
 
-    public function products(){
+    public function products()
+    {
         return $this->belongsToMany('App\Models\Shop\Product\Product', 'shop_offer_has_product', 'offer_id', 'product_id')
             ->withTimestamps();
-    }
-
-    public function getProductsOffers($take = 10){
-
-        $offers = $this->getActiveOffers();
-
-        return $this->addProductsToOffers($offers, $take);
-
     }
 
     //TODO поле name сделать уникальным
@@ -45,7 +38,15 @@ class Offer extends Model{
 
     }
 
-    public function getActiveOfferByName($name, $take=6){
+    public function getProductsOffers($take = 10, $shop_customer_group = null)
+    {
+        $offers = $this->getActiveOffers();
+
+        return $this->addProductsToOffers($offers, $take, $shop_customer_group);
+
+    }
+
+    public function getActiveOfferByName($name, $take = 6, $shop_customer_group = null){
 
         $offers = self::select(
             'id',
@@ -57,11 +58,11 @@ class Offer extends Model{
             ->where('name', $name)
             ->get();
 
-        return $this->addProductsToOffers($offers, $take);
+        return $this->addProductsToOffers($offers, $take, $shop_customer_group);
 
     }
 
-    protected function addProductsToOffers($offers, $take)
+    protected function addProductsToOffers($offers, $take, $shop_customer_group)
     {
         $newOffers = collect();
 
@@ -70,19 +71,23 @@ class Offer extends Model{
         foreach($offers as $offer){
 
             if($offer->related){
-                $offerProducts = $products->getCustomProductsOffer($offer->id, $take);
+                /*Выводит товары из предложения созданного нами*/
+                $offerProducts = $products->getCustomProductsOffer($offer->id, $take, $shop_customer_group);
 
                 $offer->relations = ['products' => $offerProducts];
 
             }else{
-                $offerProducts = $products->getProductsPrepareOffer($offer->name, $take);
+                /*Выводит товары из предложения созданного автоматически*/
+                $offerProducts = $products->getProductsPrepareOffer($offer->name, $take, $shop_customer_group);
 
                 $offer->relations = ['products' => $offerProducts];
             }
 
             $newOffers->put($offer->name, $offer);
         }
+
         unset($offers);
+
         return $newOffers;
     }
 }

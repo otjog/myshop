@@ -2,9 +2,11 @@
 
 namespace App\Console;
 
+use App\Models\Site\Mailling;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\Price\CurrencyController;
+use App\Http\Controllers\Mailling\MaillingController;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,10 +27,37 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
+        /*Обновляем Курсы Валют*/
+        $schedule->call(function ()
+        {
             $cur = New CurrencyController();
+
             $cur->getCur();
-        })->everyMinute();
+
+        })->daily();
+
+        /*Отправка рассылок клиентам*/
+        $schedule->call(function ()
+        {
+            $maillingModel = new Mailling();
+
+            $maillingController = New MaillingController($maillingModel);
+
+            $maillings = $maillingModel->getActiveMaillings();
+
+            $timestampNow = round((time()+10800)/60)*60;
+
+            foreach ($maillings as $mailling) {
+
+                $timestampEvent = round( $mailling->timestamp/60)*60;
+
+                if ($timestampNow === $timestampEvent) {
+                    $maillingController->run($mailling->id);
+                }
+            }
+
+
+        })->daily();
     }
 
     /**
