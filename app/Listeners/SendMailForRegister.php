@@ -4,9 +4,7 @@ namespace App\Listeners;
 
 use App\Events\MaillingForRegister;
 use App\Models\Shop\Offer\Offer;
-use App\Models\Shop\Product\Product;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\Shop\CustomerGroup;
 use App\Models\Settings;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForRegister;
@@ -37,11 +35,17 @@ class SendMailForRegister
 
         $data['mailling'] = $event->mailling;
 
+        $customerGroup = new CustomerGroup();
+
+        $customerGroupForMailling = $customerGroup->getCustomerGroupById($data['mailling'][0]->customer_group_id);
+
+        $settings->getParameters();
+
+        $settings->addParameter('components.shop.customer_group', $customerGroupForMailling);
+
         $data['shop']['offers'] = $offers->getActiveOfferByName('sale', 10);
 
         $globalData = $settings->pushArrayParameters($data);
-
-        dd($globalData);
 
         foreach ($globalData['mailling'][0]->mailList as $mailData) {
             Mail::to($mailData['email'], $mailData['name'])

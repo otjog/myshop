@@ -31,4 +31,18 @@ class CustomerGroup extends Model
             ->where('default', '=',1)
             ->first();
     }
+
+    public function getCustomerGroupById($id)
+    {
+        return self::select(
+            'id',
+            'active',
+            'alias',
+            'name',
+            'price_id',
+            'default'
+        )
+            ->where('id', '=', $id)
+            ->first();
+    }
 }

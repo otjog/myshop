@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use JustBetter\PaginationWithHavings\PaginationWithHavings;
 use App\Models\Settings;
-use Illuminate\Support\Facades\Auth;
+
 
 class Product extends Model
 {
