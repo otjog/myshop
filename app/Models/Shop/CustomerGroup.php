@@ -13,6 +13,11 @@ class CustomerGroup extends Model
         return $this->hasMany('App\Models\Shop\Customer');
     }
 
+    public function maillings()
+    {
+        return $this->hasMany('App\Models\Site\Mailling');
+    }
+
     public function price()
     {
         return $this->belongsTo(    'App\Models\Shop\Price\Price');

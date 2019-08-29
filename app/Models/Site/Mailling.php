@@ -3,32 +3,47 @@
 namespace App\Models\Site;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Mailling extends Model
 {
+
+    public function customer_group()
+    {
+        return $this->belongsTo(    'App\Models\Shop\CustomerGroup', 'customer_group_id');
+    }
+
     public function getActiveMaillings()
     {
         $maillings = self::where('active', 1)
             ->select('alias', 'name', 'file_src', 'time', 'customer_group_id')
+            ->with(['customer_group' => function($query){
+                $query->with('customers');
+            }])
             ->get();
 
         $maillings = $this->addNormalizeTime($maillings);
+
+        $maillings = $this->addMailList($maillings);
 
         return $maillings;
     }
 
     public function getActiveMaillingById($id)
     {
-        $mailling = self::where('active', 1)
+        $maillings = self::where('active', 1)
             ->where('id', $id)
             ->select('alias', 'name', 'file_src', 'time', 'customer_group_id')
+            ->with(['customer_group' => function($query){
+                $query->with('customers');
+            }])
             ->get();
 
-        $mailling = $this->addNormalizeTime($mailling);
+        $maillings = $this->addNormalizeTime($maillings);
 
-        $maillings = $this->addMailList($mailling);
+        $maillings = $this->addMailList($maillings);
 
-        return $maillings;
+        return $maillings[0];
     }
 
     protected function addNormalizeTime ($events)
@@ -54,7 +69,7 @@ class Mailling extends Model
                 $datetime['month'] = $month;
 
             $event->datetime = $datetime['year'] . '-' . $datetime['month'] . '-' . $datetime['day'] . ' ' . $datetime['hour'] . ':' . $datetime['min'] . ':00';
-
+            Storage::put('datetime.txt', $event->datetime);
             $event->timestamp = strtotime($event->datetime);
 
         }
@@ -62,13 +77,29 @@ class Mailling extends Model
         return $events;
     }
 
+    /**
+     * Добавляет Maillist к каждому эксземпляру рассылки
+     *
+     * Если у экземпляра рассылки указан file_src, то список адресов для рассылки берется
+     * из указанного текстового файла. При этом значение поля customer_group_id учитывается только
+     * для того, чтобы установить цену при расслки товарных предложений. Если customer_group_id,
+     * то будет учитываться группа по умолчанию.
+     * Чтобы сделать рассылку для существующих пользователей нужно, оставить поле file_src = null
+     * и указать customer_group_id
+     *
+     * @param self $maillings
+     * @return self
+     */
     protected function addMailList($maillings)
     {
         foreach ($maillings as $mailling) {
             if ($mailling->file_src !== null) {
                 $mailling->mailList = $this->getMailListFromFile($mailling->file_src);
+            } else {
+                $mailling->mailList = $this->getMailListFromDb($mailling->customer_group);
             }
         }
+
         return $maillings;
     }
 
@@ -76,22 +107,30 @@ class Mailling extends Model
     {
         $data = [];
 
-        if (is_file($filepath)) {
-            $strings = file($filepath);
-
+        if (is_file(public_path($filepath))) {
+            $strings = file(public_path($filepath));
             foreach ($strings as $string) {
                 $string = str_ireplace(["\t", "\n", "\r", "\0", "\x0B"],' ', $string);
                 $delimeterPosition = stripos($string, ' ');
 
                 $data[] = [
                     'email' => substr($string, 0, $delimeterPosition),
-                    'name' => trim(substr($string, $delimeterPosition))
+                    'full_name' => trim(substr($string, $delimeterPosition))
                 ];
 
             }
         }
 
         return $data;
+    }
+
+    protected function getMailListFromDb($customerGroup)
+    {
+        if ($customerGroup !== null) {
+           if (isset($customerGroup->customers) && $customerGroup->customers !== null) {
+               return $customerGroup->customers->toArray();
+           }
+        }
     }
 
 }

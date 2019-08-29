@@ -7,6 +7,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\Price\CurrencyController;
 use App\Http\Controllers\Mailling\MaillingController;
+use App\Events\MaillingForRegister;
+use Illuminate\Support\Facades\Storage;
 
 class Kernel extends ConsoleKernel
 {
@@ -51,13 +53,15 @@ class Kernel extends ConsoleKernel
 
                 $timestampEvent = round( $mailling->timestamp/60)*60;
 
+                Storage::put('file.txt', $timestampNow . ' - ' . $timestampEvent . ' - ' . $mailling->timestamp);
+
                 if ($timestampNow === $timestampEvent) {
-                    $maillingController->run($mailling->id);
+                    event(new MaillingForRegister($mailling));
                 }
             }
 
 
-        })->daily();
+        })->everyMinute();
     }
 
     /**

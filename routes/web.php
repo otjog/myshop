@@ -71,4 +71,7 @@
 
     Auth::routes();
 
+    Route::get('/test', function (){
+        dd(date('Y-m-d H:i', time()+10800));
+    });
 

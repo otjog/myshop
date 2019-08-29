@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Site\Mailling;
 use App\Models\Settings;
+use Illuminate\Support\Facades\Storage;
 
 class MaillingController extends Controller
 {
@@ -18,13 +19,6 @@ class MaillingController extends Controller
         $this->mailling = $mailling;
 
         $this->settings = Settings::getInstance();
-    }
-
-    public function run($id)
-    {
-        $mailling = $this->mailling->getActiveMaillingById($id);
-
-        event(new MaillingForRegister($mailling));
     }
 
     /**

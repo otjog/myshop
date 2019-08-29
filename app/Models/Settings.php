@@ -68,17 +68,19 @@ class Settings {
     public function getParameters()
     {
         /* Add Geo */
+        /*
         $geoData = new GeoData();
 
         $this->data['geo'] = $geoData->getGeoData();
+        */
         /* End Geo */
-
+/*
         if ( !isset($this->data['components']['shop']['customer']) ) {
             $customer = Auth::user();
 
             $this->data['components']['shop']['customer'] = $customer;
         }
-
+*/
         if ( !isset($this->data['components']['shop']['default_customer_group']) ) {
             $customerGroup = new CustomerGroup();
 

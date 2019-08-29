@@ -50,14 +50,14 @@ class CreateCustomerGroupsTable extends Migration
 
             $replaceArray[] = [
                 'price_id' => $price['price_id'],
-                'shop_customer_group_id' => $groupId
+                'customer_group_id' => $groupId
             ];
         }
 
         foreach ($replaceArray as $replace) {
             DB::table('shop_customers')
                 ->where('price_id', $replace['price_id'])
-                ->update(['price_id' => $replace['shop_customer_group_id']]);
+                ->update(['price_id' => $replace['customer_group_id']]);
         }
 
         /**
@@ -65,7 +65,7 @@ class CreateCustomerGroupsTable extends Migration
          */
         Schema::table('shop_customers', function($table)
         {
-            $table->renameColumn('price_id', 'shop_customer_group_id');
+            $table->renameColumn('price_id', 'customer_group_id');
         });
     }
 
@@ -77,20 +77,20 @@ class CreateCustomerGroupsTable extends Migration
     public function down()
     {
         $groups = DB::table('shop_customer_groups')
-            ->select('id as shop_customer_group_id', 'price_id')
+            ->select('id as customer_group_id', 'price_id')
             ->get();
 
         $groups = json_decode(json_encode($groups), true);
 
         foreach ($groups as $group) {
             DB::table('shop_customers')
-                ->where('shop_customer_group_id', $group['shop_customer_group_id'])
-                ->update(['shop_customer_group_id' => $group['price_id']]);
+                ->where('customer_group_id', $group['customer_group_id'])
+                ->update(['customer_group_id' => $group['price_id']]);
         }
 
         Schema::table('shop_customers', function($table)
         {
-            $table->renameColumn('shop_customer_group_id', 'price_id');
+            $table->renameColumn('customer_group_id', 'price_id');
         });
 
         Schema::dropIfExists('shop_customer_groups');

@@ -8,6 +8,8 @@ use App\Models\Shop\CustomerGroup;
 use App\Models\Settings;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ForRegister;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Site\Mailling;
 
 class SendMailForRegister
 {
@@ -37,7 +39,7 @@ class SendMailForRegister
 
         $customerGroup = new CustomerGroup();
 
-        $customerGroupForMailling = $customerGroup->getCustomerGroupById($data['mailling'][0]->customer_group_id);
+        $customerGroupForMailling = $customerGroup->getCustomerGroupById($data['mailling']->customer_group_id);
 
         $settings->getParameters();
 
@@ -47,8 +49,9 @@ class SendMailForRegister
 
         $globalData = $settings->pushArrayParameters($data);
 
-        foreach ($globalData['mailling'][0]->mailList as $mailData) {
-            Mail::to($mailData['email'], $mailData['name'])
+        foreach ($globalData['mailling']['mailList'] as $mailData) {
+
+            Mail::to($mailData['email'], $mailData['full_name'])
                 ->send(new ForRegister(['global_data' => $globalData]));
         }
     }
