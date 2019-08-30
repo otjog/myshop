@@ -3,10 +3,12 @@
 namespace App\Models\Site;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Mailling extends Model
 {
+    protected $casts = [
+        'options' => 'array',
+    ];
 
     public function customer_group()
     {
@@ -16,7 +18,7 @@ class Mailling extends Model
     public function getActiveMaillings()
     {
         $maillings = self::where('active', 1)
-            ->select('alias', 'name', 'file_src', 'time', 'customer_group_id')
+            ->select('alias', 'name', 'file_src', 'time', 'customer_group_id', 'options')
             ->with(['customer_group' => function($query){
                 $query->with('customers');
             }])
@@ -57,7 +59,7 @@ class Mailling extends Model
         ];
 
         foreach ($events as $event) {
-            list($min, $hour, $day, $month) = explode(' ', $event->time);
+            list($min, $hour, $day, $month, $dayOfWeek) = explode(' ', $event->time);
 
             if($min !== '*')
                 $datetime['min'] = $min;
@@ -68,9 +70,14 @@ class Mailling extends Model
             if($month !== '*')
                 $datetime['month'] = $month;
 
+            if($dayOfWeek === '*')
+                $dayOfWeek = date('N');
+
             $event->datetime = $datetime['year'] . '-' . $datetime['month'] . '-' . $datetime['day'] . ' ' . $datetime['hour'] . ':' . $datetime['min'] . ':00';
-            Storage::put('datetime.txt', $event->datetime);
+
             $event->timestamp = strtotime($event->datetime);
+
+            $event->dayOfWeek = $dayOfWeek;
 
         }
 

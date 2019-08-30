@@ -45,14 +45,19 @@ class SendMailForRegister
 
         $settings->addParameter('components.shop.customer_group', $customerGroupForMailling);
 
-        $data['shop']['offers'] = $offers->getActiveOfferByName('hot', 10);
+        $offerName = $event->mailling->options['shop_offer'];
+
+        $data['shop']['offers'] = $offers->getActiveOfferByName($offerName, 10);
 
         $globalData = $settings->pushArrayParameters($data);
 
         foreach ($globalData['mailling']['mailList'] as $mailData) {
 
+            $mailData['subject'] = str_ireplace('{{full_name}}', $mailData['full_name'], $event->mailling->options['mail_subject']);
+            $globalData['mailling']['current'] = $mailData;
+
             Mail::to($mailData['email'], $mailData['full_name'])
-                ->send(new ForRegister(['global_data' => $globalData]));
+                ->send(new ForRegister($globalData));
         }
     }
 }

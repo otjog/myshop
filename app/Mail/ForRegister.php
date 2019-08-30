@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ForRegister extends Mailable
 {
@@ -32,7 +31,7 @@ class ForRegister extends Mailable
     {
         return $this
             ->from(env('MAIL_FROM_ADDRESS'))
-            ->subject('Очень низкие цены на запчасти для котлов. Смотрите на сайте!')
-            ->view('email.mailling')->with($this->data);
+            ->subject($this->data['mailling']['current']['subject'])
+            ->view('email.mailling')->with(['global_data' => $this->data]);
     }
 }
