@@ -32,6 +32,6 @@ class ForRegister extends Mailable
         return $this
             ->from(env('MAIL_FROM_ADDRESS'))
             ->subject($this->data['mailling']['current']['subject'])
-            ->view('email.mailling')->with(['global_data' => $this->data]);
+            ->view($this->data['mailling']['current']['template'])->with(['global_data' => $this->data]);
     }
 }

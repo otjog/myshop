@@ -54,6 +54,7 @@ class SendMailForRegister
         foreach ($globalData['mailling']['mailList'] as $mailData) {
 
             $mailData['subject'] = str_ireplace('{{full_name}}', $mailData['full_name'], $event->mailling->options['mail_subject']);
+            $mailData['template'] = $event->mailling->options['mail_template'];
             $globalData['mailling']['current'] = $mailData;
 
             Mail::to($mailData['email'], $mailData['full_name'])
