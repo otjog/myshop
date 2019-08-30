@@ -8,7 +8,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\Price\CurrencyController;
 use App\Events\MaillingForRegister;
 
-
 class Kernel extends ConsoleKernel
 {
     /**
@@ -47,11 +46,13 @@ class Kernel extends ConsoleKernel
             $roundToHour = 3600;
             $roundToMinute = 60;
 
+            $roundTo = $roundToHour;
+
             /**
              * Мы округляем timestamp, до 1 часа. Т.е любое время указанное в пределах одного
              * округлится по математическим законам в к ближайщему часу.
              */
-            $timestampNow = round((time())/$roundToHour)*$roundToHour;
+            $timestampNow = round((time())/$roundTo)*$roundTo;
 
             $today = date('N');
 
@@ -59,7 +60,7 @@ class Kernel extends ConsoleKernel
 
                 if ($today === $mailling->dayOfWeek) {
 
-                    $timestampEvent = round( $mailling->timestamp/$roundToHour)*$roundToHour;
+                    $timestampEvent = round( $mailling->timestamp/$roundTo)*$roundTo;
 
                     if ($timestampNow === $timestampEvent) {
                         event(new MaillingForRegister($mailling));
