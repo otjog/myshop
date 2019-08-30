@@ -43,7 +43,7 @@ class Mailling extends Model
 
         $maillings = $this->addMailList($maillings);
 
-        return $maillings[0];
+        return $maillings;
     }
 
     protected function addNormalizeTime ($events)

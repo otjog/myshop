@@ -45,7 +45,7 @@ class SendMailForRegister
 
         $settings->addParameter('components.shop.customer_group', $customerGroupForMailling);
 
-        $data['shop']['offers'] = $offers->getActiveOfferByName('sale', 10);
+        $data['shop']['offers'] = $offers->getActiveOfferByName('hot', 10);
 
         $globalData = $settings->pushArrayParameters($data);
 

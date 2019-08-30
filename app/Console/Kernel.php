@@ -6,9 +6,7 @@ use App\Models\Site\Mailling;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\Price\CurrencyController;
-use App\Http\Controllers\Mailling\MaillingController;
-use App\Events\MaillingForRegister;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Mailling\RunMaillingController;
 
 class Kernel extends ConsoleKernel
 {
@@ -41,25 +39,11 @@ class Kernel extends ConsoleKernel
         /*Отправка рассылок клиентам*/
         $schedule->call(function ()
         {
-            $maillingModel = new Mailling();
+            $mailling = new Mailling();
 
-            $maillingController = New MaillingController($maillingModel);
+            $maillingController = New RunMaillingController($mailling);
 
-            $maillings = $maillingModel->getActiveMaillings();
-
-            $timestampNow = round((time()+10800)/60)*60;
-
-            foreach ($maillings as $mailling) {
-
-                $timestampEvent = round( $mailling->timestamp/60)*60;
-
-                Storage::put('file.txt', $timestampNow . ' - ' . $timestampEvent . ' - ' . $mailling->timestamp);
-
-                if ($timestampNow === $timestampEvent) {
-                    event(new MaillingForRegister($mailling));
-                }
-            }
-
+            $maillingController->runAll();
 
         })->everyMinute();
     }
