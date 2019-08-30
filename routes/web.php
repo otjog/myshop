@@ -64,11 +64,5 @@
     //Ajax
     Route::match(['get', 'post'], '/ajax', 'Ajax\AjaxController@index');
 
-    Route::get('/parse/{from}', 'Parse\ParseController@load');
-    Route::get('/curs', 'Price\CurrencyController@getCur');
-
-    Route::get('/mailling/{id}', 'Mailling\MaillingController@run');
-
     Auth::routes();
-
 

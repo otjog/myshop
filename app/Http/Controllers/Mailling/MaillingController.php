@@ -2,30 +2,11 @@
 
 namespace App\Http\Controllers\Mailling;
 
-use App\Events\MaillingForRegister;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Site\Mailling;
-use App\Models\Settings;
 
 class MaillingController extends Controller
 {
-
-    protected $mailling;
-
-    public function __construct(Mailling $mailling)
-    {
-        $this->mailling = $mailling;
-
-        $this->settings = Settings::getInstance();
-    }
-
-    public function run($id)
-    {
-        $mailling = $this->mailling->getActiveMaillingById($id);
-
-        event(new MaillingForRegister($mailling));
-    }
 
     /**
      * Display a listing of the resource.

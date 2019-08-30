@@ -13,7 +13,9 @@ class CreateMaillingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('maillings', function (Blueprint $table) {
+        $optionsComment = 'Для добавления товаров в рассылку использовать shop_offer, а в качестве значения - alias необходимого offer.';
+
+        Schema::create('maillings', function (Blueprint $table) use ($optionsComment) {
             $table->increments('id');
             $table->tinyInteger('active')->unsigned()->default(0);
             $table->string('alias', 45);
@@ -21,6 +23,7 @@ class CreateMaillingsTable extends Migration
             $table->string('file_src', 255)->nullable();
             $table->string('time', 13);
             $table->integer('customer_group_id')->nullable();
+            $table->jsonb('options')->nullable()->comment($optionsComment);
             $table->timestamps();
         });
     }

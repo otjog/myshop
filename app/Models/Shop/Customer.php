@@ -31,7 +31,7 @@ class Customer extends Authenticatable{
 
     public function customer_group()
     {
-        return $this->belongsTo(    'App\Models\Shop\CustomerGroup', 'shop_customer_group_id');
+        return $this->belongsTo(    'App\Models\Shop\CustomerGroup', 'customer_group_id');
     }
 
     public function shopOrders()

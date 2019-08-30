@@ -5,6 +5,7 @@
     <?php
         $data =& $global_data;
         $offers =& $global_data['shop']['offers'];
+        $html = $global_data['mailling']->options['html_values'];
     ?>
 
     {{-- Main Banner --}}
@@ -24,29 +25,43 @@
                                     <p style="font-size: 14px; line-height: 45px; text-align: center; margin: 0;">
                                         <span style="font-size: 38px;">
                                             <strong>
-                                                <span style="line-height: 45px; font-size: 19px;">
-                                                    Запчасти для газовых котлов по очень низким ценам.
-                                                </span>
-                                                <br>
-                                                <span style="line-height: 45px; font-size: 19px;">
-                                                    Зарегистрируйтесь на нашем сайте и получите доступ к оптовым ценам.
-                                                </span>
-                                                <br>
                                                 <span style="color: #2190e3; font-size: 30px; line-height: 45px;">
-                                                    Не верите? Посмотрите подборку ниже!
+                                                   Для {{$global_data['mailling']['current']['full_name']}}
                                                 </span>
+                                                <br>
+                                                @isset($html['text_long'])
+                                                    @foreach($html['text_long'] as $text)
+                                                        <span style="line-height: 45px; font-size: 19px;">
+                                                            {{$text}}
+                                                        </span>
+                                                        <br>
+                                                    @endforeach
+                                                @endisset
+                                                @isset($html['text_short'])
+                                                    @foreach($html['text_short'] as $text)
+                                                        <span style="color: #2190e3; font-size: 30px; line-height: 45px;">
+                                                             {{$text}}
+                                                        </span>
+                                                    @endforeach
+                                                @endisset
+
                                             </strong>
                                         </span>
                                     </p>
                                 </div>
                             </div>
                             <!--[if mso]></td></tr></table><![endif]-->
-                            <div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
-                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="#" style="height:37.5pt; width:163.5pt; v-text-anchor:middle;" arcsize="30%" stroke="false" fillcolor="#fc7318"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Tahoma, Verdana, sans-serif; font-size:20px"><![endif]--><a href="{{env('APP_URL') . '/register'}}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #fc7318; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; width: auto; width: auto; border-top: 1px solid #fc7318; border-right: 1px solid #fc7318; border-bottom: 1px solid #fc7318; border-left: 1px solid #fc7318; padding-top: 5px; padding-bottom: 5px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank"><span style="padding-left:50px;padding-right:50px;font-size:20px;display:inline-block;">
-<span style="font-size: 16px; line-height: 32px;"><span style="font-size: 20px; line-height: 40px;"><strong>Зарегистрироваться</strong></span></span>
+
+                            {{-- Button Container --}}
+                            @isset($html['buttons']['registration'])
+                                <div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
+                                    <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="#" style="height:37.5pt; width:163.5pt; v-text-anchor:middle;" arcsize="30%" stroke="false" fillcolor="#fc7318"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Tahoma, Verdana, sans-serif; font-size:20px"><![endif]--><a href="{{env('APP_URL') . '/register'}}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #fc7318; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; width: auto; width: auto; border-top: 1px solid #fc7318; border-right: 1px solid #fc7318; border-bottom: 1px solid #fc7318; border-left: 1px solid #fc7318; padding-top: 5px; padding-bottom: 5px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank"><span style="padding-left:50px;padding-right:50px;font-size:20px;display:inline-block;">
+<span style="font-size: 16px; line-height: 32px;"><span style="font-size: 20px; line-height: 40px;"><strong>{{$html['buttons']['registration']['text']}}</strong></span></span>
 </span></a>
-                                <!--[if mso]></center></v:textbox></v:roundrect></td></tr></table><![endif]-->
-                            </div>
+                                    <!--[if mso]></center></v:textbox></v:roundrect></td></tr></table><![endif]-->
+                                </div>
+                            @endisset
+                            {{-- End Button Container --}}
 
                             <!--[if (!mso)&(!IE)]><!-->
                         </div>
@@ -259,12 +274,15 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            {{-- Button Container --}}
+                            @isset($html['buttons']['registration'])
                             <div align="center" class="button-container" style="padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
                                 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;"><tr><td style="padding-top: 10px; padding-right: 10px; padding-bottom: 10px; padding-left: 10px" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="#" style="height:34.5pt; width:222.75pt; v-text-anchor:middle;" arcsize="33%" stroke="false" fillcolor="#fc7318"><w:anchorlock/><v:textbox inset="0,0,0,0"><center style="color:#ffffff; font-family:Tahoma, Verdana, sans-serif; font-size:18px"><![endif]--><a href="{{env('APP_URL') . '/register'}}" style="-webkit-text-size-adjust: none; text-decoration: none; display: inline-block; color: #ffffff; background-color: #fc7318; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; width: auto; width: auto; border-top: 1px solid #fc7318; border-right: 1px solid #fc7318; border-bottom: 1px solid #fc7318; border-left: 1px solid #fc7318; padding-top: 5px; padding-bottom: 5px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; text-align: center; mso-border-alt: none; word-break: keep-all;" target="_blank"><span style="padding-left:20px;padding-right:20px;font-size:18px;display:inline-block;">
-<span style="font-size: 16px; line-height: 32px;"><span style="font-size: 18px; line-height: 36px;"><strong>Зарегистрироваться&nbsp;›&nbsp;</strong></span></span>
+<span style="font-size: 16px; line-height: 32px;"><span style="font-size: 18px; line-height: 36px;"><strong>{{$html['buttons']['registration']['text']}}&nbsp;&nbsp;</strong></span></span>
 </span></a>
                                 <!--[if mso]></center></v:textbox></v:roundrect></td></tr></table><![endif]-->
                             </div>
+                            @endisset
                             <!--[if (!mso)&(!IE)]><!-->
                         </div>
                         <!--<![endif]-->

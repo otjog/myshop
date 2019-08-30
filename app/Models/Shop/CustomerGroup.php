@@ -13,6 +13,11 @@ class CustomerGroup extends Model
         return $this->hasMany('App\Models\Shop\Customer');
     }
 
+    public function maillings()
+    {
+        return $this->hasMany('App\Models\Site\Mailling');
+    }
+
     public function price()
     {
         return $this->belongsTo(    'App\Models\Shop\Price\Price');
@@ -29,6 +34,20 @@ class CustomerGroup extends Model
             'default'
         )
             ->where('default', '=',1)
+            ->first();
+    }
+
+    public function getCustomerGroupById($id)
+    {
+        return self::select(
+            'id',
+            'active',
+            'alias',
+            'name',
+            'price_id',
+            'default'
+        )
+            ->where('id', '=', $id)
             ->first();
     }
 }

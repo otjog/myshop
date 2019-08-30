@@ -6,7 +6,7 @@ use App\Models\Site\Mailling;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\Controllers\Price\CurrencyController;
-use App\Http\Controllers\Mailling\MaillingController;
+use App\Events\MaillingForRegister;
 
 class Kernel extends ConsoleKernel
 {
@@ -41,23 +41,35 @@ class Kernel extends ConsoleKernel
         {
             $maillingModel = new Mailling();
 
-            $maillingController = New MaillingController($maillingModel);
-
             $maillings = $maillingModel->getActiveMaillings();
 
-            $timestampNow = round((time()+10800)/60)*60;
+            $roundToHour = 3600;
+            $roundToMinute = 60;
+
+            $roundTo = $roundToHour;
+
+            /**
+             * Мы округляем timestamp, до 1 часа. Т.е любое время указанное в пределах одного
+             * округлится по математическим законам в к ближайщему часу.
+             */
+            $timestampNow = round((time())/$roundTo)*$roundTo;
+
+            $today = date('N');
 
             foreach ($maillings as $mailling) {
 
-                $timestampEvent = round( $mailling->timestamp/60)*60;
+                if ($today === $mailling->dayOfWeek) {
 
-                if ($timestampNow === $timestampEvent) {
-                    $maillingController->run($mailling->id);
+                    $timestampEvent = round( $mailling->timestamp/$roundTo)*$roundTo;
+
+                    if ($timestampNow === $timestampEvent) {
+                        event(new MaillingForRegister($mailling));
+                    }
                 }
+
             }
 
-
-        })->daily();
+        })->hourly();
     }
 
     /**

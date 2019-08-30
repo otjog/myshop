@@ -53,49 +53,48 @@ class Settings {
 
     public function addParameter($name, $value)
     {
-        $nameArray = explode('.', $name);
-
-        $max = count($nameArray)-1;
-
-        if ($max === 0) {
-            $this->data[$name] = $value;
-        } else {
-            $result = array($nameArray[$max] => $value);
-            for($i = $max-1; $i > 0; $result = array($nameArray[$i--] => $result));
-
-            $this->data[$nameArray[0]] = $result;
-        }
+        array_set($this->data, $name, $value);
     }
 
     public function pushArrayParameters($addData)
     {
         $this->data = $this->getParameters();
 
-        return array_merge($this->data, $addData);
+        $this->data = array_merge($this->data, $addData);
+
+        return $this->data;
     }
 
     public function getParameters()
     {
         /* Add Geo */
+        /*
         $geoData = new GeoData();
 
         $this->data['geo'] = $geoData->getGeoData();
+        */
         /* End Geo */
+/*
+        if ( !isset($this->data['components']['shop']['customer']) ) {
+            $customer = Auth::user();
 
-        /* Add Customer If Exist */
-        $customer = Auth::user();
+            $this->data['components']['shop']['customer'] = $customer;
+        }
+*/
+        if ( !isset($this->data['components']['shop']['default_customer_group']) ) {
+            $customerGroup = new CustomerGroup();
 
-        $this->data['components']['shop']['customer'] = $customer;
+            $this->data['components']['shop']['default_customer_group'] = $customerGroup->getDefaultCustomerGroup();
+        }
 
-        $customerGroup = new CustomerGroup();
+        if ( !isset($this->data['components']['shop']['customer_group']) ) {
 
-        $this->data['components']['shop']['default_customer_group'] = $customerGroup->getDefaultCustomerGroup();
+            if(isset($this->data['components']['shop']['customer']) && $this->data['components']['shop']['customer'] !== null)
+                $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['customer']->customer_group;
+            else
+                $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['default_customer_group'];
 
-        if($customer !== null)
-            $this->data['components']['shop']['customer_group'] = $customer->customer_group;
-        else
-            $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['default_customer_group'];
-        /* End Customer */
+        }
 
         return $this->data;
     }
