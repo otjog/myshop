@@ -3,7 +3,7 @@
 namespace App\Models\Shop\Category;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Settings;
+use App\Facades\GlobalData;
 
 class Category extends Model{
 
@@ -136,10 +136,8 @@ class Category extends Model{
 
     public function getCategoriesTree($parent_id = 0)
     {
-        $settings = Settings::getInstance();
-
-        if($settings->getParameter('models.category.categoriesTree')){
-            return $settings->getParameter('models.category.categoriesTree');
+        if(GlobalData::getParameter('models.category.categoriesTree')){
+            return GlobalData::getParameter('models.category.categoriesTree');
         }
 
         /**
@@ -167,7 +165,7 @@ class Category extends Model{
 
         $result = collect($tree);
 
-        $settings->addParameter('models.category.categoriesTree', $result);
+        GlobalData::addParameter('models.category.categoriesTree', $result);
 
         return $result;
     }
