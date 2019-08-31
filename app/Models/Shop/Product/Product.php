@@ -5,8 +5,7 @@ namespace App\Models\Shop\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use JustBetter\PaginationWithHavings\PaginationWithHavings;
-use App\Models\Settings;
-
+use App\Facades\GlobalData;
 
 class Product extends Model
 {
@@ -106,9 +105,7 @@ class Product extends Model
 
     public function getActiveProductsFromCategory($category_id)
     {
-        $settings = Settings::getInstance();
-
-        $pagination = $settings->getParameter('components.shop.pagination');
+        $pagination = GlobalData::getParameter('components.shop.pagination');
 
         $productsQuery = $this->getListProductQuery();
 
@@ -128,11 +125,9 @@ class Product extends Model
 
     public function getActiveProductsWithFilterParameters($routeData)
     {
-        $settings = Settings::getInstance();
+        $today = GlobalData::getParameter('today');
 
-        $today = $settings->getParameter('today');
-
-        $price_id = $settings->getParameter('components.shop.customer_group.price_id');
+        $price_id = GlobalData::getParameter('components.shop.customer_group.price_id');
 
         $products = self::select(
             'products.id',
@@ -217,11 +212,9 @@ class Product extends Model
 
     public function getFilteredProducts($routeData, $filterData)
     {
-        $settings = Settings::getInstance();
+        $pagination = GlobalData::getParameter('components.shop.pagination');
 
-        $pagination = $settings->getParameter('components.shop.pagination');
-
-        $filter_prefix = $settings->getParameter('components.shop.filter_prefix');
+        $filter_prefix = GlobalData::getParameter('components.shop.filter_prefix');
 
         $productsQuery = $this->getListProductQuery();
 
@@ -292,9 +285,7 @@ class Product extends Model
 
     public function getActiveProductsOfBrand($brandName)
     {
-        $settings = Settings::getInstance();
-
-        $pagination = $settings->getParameter('components.shop.pagination');
+        $pagination = GlobalData::getParameter('components.shop.pagination');
 
         $productsQuery = $this->getListProductQuery();
 
@@ -324,9 +315,7 @@ class Product extends Model
 
     public function getProductsById($idProducts)
     {
-        $settings = Settings::getInstance();
-
-        $pagination = $settings->getParameter('components.shop.pagination');
+        $pagination = GlobalData::getParameter('components.shop.pagination');
 
         $productsQuery = $this->getListProductQuery();
 
@@ -538,11 +527,9 @@ class Product extends Model
 
     private function getDefaultProductQuery(){
 
-        $settings = Settings::getInstance();
+        $today = GlobalData::getParameter('today');
 
-        $today = $settings->getParameter('today');
-
-        $price_id = $settings->getParameter('components.shop.customer_group.price_id');
+        $price_id = GlobalData::getParameter('components.shop.customer_group.price_id');
 
         return self::select(
             'products.id',

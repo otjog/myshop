@@ -5,7 +5,7 @@ namespace App\Models\Shop;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Settings;
+use App\Facades\GlobalData;
 use Illuminate\Support\Facades\Auth;
 
 class Customer extends Authenticatable{
@@ -109,9 +109,7 @@ class Customer extends Authenticatable{
             }
         }
 
-        $settings = Settings::getInstance();
-
-        $data_customer['shop_customer_group_id'] = $settings->getParameter('components.shop.default_customer_group.id');
+        $data_customer['shop_customer_group_id'] = GlobalData::getParameter('components.shop.default_customer_group.id');
 
         if(!isset($data_customer['password']))
             $data_customer['password'] = Hash::make($this->getRandomPassword());

@@ -3,19 +3,14 @@
 namespace App\Http\Controllers\Shop;
 
 use App\Http\Controllers\Controller;
-use App\Models\Shop\Order\Basket;
-use App\Models\Site\Module;
 use Illuminate\Http\Request;
 use App\Models\Shop\Category\Category;
 use App\Models\Shop\Product\Product;
-use App\Models\Settings;
-use App\Models\Site\Template;
+use App\Facades\GlobalData;
 
 class CategoryController extends Controller{
 
     protected $categories;
-
-    protected $settings;
 
     /**
      * Создание нового экземпляра контроллера.
@@ -25,11 +20,7 @@ class CategoryController extends Controller{
      */
     public function __construct(Category $categories)
     {
-        $this->settings = Settings::getInstance();
-
         $this->categories = $categories;
-
-
     }
 
     /**
@@ -43,7 +34,7 @@ class CategoryController extends Controller{
 
         $data['header_page'] =  'Категории';
 
-        $globalData = $this->settings->getParametersForController($data, 'shop', 'category', 'list');
+        $globalData = GlobalData::getParametersForController($data, 'shop', 'category', 'list');
 
         return view($globalData['template']['viewKey'], ['global_data' => $globalData]);
     }
@@ -81,7 +72,7 @@ class CategoryController extends Controller{
             $data['shop']['products'] = $products->getActiveProductsFromCategory($id);
         }
 
-        $globalData = $this->settings->getParametersForController($data, 'shop', 'category', 'show', $id);
+        $globalData = GlobalData::getParametersForController($data, 'shop', 'category', 'show', $id);
 
         return view($globalData['template']['viewKey'], ['global_data' => $globalData]);
     }

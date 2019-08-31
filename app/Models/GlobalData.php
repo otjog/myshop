@@ -12,20 +12,11 @@ use App\Models\Site\Module;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class Settings {
-
-    private static $instance = null;
-
+class GlobalData
+{
     public $data;
 
-    public static function getInstance(){
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct()
+    public function __construct()
     {
         $json = DB::table('global_data')
             ->select('options')
@@ -47,9 +38,26 @@ class Settings {
             });
         /* End Currency */
 
-    }
+        /* Add Geo */
+        $geoData = new GeoData();
 
-    private function __clone(){}
+        $this->data['geo'] = $geoData->getGeoData();
+        /* End Geo */
+
+        $customer = Auth::user();
+
+        $this->data['components']['shop']['customer'] = $customer;
+
+        $customerGroup = new CustomerGroup();
+
+        $this->data['components']['shop']['default_customer_group'] = $customerGroup->getDefaultCustomerGroup();
+
+        if(isset($this->data['components']['shop']['customer']) && $this->data['components']['shop']['customer'] !== null)
+            $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['customer']->customer_group;
+        else
+            $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['default_customer_group'];
+
+    }
 
     public function addParameter($name, $value)
     {
@@ -67,35 +75,6 @@ class Settings {
 
     public function getParameters()
     {
-        /* Add Geo */
-        /*
-        $geoData = new GeoData();
-
-        $this->data['geo'] = $geoData->getGeoData();
-        */
-        /* End Geo */
-/*
-        if ( !isset($this->data['components']['shop']['customer']) ) {
-            $customer = Auth::user();
-
-            $this->data['components']['shop']['customer'] = $customer;
-        }
-*/
-        if ( !isset($this->data['components']['shop']['default_customer_group']) ) {
-            $customerGroup = new CustomerGroup();
-
-            $this->data['components']['shop']['default_customer_group'] = $customerGroup->getDefaultCustomerGroup();
-        }
-
-        if ( !isset($this->data['components']['shop']['customer_group']) ) {
-
-            if(isset($this->data['components']['shop']['customer']) && $this->data['components']['shop']['customer'] !== null)
-                $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['customer']->customer_group;
-            else
-                $this->data['components']['shop']['customer_group'] = $this->data['components']['shop']['default_customer_group'];
-
-        }
-
         return $this->data;
     }
 
