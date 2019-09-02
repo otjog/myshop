@@ -389,6 +389,22 @@
                                                 </div>
                                             </div>
                                             <!--[if mso]></td></tr></table><![endif]-->
+
+                                            @isset($data['mailling']['current']['email'])
+                                                <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
+                                                <div style="color:#4F4F4F;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
+                                                    <div style="font-size: 12px; line-height: 14px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; color: #4F4F4F;">
+                                                        <p style="font-size: 12px; line-height: 16px; text-align: center; margin: 0;">
+                                                            <span style="font-size: 14px;">
+                                                                <span style="background-color: transparent; line-height: 16px; font-size: 14px;">
+                                                                    <a href="{{route('unsubscribe', urlencode($data['mailling']['current']['email']))}}">Отписаться</a>
+                                                                </span>
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!--[if mso]></td></tr></table><![endif]-->
+                                            @endisset
                                             <!--[if (!mso)&(!IE)]><!-->
                                         </div>
                                         <!--<![endif]-->

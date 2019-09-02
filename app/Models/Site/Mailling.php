@@ -35,7 +35,7 @@ class Mailling extends Model
     {
         $maillings = self::where('active', 1)
             ->where('id', $id)
-            ->select('alias', 'name', 'file_src', 'time', 'customer_group_id')
+            ->select('alias', 'name', 'file_src', 'time', 'customer_group_id', 'options')
             ->with(['customer_group' => function($query){
                 $query->with('customers');
             }])
