@@ -18,7 +18,7 @@ class Customer extends Authenticatable{
         'full_name',
         'email',
         'phone',
-        'shop_customer_group_id',
+        'customer_group_id',
         'address',
         'full_name_json',
         'address_json',
@@ -109,7 +109,7 @@ class Customer extends Authenticatable{
             }
         }
 
-        $data_customer['shop_customer_group_id'] = GlobalData::getParameter('components.shop.default_customer_group.id');
+        $data_customer['customer_group_id'] = GlobalData::getParameter('components.shop.default_customer_group.id');
 
         if(!isset($data_customer['password']))
             $data_customer['password'] = Hash::make($this->getRandomPassword());

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Site\Mailling;
 use App\Events\MaillingForRegister;
+use Illuminate\Support\Facades\Storage;
 
 class RunMaillingController extends Controller
 {
@@ -28,6 +29,15 @@ class RunMaillingController extends Controller
         $mailling = $this->mailling->getActiveMaillingById($id);
 
         $this->run($mailling);
+    }
+
+    public function unsubscribe($email)
+    {
+        $email = urldecode($email);
+
+        Storage::put('unsubscribes/' . $email, $email);
+
+        return "Вы успешно отписались от рассылки. Извините за беспокойство.";
     }
 
     protected function run($maillings)

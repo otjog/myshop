@@ -61,8 +61,11 @@
 
     });
 
+    Route::get('/mailling/unsubscribe/{email}', 'Mailling\RunMaillingController@unsubscribe')->name('unsubscribe');
+
     //Ajax
     Route::match(['get', 'post'], '/ajax', 'Ajax\AjaxController@index');
 
     Auth::routes();
+
 
