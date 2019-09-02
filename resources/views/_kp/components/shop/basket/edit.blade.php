@@ -9,7 +9,7 @@
     @if( isset($basket->products) )
         <div class="row">
             <div class="col-12 col-lg-9">
-                <h4 class="mb-3">Корзина</h4>
+                <h4 class="mb-3">{{$global_data['shop']['basket']['name']}}</h4>
                 <form method="POST" action="{{ route( 'baskets.update', csrf_token() ) }}" id="basket_form" role="form" accept-charset="UTF-8" >
 
                     @method('PUT')

@@ -29,9 +29,7 @@ class BrandController extends Controller{
      */
     public function index()
     {
-        $data['shop']['brands']  = $this->brands->getActiveBrands();
-
-        $data['header_page'] =  'Бренды';
+        $data['shop']['brand']  = $this->brands->getRoot();
 
         $globalData = GlobalData::getParametersForController($data, 'shop', 'brand', 'list');
 
