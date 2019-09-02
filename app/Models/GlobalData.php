@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Shop\CustomerGroup;
 use App\Models\Shop\Price\Currency;
+use App\Models\Site\Breadcrumb;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Geo\GeoData;
 use App\Models\Site\Template;
@@ -66,8 +67,6 @@ class GlobalData
 
     public function pushArrayParameters($addData)
     {
-        $this->data = $this->getParameters();
-
         $this->data = array_merge($this->data, $addData);
 
         return $this->data;
@@ -80,8 +79,6 @@ class GlobalData
 
     public function getParameter($path)
     {
-        $this->data = $this->getParameters();
-
         $pathArray = explode('.', $path);
 
         $temporary = [];
@@ -121,7 +118,15 @@ class GlobalData
         $data['modules'] = $module->getModulesData($data['template']['schema']);
         /* End Modules */
 
-        return $this->pushArrayParameters($data);
+        $this->pushArrayParameters($data);
+
+        /* Add Breadcrumbs */
+        $breadcrumbs = new Breadcrumb();
+        $modelCollection = $this->getParameter($component.'.'.$model);
+        $this->data['breadcrumbs'] = $breadcrumbs->getBreadcrumbs($modelCollection, $component);
+        /* End Breadcrumbs */
+
+        return $this->data;
     }
 
 }

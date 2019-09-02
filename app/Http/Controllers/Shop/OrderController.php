@@ -65,15 +65,9 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(PaymentService $payments)
+    public function create()
     {
-        $data['shop']['basket']   = $this->baskets->getActiveBasketWithProductsAndRelations();
-
-        $data['shop']['payments'] = $payments->getActiveMethodsWithTax($data['shop']['basket']['total']);
-
-        $products = new Product();
-
-        $data['shop']['parcelData'] = $products->getJsonParcelParameters($data['shop']['basket']->products);
+        $data['shop'] = $this->orders->getDataForCreateOrder();
 
         $globalData = GlobalData::getParametersForController($data, 'shop', 'order', 'create');
 

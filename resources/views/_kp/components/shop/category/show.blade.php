@@ -2,7 +2,6 @@
 
 @php
     $currentCategory =& $global_data['shop']['category'][0];
-    $categories =& $global_data['shop']['childrenCategories'];
     $products =& $global_data['shop']['products'];
     $parameters =& $global_data['shop']['parameters'];
 @endphp
@@ -14,9 +13,9 @@
 
             <h1>{{$global_data['header_page']}}</h1>
 
-            @if(isset($categories) && count($categories) > 0)
+            @if(isset($currentCategory->children) && count($currentCategory->children) > 0)
                 <div class="category-list py-2">
-                    @foreach($categories->chunk($global_data['components']['shop']['chunk_products']) as $categories_row)
+                    @foreach($currentCategory->children->chunk($global_data['components']['shop']['chunk_products']) as $categories_row)
                         <div class="row">
                             @foreach( $categories_row as $key => $category )
                                 <div class="col-12 col-lg-3">

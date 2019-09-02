@@ -30,9 +30,7 @@ class CategoryController extends Controller{
      */
     public function index()
     {
-        $data['shop']['category']  =  $this->categories->getCategoriesTree();
-
-        $data['header_page'] =  'Категории';
+        $data['shop']['category'] = $this->categories->getRootCategory();
 
         $globalData = GlobalData::getParametersForController($data, 'shop', 'category', 'list');
 
@@ -52,7 +50,6 @@ class CategoryController extends Controller{
         $category = $this->categories->getCategory($id);
 
         $data['shop']['category']           = $category;
-        $data['shop']['childrenCategories'] = $this->categories->getActiveChildrenCategories($id);
         $data['shop']['parameters']         = [];
         $data['header_page']                = $category[0]->name;
 
