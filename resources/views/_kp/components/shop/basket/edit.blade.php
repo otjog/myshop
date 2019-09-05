@@ -80,7 +80,7 @@
                                                         type="text"
                                                         name="{{ $key }}[quantity]"
                                                         value="{{ $product['pivot']['quantity'] }}"
-                                                        class="form-control quantity_input"
+                                                        class="form-control quantity_input text-center px-1"
                                                         size="5" >
 
                                             </div>
