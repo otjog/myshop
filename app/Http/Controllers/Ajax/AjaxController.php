@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ajax;
 
 use App\Facades\GlobalData;
+use App\Models\Shop\Order\Basket;
 use App\Models\Shop\Product\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -67,6 +68,34 @@ class AjaxController extends Controller{
 
                     break;
 
+                case 'basket' :
+
+                    $basketModel = new Basket();
+
+                    $token = $this->request['_token'];
+
+                    $localRequest = $request;
+                    unset($localRequest['module']);
+                    unset($localRequest['response']);
+                    unset($localRequest['name']);
+                    unset($localRequest['_token']);
+
+                    switch ($this->request['name']) {
+                        case 'add_product' :
+                            $basketModel->addProductToBasket($localRequest, $token);
+                            return 'fff';
+                            break;
+                        case 'update_html_module' :
+                            $this->data = $basketModel->getActiveBasketWithProductsAndRelations($token);
+                            break;
+                        case 'update_html_buy-button' :
+                            $productModel = new Product();
+                            $this->data = $productModel->getActiveProduct($localRequest['product_id']);
+                            break;
+                    }
+
+                    break;
+
                 case 'geo'  :
 
                     /** Записываем введенную пользователем Геолокацию в Сессию */
@@ -103,6 +132,9 @@ class AjaxController extends Controller{
 
     private function sendResponse(){
 
+        if ($this->request['response'] === null) {
+            return null;
+        }
         //Присваиваем переменной экземпляр Ответа Сервера
         $this->response = response();
 

@@ -2,7 +2,6 @@
     @foreach( $products_row as $key => $product )
         <div class="col-12 col-lg-4">
             <div class="product-item-wrap product-item-light border h-100">
-
                 <div class="bg-light small p-1 w-50 rounded-bottom-right">
                     Артикул: {{$product->scu or ''}}
                 </div>
@@ -51,29 +50,22 @@
                                     {{-- Price --}}
                                     @include( $global_data['template']['name']. '.components.shop.product.elements.price.list')
 
-                                    <div class="col-6 text-right">
+                                    {{-- Buy Button --}}
+                                    <div class="col-7 text-right">
                                         @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
-                                            <small class="text-success mr-4">В наличии</small>
+                                            <small class="text-success mr-4">В наличии</small><br>
                                             @if( isset($product->price['value']) && $product->price['value'] !== null && $product->price['value'] !== 0.00)
 
-                                                @if( !isset($product->basket_parameters) || count($product->basket_parameters) === 0)
-                                                    <form method="post" role="form" action="{{route('baskets.store')}}">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input type="hidden" name="product_id" value="{{ $product->id}}">
-                                                        <input type="hidden" name="quantity" value="1" >
-                                                        <input class="btn btn-danger btn-sm" type="submit" value="В корзину" />
-                                                    </form>
-                                                @else
-                                                    <a class="pt-2 d-block" href="{{ route( 'products.show', $product->id ) }}">
-                                                        Выбрать размер
-                                                    </a>
-                                                @endif
+                                                <div class="shop-basket-button-group">
+                                                    @include( $global_data['template']['name']. '.components.shop.product.elements.buy_button.list')
+                                                </div>
 
                                             @endif
                                         @else
                                             <div class="text-muted pt-4">Нет в наличии</div>
                                         @endif
                                     </div>
+
                                 </div>
                             </div>
                         </div>

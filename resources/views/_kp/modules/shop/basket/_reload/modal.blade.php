@@ -1,0 +1,1 @@
+@include('_kp.modules.shop.basket._elements.modal_body', $global_data['ajax'])

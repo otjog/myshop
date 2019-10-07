@@ -136,7 +136,15 @@ class Basket extends Model
                     'quantity' => $checkProducts->products[0]->quantity +  (int)$orderParameters['quantity']
                 ];
 
-                $this->updateExistingPivot($tableName, $relationColumns, $updateColumns);
+                if($updateColumns['quantity'] !== 0){
+
+                    $this->updateExistingPivot($tableName, $relationColumns, $updateColumns);
+
+                }else if($updateColumns['quantity'] === 0){
+
+                    $this->deleteExistingPivot($tableName, $relationColumns);
+
+                }
 
             }else{
 

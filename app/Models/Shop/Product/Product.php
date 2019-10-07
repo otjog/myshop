@@ -125,7 +125,9 @@ class Product extends Model
 
             ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -212,7 +214,9 @@ class Product extends Model
 
             ->get();
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -285,7 +289,9 @@ class Product extends Model
 
                 ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -315,7 +321,9 @@ class Product extends Model
 
             ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -335,7 +343,9 @@ class Product extends Model
 
             ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -630,9 +640,17 @@ class Product extends Model
                     ->where('shop_store_has_product.quantity', '>', 0);
             }])
 
+            /************BASKET*****************/
+            ->with(['baskets' => function($query)
+            {
+                $query->where('token', session('_token'));
+            }])
+
             /************CATEGORY***************/
             //->leftJoin('categories', 'categories.id', '=', 'products.category_id')
             ->with('category');
+
+
     }
 
     public function getCustomProductsOffer($offer_id, $take){

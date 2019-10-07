@@ -1,3 +1,4 @@
+
 @if( isset($product->price['value']) && $product->price['value'] !== null)
 
     @if( isset($product->price['sale']) && $product->price['sale'] > 0)
@@ -28,7 +29,7 @@
 
     @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
         <div class="my-1 d-flex flex-row">
-            <form id="buy-form" method="post" role="form" action="{{route('baskets.store')}}">
+            <form class="shop-buy-form" method="post" role="form" action="{{route('baskets.store')}}">
 
                 <div class="product_quantity">
                     <span>Кол-во: </span>
@@ -52,7 +53,7 @@
                 </div>
 
                 <div class="button_container">
-                    <button type="submit" class="button cart_button">Купить</button>
+                    <button type="submit" class="btn btn-danger cart_button">В корзину</button>
                 </div>
 
                 @if( isset($product->basket_parameters) && count($product->basket_parameters) > 0)
@@ -91,23 +92,23 @@
                             <li class="py-1">
                                 <div class="row">
                                     <div class="col">
-                                    <span>
-                                        от
-                                        <strong>{{$quantity_discount->pivot['quantity']}}</strong>
-                                        шт.
-                                    </span>
+                                        <span>
+                                            от
+                                            <strong>{{$quantity_discount->pivot['quantity']}}</strong>
+                                            шт.
+                                        </span>
                                         -
                                         <span>
-                                        <strong>
-                                            {{$quantity_discount->pivot['totalPrice']}}
-                                        </strong>
-                                        <small>
+                                            <strong>
+                                                {{$quantity_discount->pivot['totalPrice']}}
+                                            </strong>
+                                            <small>
                                             {{$global_data['components']['shop']['currency']['symbol']}}/шт
-                                        </small>
-                                    </span>
+                                            </small>
+                                        </span>
                                     </div>
                                     <div class="col">
-                                        <form id="buy-form" method="post" role="form" action="{{route('baskets.store')}}">
+                                        <form class="shop-buy-form" method="post" role="form" action="{{route('baskets.store')}}">
                                             <input type="hidden" name="quantity"     value="{{$quantity_discount->pivot['quantity']}}">
                                             <input type="hidden" name="product_id"   value="{{$product->id}}">
                                             <input type="hidden" name="_token"       value="{{csrf_token()}}">
