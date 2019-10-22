@@ -38,11 +38,14 @@ export default function ShopBasket(){
         queryString = getQueryStringFromObject(qsParams, queryString);
 
         sendRequest(ajaxName, queryString, function(response){
+            /*Перегружаем модуль корзины вверху страницы*/
             let htmlReload = document.getElementsByClassName(moduleClass)[0];
             updateHtml('module', 'default', htmlReload, function(htmlReload){});
 
+            /*Перегружаем блок с кнопками*/
             htmlReload = form.closest('.' + buttonGroupClass);
-            updateHtml('buy-button', 'category-button-block', htmlReload, function(htmlReload){
+            let view = htmlReload.dataset.view;
+            updateHtml('buy-button', view, htmlReload, function(htmlReload){
                 let forms = htmlReload.getElementsByClassName(formClass);
 
                 initAjaxSubmitListForms(forms);
@@ -123,7 +126,6 @@ export default function ShopBasket(){
 
     function initAjaxSubmitOneForm(form)
     {
-        console.log(form);
         /**
          * Перехватываем отправку формы и отменяем её.
          */

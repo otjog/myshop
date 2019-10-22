@@ -56,7 +56,7 @@
                                             <small class="text-success mr-4">В наличии</small><br>
                                             @if( isset($product->price['value']) && $product->price['value'] !== null && $product->price['value'] !== 0.00)
 
-                                                <div class="shop-basket-button-group">
+                                                <div class="shop-basket-button-group" data-view="product_list">
                                                     @include( $global_data['template']['name']. '.components.shop.product.elements.buy_button.list')
                                                 </div>
 

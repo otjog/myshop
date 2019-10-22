@@ -23,7 +23,7 @@ class Basket extends Model
     public function getNameAttribute($value)
     {
         if($value === null)
-            return 'Ваша корзина';
+            return 'Корзина';
         return $value;
     }
 
@@ -82,7 +82,9 @@ class Basket extends Model
 
             $basket->total      = $this->getTotal($basket->products);
 
-            $basket->count_scu  = count($basket->products);
+            $basket->total_sale = $this->getSale($basket->products);
+
+            $basket->count_scu  = $this->getCount($basket->products);
 
             $basket->declesion  = DeclesionsOfWord::make($basket->count_scu, ['товар', 'товара', 'товаров']);
 
@@ -93,6 +95,65 @@ class Basket extends Model
     }
 
     public function addProductToBasket($request, $token )
+    {
+        $basket = $this->getActiveBasket( $token );
+
+        $orderParameters = $request->all();
+
+        if( isset($orderParameters['order_attributes']) ){
+            $orderParameters['order_attributes'] = implode(',', $orderParameters['order_attributes']);
+        }else{
+            $orderParameters['order_attributes'] = null;
+        }
+
+        unset($orderParameters['_token']);
+
+        if ($basket === null) {
+
+            $baskets = new Basket();
+
+            $baskets->token = $token;
+
+            $baskets->save();
+
+            $basket = $this->getActiveBasket( $token );
+
+            $basket->products()->attach($orderParameters['product_id'], $orderParameters);
+
+        }else{
+
+            $checkProducts = $this->getExistProduct($token, $orderParameters['product_id'], $orderParameters['order_attributes']);
+
+            if ( count($checkProducts->products) > 0) {
+
+                $tableName = 'shop_basket_has_product';
+
+                $relationColumns = [
+                    'basket_id' => $checkProducts->id,
+                    'product_id' => $checkProducts->products[0]->product_id,
+                    'order_attributes' => $checkProducts->products[0]->order_attributes
+                ];
+
+                $updateColumns = [
+                    'quantity' => $checkProducts->products[0]->quantity + (int)$orderParameters['quantity']
+                ];
+
+                if ($updateColumns['quantity'] !== 0) {
+                    $this->updateExistingPivot($tableName, $relationColumns, $updateColumns);
+                } else if($updateColumns['quantity'] === 0) {
+                    $this->deleteExistingPivot($tableName, $relationColumns);
+                }
+
+            }else{
+
+                $basket->products()->attach($orderParameters['product_id'], $orderParameters);
+
+            }
+
+        }
+    }
+
+    public function updateProduct($request, $token)
     {
         $basket = $this->getActiveBasket( $token );
 
@@ -133,7 +194,7 @@ class Basket extends Model
                 ];
 
                 $updateColumns = [
-                    'quantity' => $checkProducts->products[0]->quantity +  (int)$orderParameters['quantity']
+                    'quantity' => $orderParameters['quantity']
                 ];
 
                 if($updateColumns['quantity'] !== 0){
@@ -212,13 +273,32 @@ class Basket extends Model
     {
         $total = 0;
 
-        foreach($products as $product){
-
+        foreach($products as $product)
             $total += $product['pivot']['quantity'] * $product->price['value'];
 
-        }
-
         return $total;
+
+    }
+
+    private function getSale($products)
+    {
+        $sale = 0;
+
+        foreach($products as $product)
+            $sale += $product->baskets[0]['pivot']['quantity'] * $product->price['sale'];
+
+        return $sale;
+
+    }
+
+    private function getCount($products)
+    {
+        $count = 0;
+
+        foreach($products as $product)
+            $count += $product->baskets[0]['pivot']['quantity'];
+
+        return $count;
 
     }
 

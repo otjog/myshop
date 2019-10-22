@@ -83,7 +83,6 @@ class AjaxController extends Controller{
                     switch ($this->request['name']) {
                         case 'add_product' :
                             $basketModel->addProductToBasket($localRequest, $token);
-                            return 'fff';
                             break;
                         case 'update_html_module' :
                             $this->data = $basketModel->getActiveBasketWithProductsAndRelations($token);
@@ -91,6 +90,7 @@ class AjaxController extends Controller{
                         case 'update_html_buy-button' :
                             $productModel = new Product();
                             $this->data = $productModel->getActiveProduct($localRequest['product_id']);
+
                             break;
                     }
 

@@ -34,6 +34,9 @@
     //Basket
     Route::resource('/baskets',     'Shop\BasketController',    [ 'only' => [ 'store', 'edit', 'update' ]]);
 
+    //ProductInBasket
+    Route::resource('baskets.products', 'Shop\BasketProductController');
+
     //Pay
     Route::group(['prefix' => 'pay'], function(){
 

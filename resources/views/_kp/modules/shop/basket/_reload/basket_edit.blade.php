@@ -1,0 +1,1 @@
+@include('_kp.components.shop.basket.edit.product_row._reload', ['product' => $global_data['ajax']])

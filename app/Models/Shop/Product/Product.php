@@ -103,7 +103,8 @@ class Product extends Model
 
             if (isset($products[0])) {
                 $products = $this->addLeftJoinsAsRelationCollections($products);
-                $products = $this->calculateQuantityDiscounts($products);
+                //$products = $this->calculateQuantityDiscounts($products);
+                $products = $this->changePriceIfExistQuantityDiscount($products);
                 return $products[0];
             }
             return null;
@@ -756,7 +757,7 @@ class Product extends Model
                 $quantityDiscounts = $product->quantity_discounts;
 
                 $quantityDiscounts = $quantityDiscounts->filter(function ($value, $key) use ($product)  {
-                    return $value->pivot->quantity <= $product->quantity;
+                    return $value->pivot->quantity <= $product->baskets[0]['pivot']['quantity'];
                 });
 
                 $quantityDiscounts = $quantityDiscounts->sortByDesc(function ($value, $key) {

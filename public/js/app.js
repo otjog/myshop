@@ -77941,10 +77941,14 @@ function ShopBasket() {
 
     queryString = getQueryStringFromObject(qsParams, queryString);
     sendRequest(ajaxName, queryString, function (response) {
+      /*Перегружаем модуль корзины вверху страницы*/
       var htmlReload = document.getElementsByClassName(moduleClass)[0];
       updateHtml('module', 'default', htmlReload, function (htmlReload) {});
+      /*Перегружаем блок с кнопками*/
+
       htmlReload = form.closest('.' + buttonGroupClass);
-      updateHtml('buy-button', 'category-button-block', htmlReload, function (htmlReload) {
+      var view = htmlReload.dataset.view;
+      updateHtml('buy-button', view, htmlReload, function (htmlReload) {
         var forms = htmlReload.getElementsByClassName(formClass);
         initAjaxSubmitListForms(forms);
       });
@@ -78003,11 +78007,9 @@ function ShopBasket() {
   }
 
   function initAjaxSubmitOneForm(form) {
-    console.log(form);
     /**
      * Перехватываем отправку формы и отменяем её.
      */
-
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       qsParams = {
