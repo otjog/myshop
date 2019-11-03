@@ -16,70 +16,47 @@ class BasketProductController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Добавить товар  в корзину
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
+     * @param string $token Id of the Basket
+     * @param int $productId
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store($token, Request $request)
     {
-        $token = $request->session()->get('_token');
+        unset($request['_token']);
 
-        $this->baskets->addProductToBasket( $request, $token );
+        $this->baskets->storeProduct($request, $token);
 
         return back();
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Добавить или отнять количество данного продукта
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
+     * @param string $token Id of the Basket
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int $productId
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($token, $productId, Request $request)
     {
-        //
+        unset($request['_method']);
+        unset($request['_token']);
+
+        $this->baskets->updateProduct($token, $productId, $request);
+
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $productId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($productId)
     {
         //
     }

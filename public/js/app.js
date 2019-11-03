@@ -62088,8 +62088,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Ajax; });
 /* harmony import */ var _xmlhttprequest__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./xmlhttprequest */ "./resources/assets/templates/_kp/js/xmlhttprequest.js");
 
-function Ajax(method, queryString, headers, requestName) {
-  this.path = window.location.origin + '/ajax';
+function Ajax(method, queryString, headers, requestName, path) {
+  if (path === undefined || path === null) this.path = window.location.origin + '/ajax';else this.path = path;
   this.previousUrl = window.location.origin + window.location.pathname;
   this.method = method;
   this.headers = headers;
@@ -62347,7 +62347,6 @@ shipment.getPoints();
 
 
 var shopBasket = new _product_basket_modal__WEBPACK_IMPORTED_MODULE_3__["default"]();
-shopBasket.initQuantityButton();
 shopBasket.initAjaxSubmitAllForms();
 /* END PRODUCT BASKET MODAL */
 
@@ -77913,24 +77912,18 @@ function ShopBasket() {
   var module = 'basket';
   var formClass = 'shop-buy-form';
   var moduleClass = 'shop-module-basket';
+  var totalClass = 'shop-basket-total';
   var buttonGroupClass = 'shop-basket-button-group';
-  var ajaxMethod = 'POST';
   var ajaxHeaders = {};
   var qsParams = {};
-
-  this.initQuantityButton = function () {
-    initQuantityButton();
-  };
 
   this.initAjaxSubmitAllForms = function () {
     initAjaxSubmitAllForms();
   };
 
-  function addProductToBasket(form, qsParams) {
-    var ajaxName = 'shop-basket-add_product';
-    var queryString = '';
-    qsParams.response = 'json';
-    qsParams.name = 'add_product';
+  function onRouteController(form) {
+    var path = form.getAttribute('action');
+    var qsParams = {};
     /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
 
     var formInputs = form.getElementsByTagName('input'); //todo сделать проверку на input class btn
@@ -77939,37 +77932,43 @@ function ShopBasket() {
       if (formInputs[i].hasAttribute('name') !== false) qsParams[formInputs[i].name] = formInputs[i].value;
     }
 
-    queryString = getQueryStringFromObject(qsParams, queryString);
-    sendRequest(ajaxName, queryString, function (response) {
+    var queryString = getQueryStringFromObject(qsParams, '');
+    var ajaxName = 'shop-basket-add_product';
+    var ajaxMethod = 'POST';
+    sendRequest(ajaxName, ajaxMethod, queryString, path, function (response) {
       /*Перегружаем модуль корзины вверху страницы*/
       var htmlReload = document.getElementsByClassName(moduleClass)[0];
-      updateHtml('module', 'default', htmlReload, function (htmlReload) {});
+      if (htmlReload !== undefined && htmlReload !== null) updateHtml('module', htmlReload, function (htmlReload) {});
+      /*Перегружаем total_block на странице корзины*/
+
+      htmlReload = document.getElementsByClassName(totalClass)[0];
+      if (htmlReload !== undefined && htmlReload !== null) updateHtml('total-block', htmlReload, function (htmlReload) {});
       /*Перегружаем блок с кнопками*/
 
       htmlReload = form.closest('.' + buttonGroupClass);
-      var view = htmlReload.dataset.view;
-      updateHtml('buy-button', view, htmlReload, function (htmlReload) {
-        var forms = htmlReload.getElementsByClassName(formClass);
-        initAjaxSubmitListForms(forms);
-      });
+
+      if (htmlReload !== undefined && htmlReload !== null) {
+        updateHtml('buy-button', htmlReload, function (htmlReload) {
+          var forms = htmlReload.getElementsByClassName(formClass);
+          initAjaxSubmitListForms(forms);
+        });
+      }
     });
   }
 
-  function updateHtml(name, view, htmlReload, func) {
+  function updateHtml(name, htmlReload, func) {
     var ajaxName = 'shop-basket-update_html_' + name;
-    var queryString = '';
-    qsParams.response = 'view';
-    qsParams.view = view;
-    qsParams.name = 'update_html_' + name;
-    queryString = getQueryStringFromObject(qsParams, queryString);
-    sendRequest(ajaxName, queryString, function (response) {
+    var ajaxMethod = 'GET';
+    var queryString = getQueryStringFromObject(qsParams, '');
+    var path = htmlReload.getAttribute('data-route');
+    sendRequest(ajaxName, ajaxMethod, queryString, path, function (response) {
       htmlReload.innerHTML = String(response);
       func(htmlReload);
     });
   }
 
-  function sendRequest(ajaxName, queryString, func) {
-    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName); //todo проверить, если объекта нет, делать submit формы
+  function sendRequest(ajaxName, ajaxMethod, queryString, path, func) {
+    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path); //todo проверить, если объекта нет, делать submit формы
 
     ajaxReq.req.onreadystatechange = function () {
       if (ajaxReq.req.readyState !== 4) return;
@@ -77981,8 +77980,10 @@ function ShopBasket() {
 
   function getQueryStringFromObject(object, queryString) {
     for (var parameter in object) {
-      if (queryString !== '') queryString += '&';
-      queryString += parameter + '=' + object[parameter];
+      if (object.hasOwnProperty(parameter)) {
+        if (queryString !== '') queryString += '&';
+        queryString += parameter + '=' + object[parameter];
+      }
     }
 
     return queryString;
@@ -78015,79 +78016,17 @@ function ShopBasket() {
       qsParams = {
         'module': module
       };
-      /*добавялем в корзину 1ед текущего товара*/
-
-      addProductToBasket(form, qsParams);
+      onRouteController(form);
     });
-  }
+    var textInputs = form.querySelectorAll('input[type=text]');
 
-  function initQuantityButton() {
-    var quantity = {
-      'buttons': {
-        'increment': document.getElementsByClassName('quantity_inc'),
-        'decrement': document.getElementsByClassName('quantity_dec'),
-        'delete': document.getElementsByClassName('quantity_del'),
-        'update': document.getElementsByClassName('quantity_upd')
-      },
-      'inputs': document.getElementsByClassName('quantity_input'),
-      'form': document.getElementById('basket_form')
-    };
-
-    for (var buttonsType in quantity.buttons) {
-      if (quantity.buttons.hasOwnProperty(buttonsType)) {
-        var _loop = function _loop(buttonIndex) {
-          switch (buttonsType) {
-            case 'increment':
-            case 'decrement':
-              quantity.buttons[buttonsType][buttonIndex].addEventListener('click', function (e) {
-                e = e || event;
-                changeQuantity(e, buttonIndex, quantity);
-              });
-              break;
-
-            case 'delete':
-              quantity.buttons[buttonsType][buttonIndex].addEventListener('click', function (e) {
-                quantity.inputs[buttonIndex].value = 0;
-                quantity.form.submit();
-              });
-              break;
-
-            case 'update':
-              quantity.buttons[buttonsType][buttonIndex].addEventListener('click', function (e) {
-                //любая кнопка обновляет все товары
-                quantity.form.submit();
-              });
-              break;
-          }
+    for (var i = 0; i < textInputs.length; i++) {
+      textInputs[i].addEventListener('blur', function (event) {
+        qsParams = {
+          'module': module
         };
-
-        for (var buttonIndex = 0; buttonIndex < quantity.buttons[buttonsType].length; buttonIndex++) {
-          _loop(buttonIndex);
-        }
-      }
-    }
-
-    for (var inputIndex = 0; inputIndex < quantity.inputs.length; inputIndex++) {
-      if (quantity.inputs[inputIndex].dataset.ajax) {
-        quantity.inputs[inputIndex].addEventListener('click', function (e) {
-          addProductToBasket(quantity.form);
-        });
-      }
-    }
-  }
-
-  function changeQuantity(e, buttonIndex, quantity) {
-    var target = e.target;
-
-    if (target.tagName === 'I') {
-      target = target.parentElement;
-    }
-
-    if (target.classList.contains('quantity_inc')) {
-      ++quantity.inputs[buttonIndex].value;
-    } else if (target.classList.contains('quantity_dec')) {
-      var minValue = target.dataset.quantityMinValue;
-      if (quantity.inputs[buttonIndex].value > minValue) --quantity.inputs[buttonIndex].value;
+        onRouteController(form);
+      });
     }
   }
 }

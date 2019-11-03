@@ -25,7 +25,10 @@
                 @endif
             </div>
             <div class="cart_price d-none d-md-block">
-                {{ $basket->total  or 0}}<small>{{$global_data['components']['shop']['currency']['symbol']}}</small>
+                {{ $basket->total  or 0}}
+                <small>
+                    {{$basket->currency_symbol or $global_data['components']['shop']['currency']['symbol']}}
+                </small>
             </div>
         </div>
     </div>

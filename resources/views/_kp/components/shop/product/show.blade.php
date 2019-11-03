@@ -11,27 +11,12 @@
         <div class="container">
             <div class="row">
 
-                <h1 class="product_name">
-                    @isset($product->manufacturer['name'])
-                        {{ $product->manufacturer['name'] . ' ' }}
-                    @endisset
-
-                    {{ $product->name }}
-
-                    @if( isset($product->brands) && count($product->brands) > 0 && $product->brands !== null)
-
-                        @foreach($product->brands as $brand)
-                            {{ ' | ' . $brand->name}}
-                        @endforeach
-
-                    @endif
-                </h1>
+                {{-- Name --}}
+                @include( $global_data['template']['name']. '.components.shop.product.show.name')
 
                 {{-- Images --}}
                 <div class="col-lg-7">
-                    <div class="row">
-                        @include( $global_data['template']['name']. '.components.shop.product.elements.images.gallery')
-                    </div>
+                    @include( $global_data['template']['name']. '.components.shop.product.show.image')
                 </div>
 
                 {{-- Right Column --}}
@@ -40,8 +25,14 @@
                         <div>Категория: <span class="text-muted">{{$product->category['name']}}</span></div>
                         <div>Артикул: <span class="text-muted">{{$product->scu}}</span></div>
 
-                        {{-- Price And Buy --}}
-                        @include( $global_data['template']['name']. '.components.shop.product.elements.price.show')
+                        {{-- Sell Block RELOAD--}}
+                        <div class="shop-basket-button-group"
+                             data-route="{{route('products.views.show', [$product->id, $global_data['template']['name']. '.components.shop.product.show.sell_block'])}}">
+                            @include( $global_data['template']['name']. '.components.shop.product.show.sell_block')
+                        </div>
+
+                        {{-- Quantity Discounts --}}
+                        @include( $global_data['template']['name']. '.components.shop.product.show.quantity_discount')
 
                         {{-- Best Shipment Offer --}}
                         <div id="shipment-best-offer" class="py-1">

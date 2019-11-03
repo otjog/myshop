@@ -1,1 +1,0 @@
-@include('_kp.components.shop.product.elements.buy_button.show', ['product' => $global_data['ajax']])

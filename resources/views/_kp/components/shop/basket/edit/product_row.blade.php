@@ -6,7 +6,9 @@
         @include( $global_data['template']['name']. '.components.shop.basket.edit.product_row.name')
     </div>
     <div class="order-2 col-6   order-lg-3 col-lg-6">
-        <div class="shop-basket-button-group" data-view="basket_edit">
+        <div class="shop-basket-button-group"
+             data-route="{{route('products.views.show',
+             [$product->id, $global_data['template']['name'] . '.components.shop.basket.edit.product_row._reload'])}}">
             @include( $global_data['template']['name']. '.components.shop.basket.edit.product_row._reload')
         </div>
     </div>

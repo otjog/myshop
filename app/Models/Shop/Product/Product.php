@@ -756,46 +756,49 @@ class Product extends Model
             if (isset($product->quantity_discounts) && $product->quantity_discounts !== null && count($product->quantity_discounts) > 0) {
                 $quantityDiscounts = $product->quantity_discounts;
 
-                $quantityDiscounts = $quantityDiscounts->filter(function ($value, $key) use ($product)  {
-                    return $value->pivot->quantity <= $product->baskets[0]['pivot']['quantity'];
-                });
+                if (isset($product->baskets[0]) && $product->baskets[0] !== null) {
+                    $quantityDiscounts = $quantityDiscounts->filter(function ($value, $key) use ($product)  {
+                        return $value->pivot->quantity <= $product->baskets[0]['pivot']['quantity'];
+                    });
 
-                $quantityDiscounts = $quantityDiscounts->sortByDesc(function ($value, $key) {
-                    return $value->pivot->quantity;
+                    $quantityDiscounts = $quantityDiscounts->sortByDesc(function ($value, $key) {
+                        return $value->pivot->quantity;
 
-                });
+                    });
 
-                $quantityDiscount = $quantityDiscounts->first();
+                    $quantityDiscount = $quantityDiscounts->first();
 
-                if ($quantityDiscount !== null) {
+                    if ($quantityDiscount !== null) {
 
-                    switch ($quantityDiscount->type) {
-                        case 'percent' :
-                            if($quantityDiscount->pivot->value > 99)
+                        switch ($quantityDiscount->type) {
+                            case 'percent' :
+                                if($quantityDiscount->pivot->value > 99)
+                                    break;
+
+                                $product->price['sale'] =
+                                $product['price|sale']  =
+                                    (int)($product['price|value'] / 100 * $quantityDiscount->pivot->value);
+
+                                $product->price['value'] =
+                                $product['price|value'] =
+                                    $product['price|value'] - $product->price['sale'];
                                 break;
 
-                            $product->price['sale'] =
-                            $product['price|sale']  =
-                                (int)($product['price|value'] / 100 * $quantityDiscount->pivot->value);
+                            case 'value' :
+                                if($quantityDiscount->pivot->value * $product->price['pivot']['currency_value'] >= $product->price['value'] )
+                                    break;
 
-                            $product->price['value'] =
-                            $product['price|value'] =
-                                $product['price|value'] - $product->price['sale'];
-                            break;
+                                $product->price['sale'] =
+                                $product['price|sale'] =
+                                    (int)($quantityDiscount->pivot->value * $product->price['pivot']['currency_value']);
 
-                        case 'value' :
-                            if($quantityDiscount->pivot->value * $product->price['pivot']['currency_value'] >= $product->price['value'] )
+                                $product['price|value'] -= $product->price['sale'];
+                                $product->price['value'] -= $product->price['sale'];
                                 break;
-
-                            $product->price['sale'] =
-                            $product['price|sale'] =
-                                (int)($quantityDiscount->pivot->value * $product->price['pivot']['currency_value']);
-
-                            $product['price|value'] -= $product->price['sale'];
-                            $product->price['value'] -= $product->price['sale'];
-                            break;
+                        }
                     }
                 }
+
             }
         }
         return $products;

@@ -1,31 +1,23 @@
 import Ajax from './ajax';
 
-export default function ShopBasket(){
-
-    let module = 'basket';
+export default function ShopBasket()
+{
     let formClass   = 'shop-buy-form';
     let moduleClass = 'shop-module-basket';
+    let totalClass = 'shop-basket-total';
     let buttonGroupClass = 'shop-basket-button-group';
-    let ajaxMethod  = 'POST';
     let ajaxHeaders = {};
     let qsParams = {};
 
-    this.initQuantityButton = function ()
-    {
-        initQuantityButton();
-    };
     this.initAjaxSubmitAllForms = function ()
     {
         initAjaxSubmitAllForms();
     };
 
-    function addProductToBasket(form, qsParams)
+    function onRouteController(form)
     {
-        let ajaxName    = 'shop-basket-add_product';
-        let queryString = '';
-        qsParams.response = 'json';
-        qsParams.name = 'add_product';
-
+        let path = form.getAttribute('action');
+        let qsParams = {};
         /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
         let formInputs = form.getElementsByTagName('input');
 
@@ -35,47 +27,55 @@ export default function ShopBasket(){
                 qsParams[formInputs[i].name] = formInputs[i].value;
         }
 
-        queryString = getQueryStringFromObject(qsParams, queryString);
+        let queryString = getQueryStringFromObject(qsParams, '');
 
-        sendRequest(ajaxName, queryString, function(response){
+        let ajaxName    = 'shop-basket-add_product';
+
+        let ajaxMethod = 'POST';
+
+        sendRequest(ajaxName, ajaxMethod, queryString, path, function(response){
             /*Перегружаем модуль корзины вверху страницы*/
             let htmlReload = document.getElementsByClassName(moduleClass)[0];
-            updateHtml('module', 'default', htmlReload, function(htmlReload){});
+            if(htmlReload !== undefined && htmlReload !== null)
+                updateHtml('module', htmlReload, function(htmlReload){});
+
+            /*Перегружаем total_block на странице корзины*/
+            htmlReload = document.getElementsByClassName(totalClass)[0];
+            if(htmlReload !== undefined && htmlReload !== null)
+                updateHtml('total-block', htmlReload, function(htmlReload){});
 
             /*Перегружаем блок с кнопками*/
             htmlReload = form.closest('.' + buttonGroupClass);
-            let view = htmlReload.dataset.view;
-            updateHtml('buy-button', view, htmlReload, function(htmlReload){
-                let forms = htmlReload.getElementsByClassName(formClass);
-
-                initAjaxSubmitListForms(forms);
-            });
-
+            if(htmlReload !== undefined && htmlReload !== null) {
+                updateHtml('buy-button', htmlReload, function (htmlReload) {
+                    let forms = htmlReload.getElementsByClassName(formClass);
+                    initAjaxSubmitListForms(forms);
+                });
+            }
         });
-
 
     }
 
-    function updateHtml(name, view, htmlReload, func)
+    function updateHtml(name, htmlReload, func)
     {
         let ajaxName    = 'shop-basket-update_html_' + name;
-        let queryString = '';
-        qsParams.response = 'view';
-        qsParams.view = view;
-        qsParams.name = 'update_html_' + name;
 
-        queryString = getQueryStringFromObject(qsParams, queryString);
+        let ajaxMethod = 'GET';
 
-        sendRequest(ajaxName, queryString, function(response){
+        let queryString = getQueryStringFromObject(qsParams, '');
+
+        let path = htmlReload.getAttribute('data-route');
+
+        sendRequest(ajaxName, ajaxMethod, queryString, path, function(response){
             htmlReload.innerHTML = String(response);
             func(htmlReload);
         });
 
     }
 
-    function sendRequest(ajaxName, queryString, func)
+    function sendRequest(ajaxName, ajaxMethod, queryString, path, func)
     {
-        let ajaxReq = new Ajax(ajaxMethod, queryString, ajaxHeaders, ajaxName);
+        let ajaxReq = new Ajax(ajaxMethod, queryString, ajaxHeaders, ajaxName, path);
 
         //todo проверить, если объекта нет, делать submit формы
         ajaxReq.req.onreadystatechange = function()
@@ -92,11 +92,14 @@ export default function ShopBasket(){
     function getQueryStringFromObject(object, queryString)
     {
         for (let parameter in object) {
+            if(object.hasOwnProperty(parameter)){
 
-            if (queryString !== '')
-                queryString += '&';
+                if (queryString !== '')
+                    queryString += '&';
 
-            queryString += parameter + '=' + object[parameter];
+                queryString += parameter + '=' + object[parameter];
+
+            }
         }
 
         return queryString;
@@ -133,92 +136,17 @@ export default function ShopBasket(){
         {
             event.preventDefault();
 
-            qsParams = {
-                'module' : module,
-            };
-
-            /*добавялем в корзину 1ед текущего товара*/
-            addProductToBasket(form, qsParams);
+            onRouteController(form);
 
         });
-    }
 
-    function initQuantityButton()
-    {
-        let quantity = {
-            'buttons': {
-                'increment' : document.getElementsByClassName('quantity_inc'),
-                'decrement' : document.getElementsByClassName('quantity_dec'),
-                'delete'    : document.getElementsByClassName('quantity_del'),
-                'update'    : document.getElementsByClassName('quantity_upd')
-            },
-            'inputs'    : document.getElementsByClassName('quantity_input'),
-            'form'      : document.getElementById('basket_form')
-        };
+        let textInputs = form.querySelectorAll('input[type=text]');
 
-        for(let buttonsType in quantity.buttons){
+        for (let i = 0; i < textInputs.length; i++) {
+            textInputs[i].addEventListener('blur', function (event) {
 
-            if(quantity.buttons.hasOwnProperty(buttonsType)){
-
-                for( let buttonIndex = 0; buttonIndex < quantity.buttons[buttonsType].length; buttonIndex++){
-
-                    switch(buttonsType){
-                        case 'increment':
-                        case 'decrement':
-                            quantity.buttons[ buttonsType ][ buttonIndex ].addEventListener('click', function(e){
-                                e = e || event;
-                                changeQuantity(e, buttonIndex, quantity)
-                            });
-                            break;
-                        case 'delete':
-                            quantity.buttons[ buttonsType ][ buttonIndex ].addEventListener('click', function(e){
-                                quantity.inputs[buttonIndex].value = 0;
-                                quantity.form.submit();
-                            });
-                            break;
-                        case 'update':
-                            quantity.buttons[ buttonsType ][ buttonIndex ].addEventListener('click', function(e){
-                                //любая кнопка обновляет все товары
-                                quantity.form.submit();
-                            });
-                            break;
-                    }
-
-                }
-
-            }
-
-        }
-
-        for (let inputIndex = 0; inputIndex < quantity.inputs.length; inputIndex++) {
-
-            if (quantity.inputs[inputIndex].dataset.ajax) {
-                quantity.inputs[inputIndex].addEventListener('click', function(e){
-
-                    addProductToBasket(quantity.form);
-                });
-            }
-
-        }
-    }
-
-    function changeQuantity(e, buttonIndex, quantity)
-    {
-        let target = e.target;
-
-        if(target.tagName === 'I'){
-            target = target.parentElement;
-
-        }
-
-        if (target.classList.contains('quantity_inc')) {
-            ++quantity.inputs[buttonIndex].value;
-        } else if(target.classList.contains('quantity_dec')){
-
-            let minValue = target.dataset.quantityMinValue;
-
-            if(quantity.inputs[buttonIndex].value > minValue)
-                --quantity.inputs[buttonIndex].value;
+                onRouteController(form);
+            })
         }
     }
 }

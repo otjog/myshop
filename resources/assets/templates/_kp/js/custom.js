@@ -169,6 +169,5 @@ shipment.getPoints();
 
 import ShopBasket from './product-basket-modal';
 let shopBasket = new ShopBasket();
-shopBasket.initQuantityButton();
 shopBasket.initAjaxSubmitAllForms();
 /* END PRODUCT BASKET MODAL */
