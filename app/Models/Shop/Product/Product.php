@@ -104,6 +104,7 @@ class Product extends Model
             if (isset($products[0])) {
                 $products = $this->addLeftJoinsAsRelationCollections($products);
                 $products = $this->calculateQuantityDiscounts($products);
+                $products = $this->changePriceIfExistQuantityDiscount($products);
                 return $products[0];
             }
             return null;
@@ -125,7 +126,10 @@ class Product extends Model
 
             ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        $products = $this->changePriceIfExistQuantityDiscount($products);
+        return $products;
 
     }
 
@@ -212,7 +216,10 @@ class Product extends Model
 
             ->get();
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        $products = $this->changePriceIfExistQuantityDiscount($products);
+        return $products;
 
     }
 
@@ -285,7 +292,10 @@ class Product extends Model
 
                 ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        $products = $this->changePriceIfExistQuantityDiscount($products);
+        return $products;
 
     }
 
@@ -315,7 +325,9 @@ class Product extends Model
 
             ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -335,7 +347,9 @@ class Product extends Model
 
             ->paginate($pagination);
 
-        return $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->addLeftJoinsAsRelationCollections($products);
+        $products = $this->calculateQuantityDiscounts($products);
+        return $products;
 
     }
 
@@ -630,9 +644,17 @@ class Product extends Model
                     ->where('shop_store_has_product.quantity', '>', 0);
             }])
 
+            /************BASKET*****************/
+            ->with(['baskets' => function($query)
+            {
+                $query->where('token', session('_token'));
+            }])
+
             /************CATEGORY***************/
             //->leftJoin('categories', 'categories.id', '=', 'products.category_id')
             ->with('category');
+
+
     }
 
     public function getCustomProductsOffer($offer_id, $take){
@@ -737,46 +759,49 @@ class Product extends Model
             if (isset($product->quantity_discounts) && $product->quantity_discounts !== null && count($product->quantity_discounts) > 0) {
                 $quantityDiscounts = $product->quantity_discounts;
 
-                $quantityDiscounts = $quantityDiscounts->filter(function ($value, $key) use ($product)  {
-                    return $value->pivot->quantity <= $product->quantity;
-                });
+                if (isset($product->baskets[0]) && $product->baskets[0] !== null) {
+                    $quantityDiscounts = $quantityDiscounts->filter(function ($value, $key) use ($product)  {
+                        return $value->pivot->quantity <= $product->baskets[0]['pivot']['quantity'];
+                    });
 
-                $quantityDiscounts = $quantityDiscounts->sortByDesc(function ($value, $key) {
-                    return $value->pivot->quantity;
+                    $quantityDiscounts = $quantityDiscounts->sortByDesc(function ($value, $key) {
+                        return $value->pivot->quantity;
 
-                });
+                    });
 
-                $quantityDiscount = $quantityDiscounts->first();
+                    $quantityDiscount = $quantityDiscounts->first();
 
-                if ($quantityDiscount !== null) {
+                    if ($quantityDiscount !== null) {
 
-                    switch ($quantityDiscount->type) {
-                        case 'percent' :
-                            if($quantityDiscount->pivot->value > 99)
+                        switch ($quantityDiscount->type) {
+                            case 'percent' :
+                                if($quantityDiscount->pivot->value > 99)
+                                    break;
+
+                                $product->price['sale'] =
+                                $product['price|sale']  =
+                                    (int)($product['price|value'] / 100 * $quantityDiscount->pivot->value);
+
+                                $product->price['value'] =
+                                $product['price|value'] =
+                                    $product['price|value'] - $product->price['sale'];
                                 break;
 
-                            $product->price['sale'] =
-                            $product['price|sale']  =
-                                (int)($product['price|value'] / 100 * $quantityDiscount->pivot->value);
+                            case 'value' :
+                                if($quantityDiscount->pivot->value * $product->price['pivot']['currency_value'] >= $product->price['value'] )
+                                    break;
 
-                            $product->price['value'] =
-                            $product['price|value'] =
-                                $product['price|value'] - $product->price['sale'];
-                            break;
+                                $product->price['sale'] =
+                                $product['price|sale'] =
+                                    (int)($quantityDiscount->pivot->value * $product->price['pivot']['currency_value']);
 
-                        case 'value' :
-                            if($quantityDiscount->pivot->value * $product->price['pivot']['currency_value'] >= $product->price['value'] )
+                                $product['price|value'] -= $product->price['sale'];
+                                $product->price['value'] -= $product->price['sale'];
                                 break;
-
-                            $product->price['sale'] =
-                            $product['price|sale'] =
-                                (int)($quantityDiscount->pivot->value * $product->price['pivot']['currency_value']);
-
-                            $product['price|value'] -= $product->price['sale'];
-                            $product->price['value'] -= $product->price['sale'];
-                            break;
+                        }
                     }
                 }
+
             }
         }
         return $products;
