@@ -103,7 +103,7 @@ class Product extends Model
 
             if (isset($products[0])) {
                 $products = $this->addLeftJoinsAsRelationCollections($products);
-                //$products = $this->calculateQuantityDiscounts($products);
+                $products = $this->calculateQuantityDiscounts($products);
                 $products = $this->changePriceIfExistQuantityDiscount($products);
                 return $products[0];
             }
@@ -128,6 +128,7 @@ class Product extends Model
 
         $products = $this->addLeftJoinsAsRelationCollections($products);
         $products = $this->calculateQuantityDiscounts($products);
+        $products = $this->changePriceIfExistQuantityDiscount($products);
         return $products;
 
     }
@@ -217,6 +218,7 @@ class Product extends Model
 
         $products = $this->addLeftJoinsAsRelationCollections($products);
         $products = $this->calculateQuantityDiscounts($products);
+        $products = $this->changePriceIfExistQuantityDiscount($products);
         return $products;
 
     }
@@ -292,6 +294,7 @@ class Product extends Model
 
         $products = $this->addLeftJoinsAsRelationCollections($products);
         $products = $this->calculateQuantityDiscounts($products);
+        $products = $this->changePriceIfExistQuantityDiscount($products);
         return $products;
 
     }
