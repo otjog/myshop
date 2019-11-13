@@ -39,6 +39,10 @@
         //ProductInBasket
         Route::resource('/baskets.products', 'Shop\BasketProductController');
 
+        //PricelistsForMarketplaces
+        Route::resource('/marketplaces.pricelists',     'Shop\Pricelist\MarketplacePricelistController',
+            [ 'only' => [ 'show' ]]);
+
         //Image
         Route::get('/models/{models}/sizes/{sizes}/images/{images}/modelid/{modelId?}/extension/{extension?}',     'Image\ImageController@show')
             ->where('images', '.*')

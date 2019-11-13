@@ -38,6 +38,12 @@ class Product extends Model
         return $this->belongsToMany('App\Models\Shop\Store\Store', 'shop_store_has_product')->withPivot('quantity')->withTimestamps();
     }
 
+    public function marketplaces()
+    {
+        return $this->belongsToMany('App\Models\Shop\Marketplace', 'shop_marketplace_has_product')
+            ->withTimestamps();
+    }
+
     public function discounts()
     {
         return $this->belongsToMany('App\Models\Shop\Price\Discount', 'product_has_discount')->withPivot(['value', 'quantity'])->withTimestamps();
