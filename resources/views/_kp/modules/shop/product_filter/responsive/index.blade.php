@@ -1,3 +1,7 @@
+@php
+    $filterPrefix = $global_data['components']['shop']['filter_prefix'];
+@endphp
+
 <div class="product-filter d-block d-md-none pt-2">
     <div>
         <a
@@ -17,60 +21,47 @@
             <div class="text-right pb-2">
                 <span class="filter-clear border-bottom-dotted">Очистить всё</span>
             </div>
-            <form name="product_filter" role="form" method="GET">
+            <form
+                    class="product-filter-form"
+                    name="product_filter"
+                    role="form"
+                    method="GET"
+                    action="{{Request::url()}}"
+                    data-ajax
+                    data-ajax-event-name="submit"
+                    data-ajax-method="get"
+                    data-ajax-name="shop-filter-product"
+                    data-ajax-reload-class="product-list"
+                    data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
+            >
 
                 @foreach ($filters as $filter)
 
-                    @php
-                        $routeAlias = key($routeData);
-                        $routeValue = $routeData[ key($routeData) ];
-                        $filterPrefix = $global_data['components']['shop']['filter_prefix'];
+                    <div class="card rounded-0 filter filter-{{$filter['alias']}} filter-{{$filter['type']}} @if($filter['type'] === 'slider-range')filter-slider @endif">
+                        <div class="card-header p-1" id="heading-{{$filter['alias']}}">
 
-                    @endphp
+                            <button
+                                    class="btn btn-link w-75 text-left collapsed"
+                                    type="button"
+                                    data-toggle="collapse"
+                                    data-target="#collapse-{{$filter['alias']}}"
+                                    aria-expanded="false"
+                                    aria-controls="collapse-{{$filter['alias']}}"
+                            >
+                                {{$filter['name']}}
+                            </button>
+                            <span class="filter-clear border-bottom-dotted float-right">Очистить</span>
 
-                    @if ($filter['alias'] === $routeAlias)
-                        <input
-                                type="hidden"
-                                name="{{ $routeAlias }}"
-                                value="{{ $routeValue }}"
-                                data-filter-name="{{ $routeAlias  }}"
-                                data-filter-type="hidden"
-                                data-filter-value="{{ $routeValue }}">
-                    @elseif($filter['alias'] === $filterPrefix . $routeAlias)
-                        <input
-                                type="hidden"
-                                name="{{ $filterPrefix . $routeAlias }}"
-                                value="{{ $routeValue }}"
-                                data-filter-name="{{ $filterPrefix . $routeAlias }}"
-                                data-filter-type="hidden"
-                                data-filter-value="{{ $routeValue }}">
-                    @else
-                        <div class="card rounded-0 filter filter-{{$filter['alias']}} filter-{{$filter['type']}} @if($filter['type'] === 'slider-range')filter-slider @endif">
-                            <div class="card-header p-1" id="heading-{{$filter['alias']}}">
+                        </div>
 
-                                <button
-                                        class="btn btn-link w-75 text-left collapsed"
-                                        type="button"
-                                        data-toggle="collapse"
-                                        data-target="#collapse-{{$filter['alias']}}"
-                                        aria-expanded="false"
-                                        aria-controls="collapse-{{$filter['alias']}}"
-                                >
-                                        {{$filter['name']}}
-                                    </button>
-                                <span class="filter-clear border-bottom-dotted float-right">Очистить</span>
-
-                            </div>
-
-                            <div id="collapse-{{$filter['alias']}}" class="collapse" aria-labelledby="heading-{{$filter['alias']}}" data-parent="#product-filter-responsive">
-                                <div class="card-body">
-                                    <div class="container">
-                                        @include( $global_data['template']['name'] .'.modules.shop.product_filter.elements.'.$filter['type'], [$filter])
-                                    </div>
+                        <div id="collapse-{{$filter['alias']}}" class="collapse" aria-labelledby="heading-{{$filter['alias']}}" data-parent="#product-filter-responsive">
+                            <div class="card-body">
+                                <div class="container">
+                                    @include( $global_data['template']['name'] .'.modules.shop.product_filter.elements.'.$filter['type'], [$filter])
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
 
                 @endforeach
 

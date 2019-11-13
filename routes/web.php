@@ -24,6 +24,9 @@
         //Categories
         Route::resource('/categories',  'Shop\CategoryController',  [ 'only' => [ 'index', 'show' ]]);
 
+        //CategoryFilter
+        Route::resource('/categories.filters',  'Shop\CategoryController',  [ 'only' => 'show' ]);
+
         //Brands
         Route::resource('/brands',      'Shop\BrandController',     [ 'only' => [ 'index', 'show' ]]);
 
@@ -57,10 +60,13 @@
         });
 
     //ProductView
-    Route::resource('/products.views',    'Shop\View\ProductViewController',   [ 'only' => [ 'show' ]]);
+    Route::resource('/products.views',      'Shop\View\ProductViewController',  [ 'only' => [ 'show' ]]);
+
+    //CategoryView
+    Route::resource('/categories.views',    'Shop\View\CategoryViewController', [ 'only' => [ 'show' ]]);
 
     //BasketView
-    Route::resource('/baskets.views',     'Shop\View\BasketViewController',    [ 'only' => [ 'show' ]]);
+    Route::resource('/baskets.views',       'Shop\View\BasketViewController',   [ 'only' => [ 'show' ]]);
 
 
     //Pay

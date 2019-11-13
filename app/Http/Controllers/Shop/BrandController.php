@@ -47,19 +47,10 @@ class BrandController extends Controller{
         $brand = $this->brands->getBrand($name);
 
         $data['shop']['brand']       = $brand;
-        $data['shop']['parameters']  = [];
+        $data['shop']['parameters']  = $request->all();
         $data['header_page'] = 'Товары бренда ' . $brand[0]->name;
 
-        if (count($request->query) > 0) {
-
-            $routeData = ['brand' => $name];
-
-            $filterData = $request->toArray();
-
-            $data['shop']['products'] = $products->getFilteredProducts($routeData, $filterData);
-        } else {
-            $data['shop']['products'] = $products->getActiveProductsOfBrand($name);
-        }
+        $data['shop']['products'] = $products->getProductsFromRoute($request->route()->parameters, $request->all());
 
         $globalData = GlobalData::getParametersForController($data, 'shop', 'brand', 'show');
 

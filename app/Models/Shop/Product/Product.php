@@ -90,7 +90,7 @@ class Product extends Model
             ->get();
     }
 
-    public function getActiveProduct($id)
+    public function getProduct($id)
     {
         $productsQuery = $this->getOneProductQuery();
 
@@ -110,30 +110,43 @@ class Product extends Model
             return null;
     }
 
-    public function getActiveProductsFromCategory($category_id)
+    public function getProductsFromRoute($routeParameters, $filterData = [], $chunk = null)
     {
-        $pagination = GlobalData::getParameter('components.shop.pagination');
+        if(!$chunk)
+            $chunk = GlobalData::getParameter('components.shop.pagination');
 
+        /**
+         * Получаем обшие данные для всех роутов
+         */
         $productsQuery = $this->getListProductQuery();
 
-        $products = $productsQuery
+        /**
+         * Фильтруем товары, если есть данные фильтра
+         */
+        $products = $this->filterByFormParameters($productsQuery, $filterData);
 
-            ->where('products.active', 1)
+        /**
+         * Фильтруем по роуту
+         */
+        $products = $this->filterByRouteParameter($products, $routeParameters);
 
-            ->where('products.category_id', $category_id)
+        /**
+         * Сортируем и разбиваем на страницы
+         */
+        $products = $products
 
             ->orderBy('products.name')
 
-            ->paginate($pagination);
+            ->paginate($chunk);
 
         $products = $this->addLeftJoinsAsRelationCollections($products);
         $products = $this->calculateQuantityDiscounts($products);
         $products = $this->changePriceIfExistQuantityDiscount($products);
-        return $products;
 
+        return $products;
     }
 
-    public function getActiveProductsWithFilterParameters($routeData)
+    public function getActiveProductsFromRoute($routeData)
     {
         $today = GlobalData::getParameter('today');
 
@@ -223,114 +236,6 @@ class Product extends Model
 
     }
 
-    public function getFilteredProducts($routeData, $filterData)
-    {
-        $pagination = GlobalData::getParameter('components.shop.pagination');
-
-        $filter_prefix = GlobalData::getParameter('components.shop.filter_prefix');
-
-        $productsQuery = $this->getListProductQuery();
-
-        $products = $productsQuery
-
-            ->where('products.active', 1);
-
-        switch (key($routeData)) {
-            case 'category' :
-                $categoryId = (int)$routeData[ key($routeData) ];
-                $products = $products->where( 'products.category_id', $categoryId);
-                break;
-            case 'brand'    :
-                $brandName = $routeData[ key($routeData) ];
-                $products = $products
-                    ->rightJoin('product_has_parameter', function ($join) use ($brandName) {
-                        $join->on('products.id', '=', 'product_has_parameter.product_id')
-                            ->where('product_has_parameter.value', '=', $brandName);
-                    })
-                    ->rightJoin('product_parameters','product_parameters.id', '=', 'product_has_parameter.parameter_id');
-        }
-
-        //WHEN's
-        $products = $products
-            /************PRICE*******************/
-            ->when(isset($filterData['price']), function ($query) use ($filterData) {
-
-                list($min, $max) = (explode('|', $filterData['price']));
-
-                return $query->having('price|value', '>=', ($min))
-                    ->having('price|value', '<=', ($max));
-
-            })
-
-            /************MANUFACTURER***********/
-            ->when(isset($filterData['manufacturer']), function ($query) use ($filterData) {
-                return $query->whereIn('products.manufacturer_id', explode('|', $filterData['manufacturer']));
-            })
-
-            /************CATEGORY***************/
-            ->when(isset($filterData['category']), function ($query) use ($filterData) {
-                return $query->whereIn('products.category_id', explode('|', $filterData['category']));
-            });
-
-            /************PARAMETERS*************/
-            foreach($filterData as $key => $parameter){
-
-                if(strpos($key, $filter_prefix) === 0){
-                    $key = str_replace($filter_prefix, '', $key);
-
-                    $products = $products->whereHas('parameters', function($query) use ($parameter, $key) {
-                        $query->where('product_parameters.alias', '=', $key)
-                            ->whereIn('product_has_parameter.value', explode('|', $parameter));
-                    });
-                }
-
-            }
-
-            $products = $products->with('parameters')
-
-                ->orderBy('products.name')
-
-                ->paginate($pagination);
-
-        $products = $this->addLeftJoinsAsRelationCollections($products);
-        $products = $this->calculateQuantityDiscounts($products);
-        $products = $this->changePriceIfExistQuantityDiscount($products);
-        return $products;
-
-    }
-
-    public function getActiveProductsOfBrand($brandName)
-    {
-        $pagination = GlobalData::getParameter('components.shop.pagination');
-
-        $productsQuery = $this->getListProductQuery();
-
-        $products = $productsQuery
-            ->addSelect(
-                'product_parameters.name        as parameters|name',
-                'product_parameters.alias       as parameters|alias',
-                'product_has_parameter.value    as parameters|pivot|value',
-                'product_has_parameter.basket_value    as parameters|pivot|basket_value'
-            )
-            ->where('products.active', 1)
-
-            /************PARAMETERS*************/
-            ->rightJoin('product_has_parameter', function ($join) use ($brandName) {
-                $join->on('products.id', '=', 'product_has_parameter.product_id')
-                    ->where('product_has_parameter.value', '=', $brandName);
-            })
-            ->rightJoin('product_parameters','product_parameters.id', '=', 'product_has_parameter.parameter_id')
-
-            ->orderBy('products.name')
-
-            ->paginate($pagination);
-
-        $products = $this->addLeftJoinsAsRelationCollections($products);
-        $products = $this->calculateQuantityDiscounts($products);
-        return $products;
-
-    }
-
     public function getProductsById($idProducts)
     {
         $pagination = GlobalData::getParameter('components.shop.pagination');
@@ -340,8 +245,6 @@ class Product extends Model
         $products = $productsQuery
 
             ->whereIn('products.id', $idProducts)
-
-            ->where('products.active', 1)
 
             ->orderBy('products.name')
 
@@ -531,8 +434,6 @@ class Product extends Model
                 'products.width',
                 'products.height'
             )
-            /************IMAGES*****************/
-            ->with('images')
 
             /************PARAMETERS*************/
             ->with(['parameters' => function ($query) {
@@ -540,17 +441,13 @@ class Product extends Model
             }]);
     }
 
-    private function getListProductQuery(){
-
-        $productsQuery = $this->getDefaultProductQuery();
-
-        return $productsQuery
-        /************IMAGES*****************/
-        ->with('images');
+    private function getListProductQuery()
+    {
+        return $this->getDefaultProductQuery();
     }
 
-    private function getDefaultProductQuery(){
-
+    private function getDefaultProductQuery()
+    {
         $today = GlobalData::getParameter('today');
 
         $price_id = GlobalData::getParameter('components.shop.customer_group.price_id');
@@ -575,8 +472,6 @@ class Product extends Model
             'product_has_discount.quantity  as discounts|pivot|quantity',
             'manufacturers.id               as manufacturer|id',
             'manufacturers.name             as manufacturer|name',
-            //'categories.id                  as category|id',
-            //'categories.name                as category|name',
 
             DB::raw(
                 'CASE discounts.type
@@ -597,6 +492,8 @@ class Product extends Model
                         END AS "price|sale"'
             )
         )
+
+            ->where('products.active', 1)
 
             /************PRICE******************/
             ->leftJoin('product_has_price', function ($join) use ($price_id) {
@@ -651,10 +548,10 @@ class Product extends Model
             }])
 
             /************CATEGORY***************/
-            //->leftJoin('categories', 'categories.id', '=', 'products.category_id')
-            ->with('category');
+            ->with('category')
 
-
+            /************IMAGES*****************/
+            ->with('images');
     }
 
     public function getCustomProductsOffer($offer_id, $take){
@@ -843,5 +740,57 @@ class Product extends Model
             }
         }
         return $products;
+    }
+
+    protected function filterByFormParameters($productsQuery, $filterData)
+    {
+        $filter_prefix = GlobalData::getParameter('components.shop.filter_prefix');
+
+        $products = $productsQuery
+            /************PRICE*******************/
+            ->when(isset($filterData['price']), function ($query) use ($filterData) {
+                return $query->having('price|value', '>=', ($filterData['price']["0"]))
+                    ->having('price|value', '<=', ($filterData['price']["1"]));
+            })
+
+            /************MANUFACTURER***********/
+            ->when(isset($filterData['manufacturer']), function ($query) use ($filterData) {
+                return $query->whereIn('products.manufacturer_id', $filterData['manufacturer']);
+            })
+
+            /************CATEGORY***************/
+            ->when(isset($filterData['category']), function ($query) use ($filterData) {
+                return $query->whereIn('products.category_id', $filterData['category']);
+            });
+
+        /************PARAMETERS*************/
+        foreach($filterData as $key => $parameter){
+
+            if(strpos($key, $filter_prefix) === 0){
+                $key = str_replace($filter_prefix, '', $key);
+                $products = $products->whereHas('parameters', function($query) use ($parameter, $key) {
+                    $query->where('product_parameters.alias', '=', $key)
+                        ->whereIn('product_has_parameter.value', $parameter);
+                });
+            }
+
+        }
+
+        return $products;
+    }
+
+    protected function filterByRouteParameter($products, $routeParameters)
+    {
+        foreach ($routeParameters as $key => $id) {
+            switch ($key) {
+                case 'category' :
+                    return $products->where('products.category_id', $id);
+                case 'brand' :
+                    return $products->rightJoin('product_has_parameter', function ($join) use ($id) {
+                        $join->on('products.id', '=', 'product_has_parameter.product_id')
+                            ->where('product_has_parameter.value', '=', $id);
+                    });
+            }
+        }
     }
 }

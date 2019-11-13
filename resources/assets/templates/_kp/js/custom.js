@@ -165,9 +165,16 @@ shipment.getOffers();
 shipment.getPoints();
 /*******/
 
-/* PRODUCT BASKET MODAL */
-
+/* ADD PRODUCT TO BASKET AJAX */
 import ShopBasket from './product-basket-modal';
 let shopBasket = new ShopBasket();
 shopBasket.initAjaxSubmitAllForms();
-/* END PRODUCT BASKET MODAL */
+/* END PRODUCT TO BASKET AJAX */
+
+/* FILTER PRODUCT AJAX */
+import ProductFilter from './product-filter';
+let productFilter = new ProductFilter();
+productFilter.initProductFilter();
+productFilter.initAjaxSubmitForm();
+/* END FILTER PRODUCT AJAX */
+
