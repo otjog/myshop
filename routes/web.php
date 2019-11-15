@@ -39,6 +39,9 @@
         //ProductInBasket
         Route::resource('/baskets.products', 'Shop\BasketProductController');
 
+        //Pricelists
+        Route::resource('/pricelists',  'Shop\PricelistController', [ 'only' => [ 'show' ]]);
+
         //PricelistsForMarketplaces
         Route::resource('/marketplaces.pricelists',     'Shop\Pricelist\MarketplacePricelistController',
             [ 'only' => [ 'show' ]]);

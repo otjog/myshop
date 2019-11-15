@@ -1,29 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Shop\Pricelist;
+namespace App\Http\Controllers\Shop;
 
-use App\Models\Shop\Price\Pricelists;
-use App\Models\Shop\Product\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Shop\Marketplace;
+use App\Models\Shop\Product\Product;
 use App\Models\Shop\Category\Category;
+use App\Models\Shop\Price\Pricelists;
 
-class MarketplacePricelistController extends Controller
+class PricelistController extends Controller
 {
-
-    public $marketplaceModel;
-
     public $pricelistModel;
 
     public $categoryModel;
 
     public $productModel;
 
-    public function __construct(Marketplace $marketplaceModel, Pricelists $pricelistModel, Category $categoryModel, Product $productModel)
+    public function __construct(Pricelists $pricelistModel, Category $categoryModel, Product $productModel)
     {
-        $this->marketplaceModel = $marketplaceModel;
-
         $this->pricelistModel = $pricelistModel;
 
         $this->categoryModel = $categoryModel;
@@ -65,23 +59,19 @@ class MarketplacePricelistController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  string  $mp_alias Alias of MarketPlace, ex.: ozon
-     * @param  string  $pl_alias Alias of PriceList, ex.: yml
+     * @param  string  $pl_alias
      * @return \Illuminate\Http\Response
      */
-    public function show($mp_alias, $pl_alias)
+    public function show($pl_alias)
     {
         $categories = $this->categoryModel->getActiveCategories();
 
-        $marketplace = $this->marketplaceModel->select('id')->where('alias', $mp_alias)->first();
-
-        $products = $this->productModel->getActiveProductsToMarketplace($marketplace->id);
+        $products = $this->productModel->getActiveProducts();
 
         $xmlString = $this->pricelistModel->getPriceList($products, $categories, $pl_alias);
 
         return response($xmlString, 200)
             ->header('Content-Type', 'text/xml');
-
     }
 
     /**
