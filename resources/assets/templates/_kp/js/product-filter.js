@@ -4,6 +4,8 @@ export default function ProductFilter()
 {
     let ajaxHeaders = {};
 
+    let ajaxAfterRequestCount;
+
     this.initAjaxSubmitForm = function ()
     {
         initAjaxActionElements();
@@ -154,14 +156,12 @@ export default function ProductFilter()
         }
     };
 
-    function initAjaxActionElements(className)
+    function initAjaxActionElements(htmlReload)
     {
-        if (className === null || className === undefined)
-            className = '';
-        else
-            className = '.' + className + ' ';
+        if (htmlReload === null || htmlReload === undefined)
+            htmlReload = document;
 
-        let actionElements = document.querySelectorAll(className + '[data-ajax]');
+        let actionElements = htmlReload.querySelectorAll('[data-ajax]');
 
         for (let i = 0; i < actionElements.length; i++) {
             let eventName = actionElements[i].getAttribute('data-ajax-event-name');
@@ -176,35 +176,50 @@ export default function ProductFilter()
          */
         actionElement.addEventListener(eventName, function(event)
         {
+            ajaxAfterRequestCount = 1;
             event.preventDefault();
-            onRouteController(actionElement);
+            let formParameters = getFormParameters(actionElement);
+            onRouteController(actionElement, formParameters);
+
+            while (actionElement.hasAttribute('data-ajax-method' + ajaxAfterRequestCount)) {
+                onRouteController(actionElement, {}, ajaxAfterRequestCount);
+                ajaxAfterRequestCount++;
+            }
+
         });
     }
 
-    function onRouteController(actionElement)
+    function onRouteController(actionElement, formParameters, pf)
     {
-        let formParameters = getFormParameters(actionElement);
+        if (pf === undefined)
+            pf = '';
 
-        let fullUrl = getFullUrl(actionElement);
+        let dataset = actionElement.dataset;
 
-        let ajaxPath    = getPath(fullUrl, actionElement);
+        let pushState = dataset.ajaxPushState;
+
+        let fullUrl = getFullUrl(actionElement, pf);
+
+        let ajaxPath = getPath(fullUrl, dataset['ajaxView'+pf]);
 
         let queryString = getQueryStringFromHref(fullUrl);
 
         queryString = getQueryStringFromObject(formParameters, queryString);
 
-        let dataset     = actionElement.dataset;
+        let htmlReload  = getHtmlReload(actionElement, dataset['ajaxReloadClass'+pf]);
 
-        let htmlReload  = document.getElementsByClassName(dataset.ajaxReloadClass)[0];
+        sendRequest (dataset['ajaxName'+pf], dataset['ajaxMethod'+pf], queryString, ajaxPath, pushState, htmlReload, function(response) {
 
-        sendRequest (dataset.ajaxName, dataset.ajaxMethod, queryString, ajaxPath, htmlReload, function(response) {
-            htmlReload.innerHTML = String(response);
-            initAjaxActionElements(dataset.ajaxReloadClass);
+            if (htmlReload !== null) {
+                htmlReload.innerHTML = String(response);
+                initAjaxActionElements(htmlReload);
+            }
+
         });
 
     }
 
-    function sendRequest(ajaxName, ajaxMethod, queryString, path, htmlReload, func)
+    function sendRequest(ajaxName, ajaxMethod, queryString, path, pushState, htmlReload, func)
     {
         let ajaxReq = new Ajax(ajaxMethod, queryString, ajaxHeaders, ajaxName, path);
 
@@ -225,7 +240,8 @@ export default function ProductFilter()
 
         ajaxReq.sendRequest();
 
-        history.pushState('', '', '?' + queryString);
+        if (pushState)
+            history.pushState('', '', '?' + queryString);
 
 
     }
@@ -276,6 +292,7 @@ export default function ProductFilter()
                             formParameters[formInputs[i].name] = formInputs[i].value;
                         }
                         break;
+                    case 'hidden' :
                     case 'text' :
                         formParameters[formInputs[i].name] = formInputs[i].value;
                         break;
@@ -286,60 +303,78 @@ export default function ProductFilter()
         return formParameters;
     }
 
-    function getPath(fullUrl, actionElement)
+    function getPath(fullUrl, ajaxView)
     {
         let locationArray = fullUrl.split('?');
 
-        let viewpath = '/views/' + actionElement.dataset.ajaxView;
+        let viewpath = '';
+
+        if (ajaxView !== undefined)
+            viewpath = '/views/' + ajaxView;
 
         return locationArray[0] + viewpath;
     }
 
-    function getFullUrl(actionElement)
+    function getFullUrl(actionElement, pf)
     {
-        if (actionElement.hasAttribute('action')) {
+        if (actionElement.hasAttribute('data-ajax-action'+pf)) {
+            return actionElement.getAttribute('data-ajax-action'+pf)
+        } else if (actionElement.hasAttribute('action')) {
             return actionElement.getAttribute('action')
         } else if(actionElement.hasAttribute('href')) {
             return actionElement.getAttribute('href')
         }
     }
 
+    function getHtmlReload(actionElement, className)
+    {
+        if (className !== undefined && className !== null){
+
+            if (actionElement.closest('.'+className))
+                return actionElement.closest('.'+className);
+            else if(document.getElementsByClassName(className)[0])
+                return document.getElementsByClassName(className)[0];
+        }
+        return null
+
+    }
+
     function onloadstart(htmlReload)
     {
+        if (htmlReload !== null) {
+            htmlReload.style.opacity = 0.25;
 
-        htmlReload.style.opacity = 0.25;
+            let spinners = htmlReload.getElementsByClassName('spinner-border');
 
-        let spinners = htmlReload.getElementsByClassName('spinner-border');
+            for (let i = 0; i < spinners.length; i++) {
+                spinners[i].style.display = 'block';
+            }
 
-        for (let i = 0; i < spinners.length; i++) {
-            spinners[i].style.display = 'block';
+            let step, length;
+
+            step = length = -75;
+
+            let coordinates = htmlReload.getBoundingClientRect();
+
+            let int = setInterval(function() {
+                window.scrollBy(0, step);
+                length += step;
+                if (length <= (coordinates.y - 100))
+                    clearInterval(int);
+            }, 20);
         }
-
-        let step, length;
-
-        step = length = -75;
-
-        let coordinates = htmlReload.getBoundingClientRect();
-
-        let int = setInterval(function() {
-            window.scrollBy(0, step);
-            length += step;
-            if (length <= (coordinates.y - 100))
-                clearInterval(int);
-        }, 20);
-
-
-
     }
 
     function onloadend(htmlReload)
     {
-        let spinners = htmlReload.getElementsByClassName('spinner-border');
+        if (htmlReload !== null) {
+            let spinners = htmlReload.getElementsByClassName('spinner-border');
 
-        for (let i = 0; i < spinners.length; i++) {
-            spinners[i].style.display = 'none';
+            for (let i = 0; i < spinners.length; i++) {
+                spinners[i].style.display = 'none';
+            }
+
+            htmlReload.style.opacity = 1.0;
         }
-
-        htmlReload.style.opacity = 1.0;
     }
 }

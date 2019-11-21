@@ -3,6 +3,7 @@
         <a
                 href="{{Request::url()}}"
                 data-ajax
+                data-ajax-push-state="1"
                 data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
                 data-ajax-event-name="click"
                 data-ajax-method="get"

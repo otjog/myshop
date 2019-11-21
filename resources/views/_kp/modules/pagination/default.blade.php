@@ -10,6 +10,7 @@
                             class="w-100 h-100 pt-3 text-center text-primary"
                             href="{{$products->appends($parameters)->url(1)}}"
                             data-ajax
+                            data-ajax-push-state="1"
                             data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
                             data-ajax-event-name="click"
                             data-ajax-method="get"
@@ -24,6 +25,7 @@
                             class="w-100 h-100 pt-3 text-center text-primary"
                             href="{{$products->appends($parameters)->previousPageUrl()}}"
                             data-ajax
+                            data-ajax-push-state="1"
                             data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
                             data-ajax-event-name="click"
                             data-ajax-method="get"
@@ -54,6 +56,7 @@
                                 class="w-100 h-100 pt-3 text-center text-primary"
                                 href="{{$products->appends($parameters)->url($i)}}"
                                 data-ajax
+                                data-ajax-push-state="1"
                                 data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
                                 data-ajax-event-name="click"
                                 data-ajax-method="get"
@@ -74,6 +77,7 @@
                             class="w-100 h-100 pt-3 text-center text-primary"
                             href="{{$products->appends($parameters)->nextPageUrl()}}"
                             data-ajax
+                            data-ajax-push-state="1"
                             data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
                             data-ajax-event-name="click"
                             data-ajax-method="get"
@@ -88,6 +92,7 @@
                             class="w-100 h-100 pt-3 text-center text-primary"
                             href="{{$products->appends($parameters)->url($products->lastPage())}}"
                             data-ajax
+                            data-ajax-push-state="1"
                             data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
                             data-ajax-event-name="click"
                             data-ajax-method="get"

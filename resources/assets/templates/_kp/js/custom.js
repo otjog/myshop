@@ -167,8 +167,8 @@ shipment.getPoints();
 
 /* ADD PRODUCT TO BASKET AJAX */
 import ShopBasket from './product-basket-modal';
-let shopBasket = new ShopBasket();
-shopBasket.initAjaxSubmitAllForms();
+//let shopBasket = new ShopBasket();
+//shopBasket.initAjaxSubmitAllForms();
 /* END PRODUCT TO BASKET AJAX */
 
 /* FILTER PRODUCT AJAX */

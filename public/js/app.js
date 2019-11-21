@@ -62201,7 +62201,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dadata__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dadata */ "./resources/assets/templates/_kp/js/dadata.js");
 /* harmony import */ var _shipment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shipment */ "./resources/assets/templates/_kp/js/shipment.js");
 /* harmony import */ var _product_basket_modal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./product-basket-modal */ "./resources/assets/templates/_kp/js/product-basket-modal.js");
-/* harmony import */ var _product_filter_new__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./product-filter-new */ "./resources/assets/templates/_kp/js/product-filter.js");
+/* harmony import */ var _product_filter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./product-filter */ "./resources/assets/templates/_kp/js/product-filter.js");
 //FancyBox
 var fancyOptions = {
   openEffect: 'none',
@@ -62344,15 +62344,15 @@ shipment.getPoints();
 
 /* ADD PRODUCT TO BASKET AJAX */
 
+ //let shopBasket = new ShopBasket();
+//shopBasket.initAjaxSubmitAllForms();
 
-var shopBasket = new _product_basket_modal__WEBPACK_IMPORTED_MODULE_3__["default"]();
-shopBasket.initAjaxSubmitAllForms();
 /* END PRODUCT TO BASKET AJAX */
 
 /* FILTER PRODUCT AJAX */
 
 
-var productFilter = new _product_filter_new__WEBPACK_IMPORTED_MODULE_4__["default"]();
+var productFilter = new _product_filter__WEBPACK_IMPORTED_MODULE_4__["default"]();
 productFilter.initProductFilter();
 productFilter.initAjaxSubmitForm();
 /* END FILTER PRODUCT AJAX */
@@ -78033,10 +78033,10 @@ function ShopBasket() {
 
 /***/ }),
 
-/***/ "./resources/assets/templates/_kp/js/product-filter-new.js":
-/*!*****************************************************************!*\
+/***/ "./resources/assets/templates/_kp/js/product-filter.js":
+/*!*************************************************************!*\
   !*** ./resources/assets/templates/_kp/js/product-filter.js ***!
-  \*****************************************************************/
+  \*************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -78047,6 +78047,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function ProductFilter() {
   var ajaxHeaders = {};
+  var ajaxAfterRequestCount;
 
   this.initAjaxSubmitForm = function () {
     initAjaxActionElements();
@@ -78202,9 +78203,9 @@ function ProductFilter() {
     }
   };
 
-  function initAjaxActionElements(className) {
-    if (className === null || className === undefined) className = '';else className = '.' + className + ' ';
-    var actionElements = document.querySelectorAll(className + '[data-ajax]');
+  function initAjaxActionElements(htmlReload) {
+    if (htmlReload === null || htmlReload === undefined) htmlReload = document;
+    var actionElements = htmlReload.querySelectorAll('[data-ajax]');
 
     for (var i = 0; i < actionElements.length; i++) {
       var eventName = actionElements[i].getAttribute('data-ajax-event-name');
@@ -78217,26 +78218,36 @@ function ProductFilter() {
      * Перехватываем и отменяем (отправку формы или переход по ссылке)
      */
     actionElement.addEventListener(eventName, function (event) {
+      ajaxAfterRequestCount = 1;
       event.preventDefault();
-      onRouteController(actionElement);
+      var formParameters = getFormParameters(actionElement);
+      onRouteController(actionElement, formParameters);
+
+      while (actionElement.hasAttribute('data-ajax-method' + ajaxAfterRequestCount)) {
+        onRouteController(actionElement, {}, ajaxAfterRequestCount);
+        ajaxAfterRequestCount++;
+      }
     });
   }
 
-  function onRouteController(actionElement) {
-    var formParameters = getFormParameters(actionElement);
-    var fullUrl = getFullUrl(actionElement);
-    var ajaxPath = getPath(fullUrl, actionElement);
+  function onRouteController(actionElement, formParameters, pf) {
+    if (pf === undefined) pf = '';
+    var dataset = actionElement.dataset;
+    var pushState = dataset.ajaxPushState;
+    var fullUrl = getFullUrl(actionElement, pf);
+    var ajaxPath = getPath(fullUrl, dataset['ajaxView' + pf]);
     var queryString = getQueryStringFromHref(fullUrl);
     queryString = getQueryStringFromObject(formParameters, queryString);
-    var dataset = actionElement.dataset;
-    var htmlReload = document.getElementsByClassName(dataset.ajaxReloadClass)[0];
-    sendRequest(dataset.ajaxName, dataset.ajaxMethod, queryString, ajaxPath, htmlReload, function (response) {
-      htmlReload.innerHTML = String(response);
-      initAjaxActionElements(dataset.ajaxReloadClass);
+    var htmlReload = getHtmlReload(actionElement, dataset['ajaxReloadClass' + pf]);
+    sendRequest(dataset['ajaxName' + pf], dataset['ajaxMethod' + pf], queryString, ajaxPath, pushState, htmlReload, function (response) {
+      if (htmlReload !== null) {
+        htmlReload.innerHTML = String(response);
+        initAjaxActionElements(htmlReload);
+      }
     });
   }
 
-  function sendRequest(ajaxName, ajaxMethod, queryString, path, htmlReload, func) {
+  function sendRequest(ajaxName, ajaxMethod, queryString, path, pushState, htmlReload, func) {
     var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path);
 
     ajaxReq.req.onloadstart = function () {
@@ -78251,7 +78262,7 @@ function ProductFilter() {
     };
 
     ajaxReq.sendRequest();
-    history.pushState('', '', '?' + queryString);
+    if (pushState) history.pushState('', '', '?' + queryString);
   }
 
   function getQueryStringFromHref(fullUrl) {
@@ -78293,6 +78304,7 @@ function ProductFilter() {
 
             break;
 
+          case 'hidden':
           case 'text':
             formParameters[formInputs[i].name] = formInputs[i].value;
             break;
@@ -78303,47 +78315,62 @@ function ProductFilter() {
     return formParameters;
   }
 
-  function getPath(fullUrl, actionElement) {
+  function getPath(fullUrl, ajaxView) {
     var locationArray = fullUrl.split('?');
-    var viewpath = '/views/' + actionElement.dataset.ajaxView;
+    var viewpath = '';
+    if (ajaxView !== undefined) viewpath = '/views/' + ajaxView;
     return locationArray[0] + viewpath;
   }
 
-  function getFullUrl(actionElement) {
-    if (actionElement.hasAttribute('action')) {
+  function getFullUrl(actionElement, pf) {
+    if (actionElement.hasAttribute('data-ajax-action' + pf)) {
+      return actionElement.getAttribute('data-ajax-action' + pf);
+    } else if (actionElement.hasAttribute('action')) {
       return actionElement.getAttribute('action');
     } else if (actionElement.hasAttribute('href')) {
       return actionElement.getAttribute('href');
     }
   }
 
-  function onloadstart(htmlReload) {
-    htmlReload.style.opacity = 0.25;
-    var spinners = htmlReload.getElementsByClassName('spinner-border');
-
-    for (var i = 0; i < spinners.length; i++) {
-      spinners[i].style.display = 'block';
+  function getHtmlReload(actionElement, className) {
+    if (className !== undefined && className !== null) {
+      if (actionElement.closest('.' + className)) return actionElement.closest('.' + className);else if (document.getElementsByClassName(className)[0]) return document.getElementsByClassName(className)[0];
     }
 
-    var step, length;
-    step = length = -75;
-    var coordinates = htmlReload.getBoundingClientRect();
+    return null;
+  }
 
-    var _int = setInterval(function () {
-      window.scrollBy(0, step);
-      length += step;
-      if (length <= coordinates.y - 100) clearInterval(_int);
-    }, 20);
+  function onloadstart(htmlReload) {
+    if (htmlReload !== null) {
+      htmlReload.style.opacity = 0.25;
+      var spinners = htmlReload.getElementsByClassName('spinner-border');
+
+      for (var i = 0; i < spinners.length; i++) {
+        spinners[i].style.display = 'block';
+      }
+
+      var step, length;
+      step = length = -75;
+      var coordinates = htmlReload.getBoundingClientRect();
+
+      var _int = setInterval(function () {
+        window.scrollBy(0, step);
+        length += step;
+        if (length <= coordinates.y - 100) clearInterval(_int);
+      }, 20);
+    }
   }
 
   function onloadend(htmlReload) {
-    var spinners = htmlReload.getElementsByClassName('spinner-border');
+    if (htmlReload !== null) {
+      var spinners = htmlReload.getElementsByClassName('spinner-border');
 
-    for (var i = 0; i < spinners.length; i++) {
-      spinners[i].style.display = 'none';
+      for (var i = 0; i < spinners.length; i++) {
+        spinners[i].style.display = 'none';
+      }
+
+      htmlReload.style.opacity = 1.0;
     }
-
-    htmlReload.style.opacity = 1.0;
   }
 }
 

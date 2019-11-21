@@ -28,6 +28,7 @@
                     method="GET"
                     action="{{Request::url()}}"
                     data-ajax
+                    data-ajax-push-state="1"
                     data-ajax-event-name="submit"
                     data-ajax-method="get"
                     data-ajax-name="shop-filter-product"

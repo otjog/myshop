@@ -37,7 +37,7 @@
         Route::resource('/pages',       'Info\PageController',      [ 'only' => [ 'show' ]]);
 
         //Basket
-        Route::resource('/baskets',     'Shop\BasketController',    [ 'only' => [ 'store', 'edit', 'update' ]]);
+        Route::resource('/baskets',     'Shop\BasketController',    [ 'only' => [ 'show', 'store', 'edit', 'update' ]]);
 
         //ProductInBasket
         Route::resource('/baskets.products', 'Shop\BasketProductController');
