@@ -62200,8 +62200,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tiny_slider_src_tiny_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-slider/src/tiny-slider */ "./node_modules/tiny-slider/src/tiny-slider.js");
 /* harmony import */ var _dadata__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dadata */ "./resources/assets/templates/_kp/js/dadata.js");
 /* harmony import */ var _shipment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shipment */ "./resources/assets/templates/_kp/js/shipment.js");
-/* harmony import */ var _product_basket_modal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./product-basket-modal */ "./resources/assets/templates/_kp/js/product-basket-modal.js");
-/* harmony import */ var _product_filter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./product-filter */ "./resources/assets/templates/_kp/js/product-filter.js");
+/* harmony import */ var _init_ajax_modules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./init-ajax-modules */ "./resources/assets/templates/_kp/js/init-ajax-modules.js");
 //FancyBox
 var fancyOptions = {
   openEffect: 'none',
@@ -62342,20 +62341,13 @@ shipment.getOffers();
 shipment.getPoints();
 /*******/
 
-/* ADD PRODUCT TO BASKET AJAX */
-
- //let shopBasket = new ShopBasket();
-//shopBasket.initAjaxSubmitAllForms();
-
-/* END PRODUCT TO BASKET AJAX */
-
-/* FILTER PRODUCT AJAX */
+/* AJAX MODULES */
 
 
-var productFilter = new _product_filter__WEBPACK_IMPORTED_MODULE_4__["default"]();
-productFilter.initProductFilter();
-productFilter.initAjaxSubmitForm();
-/* END FILTER PRODUCT AJAX */
+var ajaxModules = new _init_ajax_modules__WEBPACK_IMPORTED_MODULE_3__["default"]();
+ajaxModules.initProductFilter();
+ajaxModules.initAjaxSubmitForm();
+/* END AJAX MODULES */
 
 /***/ }),
 
@@ -62491,6 +62483,451 @@ function InitMap(geo, zoom) {
       zoom: zoom,
       center: location
     });
+  }
+}
+
+/***/ }),
+
+/***/ "./resources/assets/templates/_kp/js/init-ajax-modules.js":
+/*!****************************************************************!*\
+  !*** ./resources/assets/templates/_kp/js/init-ajax-modules.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProductFilter; });
+/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
+
+function ProductFilter() {
+  var ajaxModules = {
+    'shop-basket-add_product': {
+      'unique': true,
+      'secondRequests': {
+        'update_html_buy-button': {
+          'unique': true,
+          'method': 'get',
+          'view': '_kp.components.shop.product.list.card.sell_block',
+          'reloadClass': 'shop-basket-button-group'
+        },
+        'update_html_module': {
+          'unique': false,
+          'method': 'get',
+          'view': '_kp.modules.shop.basket._elements.module',
+          'reloadClass': 'shop-module-basket'
+        }
+      }
+    }
+  };
+  var ajaxHeaders = {};
+  var ajaxAfterRequestCount;
+
+  this.initAjaxSubmitForm = function () {
+    initAjaxActionElements();
+  };
+
+  this.initProductFilter = function () {
+    /*****************************************************
+     Product Filter (Скорее всего не оптимизированный код)
+     *****************************************************/
+    var sliders = $('.filter-slider');
+    $('.filter-slider .slider-show').css('display', 'block');
+
+    for (var i = 0; i < sliders.length; i++) {
+      var values = getValues(sliders[i]);
+      getSliderShow(sliders[i]).slider({
+        range: true,
+        min: values.range[0],
+        max: values.range[1],
+        values: [values.value[0], values.value[1]],
+        slide: function slide(e, ui) {
+          changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
+        }
+      });
+    }
+
+    $('input[data-filter-type=slider]').on('change', function (e) {
+      e = e || event;
+      var slider = $(e.target).closest('.filter-slider')[0];
+      var values = getValues(slider);
+
+      if ($.isNumeric(Number(e.target.value))) {
+        if (values.value[0] > values.value[1]) {
+          if (values.value[0] > values.range[1]) {
+            values.value[0] = values.range[1];
+            values.value[1] = values.range[1];
+            changeInputValue([0, 1], [values.range[1], values.range[1]], slider);
+          } else if (values.value[1] < values.range[0]) {
+            values.value[1] = values.value[0];
+            changeInputValue([1], [values.value[0]], slider);
+          } else {
+            values.value[1] = values.value[0];
+            changeInputValue([1], [values.value[0]], slider);
+          }
+        } else if (values.value[0] < values.range[0]) {
+          values.value[0] = values.range[0];
+          changeInputValue([0], [values.range[0]], slider);
+        } else if (values.value[1] > values.range[1]) {
+          values.value[1] = values.range[1];
+          changeInputValue([1], [values.range[1]], slider);
+        }
+      } else {
+        var index = e.target.dataset.filterSliderInputIndex;
+        values.value[index] = values.range[index];
+        changeInputValue([index], [values.range[index]], slider);
+      }
+
+      changeSliderValue(values.value, slider);
+    });
+  };
+
+  function initAjaxActionElements(htmlReload) {
+    if (htmlReload === null || htmlReload === undefined) htmlReload = document;
+    var actionElements = htmlReload.querySelectorAll('[data-ajax]');
+
+    for (var i = 0; i < actionElements.length; i++) {
+      var eventName = actionElements[i].getAttribute('data-ajax-event-name');
+      /**
+       * Перехватываем и отменяем (отправку формы или переход по ссылке)
+       */
+
+      catchEvent(actionElements[i], eventName);
+      /**
+       * Запуск Ajax при изменении лбого input
+       */
+
+      sendRequestAfterChangeInput(actionElements[i]);
+      /**
+       * Инициализиуем кнопки очистки формы
+       */
+
+      sendRequestAfterClearFilter(actionElements[i]);
+    }
+  }
+
+  function catchEvent(actionElement, eventName) {
+    actionElement.addEventListener(eventName, function (event) {
+      var formParameters = getFormParameters(actionElement);
+      ajaxAfterRequestCount = 1;
+      event.preventDefault();
+      onRouteController(actionElement, event.path, formParameters);
+    });
+  }
+
+  function sendRequestAfterChangeInput(actionElement) {
+    var textInputs = actionElement.querySelectorAll('input:not([type=hidden])');
+
+    for (var i = 0; i < textInputs.length; i++) {
+      textInputs[i].addEventListener('change', function (event) {
+        var formParameters = getFormParameters(actionElement);
+        onRouteController(actionElement, event.path, formParameters);
+      });
+    }
+  }
+
+  function sendRequestAfterClearFilter(actionElement) {
+    var filterClears = actionElement.getElementsByClassName('filter-clear');
+
+    for (var i = 0; i < filterClears.length; i++) {
+      /**/
+      if (filterClears[i].tagName !== 'A' && filterClears[i].tagName !== 'BUTTON') {
+        filterClears[i].style.display = 'inline';
+        filterClears[i].addEventListener('click', function (event) {
+          /*старый участок кода*/
+          var filter = event.target.closest('.filter');
+          if (filter !== null && filter !== undefined) clearOneFilter(filter);
+          var formParameters = getFormParameters(actionElement);
+          onRouteController(actionElement, event.path, formParameters);
+        });
+      } else {
+        filterClears[i].addEventListener('click', function (event) {
+          var filters = actionElement.getElementsByClassName('filter');
+
+          for (var _i = 0; _i < filters.length; _i++) {
+            clearOneFilter(filters[_i]);
+          }
+        });
+      }
+    }
+  }
+
+  function onRouteController(actionElement, bublesPath, formParameters, pf) {
+    if (pf === undefined) pf = '';
+    var dataset = actionElement.dataset;
+    var pushState = dataset.ajaxPushState;
+    var fullUrl = getFullUrl(actionElement, pf);
+    var ajaxPath = getPath(fullUrl, dataset['ajaxView' + pf]);
+    var queryString = getQueryStringFromHref(fullUrl);
+    queryString = getQueryStringFromObject(formParameters, queryString);
+    /*Находим html который нужно перегрузить аяксом*/
+
+    var reloadClassName = dataset['ajaxReloadClass' + pf];
+    var htmlReload = getHtmlReload(bublesPath, reloadClassName);
+    /**/
+
+    var effectsList = getEffectsList(actionElement, dataset, pf);
+    sendRequest(dataset['ajaxName' + pf], dataset['ajaxMethod' + pf], queryString, ajaxPath, pushState, htmlReload, effectsList, function (response) {
+      if (htmlReload !== null) {
+        htmlReload.innerHTML = String(response);
+        initAjaxActionElements(htmlReload);
+      }
+
+      if (pf === '') {
+        for (var i = 1; i < 4; i++) {
+          if (actionElement.hasAttribute('data-ajax-method' + i)) onRouteController(actionElement, bublesPath, {}, i);
+        }
+      }
+    });
+  }
+
+  function sendRequest(ajaxName, ajaxMethod, queryString, path, pushState, htmlReload, effectsList, func) {
+    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path);
+
+    ajaxReq.req.onloadstart = function () {
+      onloadstart(htmlReload, effectsList);
+    }; //todo проверить, если объекта нет, делать submit формы
+
+
+    ajaxReq.req.onreadystatechange = function () {
+      if (ajaxReq.req.readyState !== 4) return;
+      func(ajaxReq.req.responseText);
+      onloadend(htmlReload, effectsList);
+    };
+
+    ajaxReq.sendRequest();
+    if (pushState) history.pushState('', '', '?' + queryString);
+  }
+
+  function getQueryStringFromHref(fullUrl) {
+    var locationArray = fullUrl.split('?');
+    /**
+     * Мы не кодируем строку с помощью encodeURI,
+     * т.к. ожидаем, что она уже приходит закодированной.
+     */
+
+    return locationArray[1] !== undefined ? locationArray[1] : '';
+  }
+
+  function getQueryStringFromObject(object, queryString) {
+    for (var parameter in object) {
+      if (object.hasOwnProperty(parameter)) {
+        if (queryString !== '') queryString += '&';
+        queryString += parameter + '=' + encodeURIComponent(object[parameter]);
+      }
+    }
+
+    return queryString;
+  }
+
+  function getFormParameters(form) {
+    var formParameters = {};
+    /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
+
+    var formInputs = form.getElementsByTagName('input'); //todo сделать проверку на input class btn
+
+    for (var i = 0; i < formInputs.length; i++) {
+      if (formInputs[i].hasAttribute('name') !== false) {
+        var type = formInputs[i].getAttribute('type');
+
+        switch (type) {
+          case 'checkbox':
+            if (formInputs[i].checked) {
+              formParameters[formInputs[i].name] = formInputs[i].value;
+            }
+
+            break;
+
+          case 'hidden':
+          case 'text':
+            formParameters[formInputs[i].name] = formInputs[i].value;
+            break;
+        }
+      }
+    }
+
+    return formParameters;
+  }
+
+  function getPath(fullUrl, ajaxView) {
+    var locationArray = fullUrl.split('?');
+    var viewpath = '';
+    if (ajaxView !== undefined) viewpath = '/views/' + ajaxView;
+    return locationArray[0] + viewpath;
+  }
+
+  function getFullUrl(actionElement, pf) {
+    if (actionElement.hasAttribute('data-ajax-action' + pf)) {
+      return actionElement.getAttribute('data-ajax-action' + pf);
+    } else if (actionElement.hasAttribute('action')) {
+      return actionElement.getAttribute('action');
+    } else if (actionElement.hasAttribute('href')) {
+      return actionElement.getAttribute('href');
+    }
+  }
+
+  function getHtmlReload(bublesPath, className) {
+    if (className !== undefined && className !== null) {
+      for (var i = 0; i < bublesPath.length; i++) {
+        if (bublesPath[i].getElementsByClassName(className)[0]) {
+          return bublesPath[i].getElementsByClassName(className)[0];
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function onloadstart(htmlReload, effectsList) {
+    if (htmlReload !== null) {
+      for (var i = 0; i < effectsList.length; ++i) {
+        effectFunctions[effectsList[i]].start(htmlReload);
+      }
+    }
+  }
+
+  function onloadend(htmlReload, effectsList) {
+    if (htmlReload !== null) {
+      for (var i = 0; i < effectsList.length; ++i) {
+        effectFunctions[effectsList[i]].end(htmlReload);
+      }
+    }
+  }
+
+  function getEffectsList(actionElement, dataset, pf) {
+    var effectsString = dataset['ajaxEffects' + pf];
+    var defaultEffects = ['default'];
+    var effectsList = [];
+    if (typeof effectsString === 'string') effectsList = effectsString.split('|').concat(defaultEffects);else effectsList = defaultEffects;
+    return effectsList;
+  }
+
+  var effectFunctions = {
+    'default': {
+      'start': function start(htmlReload) {
+        effectFunctions.opacity.start(htmlReload);
+      },
+      'end': function end(htmlReload) {
+        effectFunctions.opacity.end(htmlReload);
+      }
+    },
+    'spinner': {
+      'start': function start(htmlReload) {
+        var spinners = htmlReload.getElementsByClassName('spinner-border');
+
+        for (var i = 0; i < spinners.length; i++) {
+          spinners[i].style.display = 'block';
+        }
+      },
+      'end': function end(htmlReload) {
+        var spinners = htmlReload.getElementsByClassName('spinner-border');
+
+        for (var i = 0; i < spinners.length; i++) {
+          spinners[i].style.display = 'none';
+        }
+      }
+    },
+    'opacity': {
+      'start': function start(htmlReload) {
+        htmlReload.style.opacity = 0.25;
+      },
+      'end': function end(htmlReload) {
+        htmlReload.style.opacity = 1.0;
+      }
+    },
+    'scrolltop': {
+      'start': function start(htmlReload) {
+        var step, length;
+        step = length = -75;
+        var coordinates = htmlReload.getBoundingClientRect();
+
+        var _int = setInterval(function () {
+          window.scrollBy(0, step);
+          length += step;
+          if (length <= coordinates.y - 100) clearInterval(_int);
+        }, 20);
+      },
+      'end': function end(htmlReload) {}
+    }
+  };
+
+  function clearOneFilter(filter) {
+    var inputs = $(filter).find('[data-filter-type]');
+
+    for (var i = 0; i < inputs.length; i++) {
+      switch (inputs[i].type) {
+        case 'checkbox':
+          if (inputs[i].checked === true) {
+            inputs[i].checked = false;
+          }
+
+          break;
+
+        case 'text':
+          if (inputs[i].dataset.filterType === 'slider') {
+            var values = [];
+            values[0] = inputs[i].min;
+            values[1] = inputs[i].max;
+            changeInputValue([0, 1], values, filter);
+            changeSliderValue(values, filter);
+          } else {
+            inputs[i].value = '';
+          }
+
+          break;
+
+        case 'select':
+        case 'select-multiple':
+          var options = inputs[i];
+
+          for (var _i2 = 0; _i2 < options.length; _i2++) {
+            if (options[_i2].selected === true) {
+              options[_i2].selected = false;
+            }
+          }
+
+          break;
+      }
+    }
+  }
+  /*Старый код*/
+
+
+  function getValues(slider) {
+    var inputs = getInputs(slider);
+    var inputsValue = {
+      'value': [],
+      'range': []
+    };
+
+    for (var i = 0; i < inputs.length; i++) {
+      inputsValue.value[i] = Number(inputs[i].value);
+      if (inputs.length === 1) break;
+    }
+
+    inputsValue.range[0] = Number(inputs[0].min);
+    inputsValue.range[1] = Number(inputs[0].max);
+    return inputsValue;
+  }
+
+  function getInputs(slider) {
+    return $(slider).find('input[data-filter-type=slider]');
+  }
+
+  function getSliderShow(slider) {
+    return $(slider).find('.slider-show');
+  }
+
+  function changeInputValue(index, values, slider) {
+    var inputs = getInputs(slider);
+
+    for (var i = 0; i < index.length; i++) {
+      inputs[index[i]].value = values[i];
+    }
+  }
+
+  function changeSliderValue(values, slider) {
+    getSliderShow(slider).slider("values", values);
   }
 }
 
@@ -77900,479 +78337,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     return _;
   };
 });
-
-/***/ }),
-
-/***/ "./resources/assets/templates/_kp/js/product-basket-modal.js":
-/*!*******************************************************************!*\
-  !*** ./resources/assets/templates/_kp/js/product-basket-modal.js ***!
-  \*******************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ShopBasket; });
-/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
-
-function ShopBasket() {
-  var formClass = 'shop-buy-form';
-  var moduleClass = 'shop-module-basket';
-  var totalClass = 'shop-basket-total';
-  var buttonGroupClass = 'shop-basket-button-group';
-  var ajaxHeaders = {};
-  var qsParams = {};
-
-  this.initAjaxSubmitAllForms = function () {
-    initAjaxSubmitAllForms();
-  };
-
-  function onRouteController(form) {
-    var path = form.getAttribute('action');
-    var qsParams = {};
-    /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
-
-    var formInputs = form.getElementsByTagName('input'); //todo сделать проверку на input class btn
-
-    for (var i = 0; i < formInputs.length; i++) {
-      if (formInputs[i].hasAttribute('name') !== false) qsParams[formInputs[i].name] = formInputs[i].value;
-    }
-
-    var queryString = getQueryStringFromObject(qsParams, '');
-    var ajaxName = 'shop-basket-add_product';
-    var ajaxMethod = 'POST';
-    sendRequest(ajaxName, ajaxMethod, queryString, path, function (response) {
-      /*Перегружаем модуль корзины вверху страницы*/
-      var htmlReload = document.getElementsByClassName(moduleClass)[0];
-      if (htmlReload !== undefined && htmlReload !== null) updateHtml('module', htmlReload, function (htmlReload) {});
-      /*Перегружаем total_block на странице корзины*/
-
-      htmlReload = document.getElementsByClassName(totalClass)[0];
-      if (htmlReload !== undefined && htmlReload !== null) updateHtml('total-block', htmlReload, function (htmlReload) {});
-      /*Перегружаем блок с кнопками*/
-
-      htmlReload = form.closest('.' + buttonGroupClass);
-
-      if (htmlReload !== undefined && htmlReload !== null) {
-        updateHtml('buy-button', htmlReload, function (htmlReload) {
-          var forms = htmlReload.getElementsByClassName(formClass);
-          initAjaxSubmitListForms(forms);
-        });
-      }
-    });
-  }
-
-  function updateHtml(name, htmlReload, func) {
-    var ajaxName = 'shop-basket-update_html_' + name;
-    var ajaxMethod = 'GET';
-    var queryString = getQueryStringFromObject(qsParams, '');
-    var path = htmlReload.getAttribute('data-route');
-    sendRequest(ajaxName, ajaxMethod, queryString, path, function (response) {
-      htmlReload.innerHTML = String(response);
-      func(htmlReload);
-    });
-  }
-
-  function sendRequest(ajaxName, ajaxMethod, queryString, path, func) {
-    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path); //todo проверить, если объекта нет, делать submit формы
-
-    ajaxReq.req.onreadystatechange = function () {
-      if (ajaxReq.req.readyState !== 4) return;
-      func(ajaxReq.req.responseText);
-    };
-
-    ajaxReq.sendRequest();
-  }
-
-  function getQueryStringFromObject(object, queryString) {
-    for (var parameter in object) {
-      if (object.hasOwnProperty(parameter)) {
-        if (queryString !== '') queryString += '&';
-        queryString += parameter + '=' + object[parameter];
-      }
-    }
-
-    return queryString;
-  }
-
-  function initAjaxSubmitAllForms() {
-    var forms = document.getElementsByClassName(formClass);
-
-    if (forms !== null && forms !== undefined) {
-      for (var i = 0; i < forms.length; i++) {
-        initAjaxSubmitOneForm(forms[i]);
-      }
-    }
-  }
-
-  function initAjaxSubmitListForms(forms) {
-    if (forms !== null && forms !== undefined) {
-      for (var i = 0; i < forms.length; i++) {
-        initAjaxSubmitOneForm(forms[i]);
-      }
-    }
-  }
-
-  function initAjaxSubmitOneForm(form) {
-    /**
-     * Перехватываем отправку формы и отменяем её.
-     */
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      onRouteController(form);
-    });
-    var textInputs = form.querySelectorAll('input[type=text]');
-
-    for (var i = 0; i < textInputs.length; i++) {
-      textInputs[i].addEventListener('blur', function (event) {
-        onRouteController(form);
-      });
-    }
-  }
-}
-
-/***/ }),
-
-/***/ "./resources/assets/templates/_kp/js/product-filter.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/templates/_kp/js/product-filter.js ***!
-  \*************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProductFilter; });
-/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
-
-function ProductFilter() {
-  var ajaxHeaders = {};
-  var ajaxAfterRequestCount;
-
-  this.initAjaxSubmitForm = function () {
-    initAjaxActionElements();
-  };
-
-  this.initProductFilter = function () {
-    /*****************************************************
-     Product Filter (Скорее всего не оптимизированный код)
-     *****************************************************/
-    var sliders = $('.filter-slider');
-    $('.filter-slider .slider-show').css('display', 'block');
-
-    for (var i = 0; i < sliders.length; i++) {
-      var values = getValues(sliders[i]);
-      getSliderShow(sliders[i]).slider({
-        range: true,
-        min: values.range[0],
-        max: values.range[1],
-        values: [values.value[0], values.value[1]],
-        slide: function slide(e, ui) {
-          changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
-        }
-      });
-    }
-
-    $('input[data-filter-type=slider]').on('change', function (e) {
-      console.log(1);
-      e = e || event;
-      var slider = $(e.target).closest('.filter-slider')[0];
-      var values = getValues(slider);
-
-      if ($.isNumeric(Number(e.target.value))) {
-        if (values.value[0] > values.value[1]) {
-          if (values.value[0] > values.range[1]) {
-            values.value[0] = values.range[1];
-            values.value[1] = values.range[1];
-            changeInputValue([0, 1], [values.range[1], values.range[1]], slider);
-          } else if (values.value[1] < values.range[0]) {
-            values.value[1] = values.value[0];
-            changeInputValue([1], [values.value[0]], slider);
-          } else {
-            values.value[1] = values.value[0];
-            changeInputValue([1], [values.value[0]], slider);
-          }
-        } else if (values.value[0] < values.range[0]) {
-          values.value[0] = values.range[0];
-          changeInputValue([0], [values.range[0]], slider);
-        } else if (values.value[1] > values.range[1]) {
-          values.value[1] = values.range[1];
-          changeInputValue([1], [values.range[1]], slider);
-        }
-      } else {
-        var index = e.target.dataset.filterSliderInputIndex;
-        values.value[index] = values.range[index];
-        changeInputValue([index], [values.range[index]], slider);
-      }
-
-      changeSliderValue(values.value, slider);
-    });
-
-    function getValues(slider) {
-      var inputs = getInputs(slider);
-      var inputsValue = {
-        'value': [],
-        'range': []
-      };
-
-      for (var i = 0; i < inputs.length; i++) {
-        inputsValue.value[i] = Number(inputs[i].value);
-        if (inputs.length === 1) break; //todo проверить работоспособность break
-      }
-
-      inputsValue.range[0] = Number(inputs[0].min);
-      inputsValue.range[1] = Number(inputs[0].max);
-      return inputsValue;
-    }
-
-    function getInputs(slider) {
-      return $(slider).find('input[data-filter-type=slider]');
-    }
-
-    function getSliderShow(slider) {
-      return $(slider).find('.slider-show');
-    }
-
-    function changeInputValue(index, values, slider) {
-      var inputs = getInputs(slider);
-
-      for (var i = 0; i < index.length; i++) {
-        inputs[index[i]].value = values[i];
-      }
-    }
-
-    function changeSliderValue(values, slider) {
-      getSliderShow(slider).slider("values", values);
-    }
-    /*Очистка фильтра. Для каждого типа фильтра */
-
-
-    $('.filter-clear').css('display', 'inline').on('click', function (e) {
-      var filter = e.target.closest('.filter');
-
-      if (filter !== null && filter !== undefined) {
-        clearOneFilter(filter);
-      } else {
-        var filterWrap = e.target.closest('.product-filter');
-        var filters = $(filterWrap).find('.filter');
-
-        for (var _i = 0; _i < filters.length; _i++) {
-          clearOneFilter(filters[_i]);
-        }
-      }
-    });
-
-    function clearOneFilter(filter) {
-      var inputs = $(filter).find('[data-filter-type]');
-
-      for (var _i2 = 0; _i2 < inputs.length; _i2++) {
-        switch (inputs[_i2].type) {
-          case 'checkbox':
-            if (inputs[_i2].checked === true) {
-              inputs[_i2].checked = false;
-            }
-
-            break;
-
-          case 'text':
-            if (inputs[_i2].dataset.filterType === 'slider') {
-              var _values = [];
-              _values[0] = inputs[_i2].min;
-              _values[1] = inputs[_i2].max;
-              changeInputValue([0, 1], _values, filter);
-              changeSliderValue(_values, filter);
-            } else {
-              inputs[_i2].value = '';
-            }
-
-            break;
-
-          case 'select':
-          case 'select-multiple':
-            var options = inputs[_i2];
-
-            for (var _i3 = 0; _i3 < options.length; _i3++) {
-              if (options[_i3].selected === true) {
-                options[_i3].selected = false;
-              }
-            }
-
-            break;
-        }
-      }
-    }
-  };
-
-  function initAjaxActionElements(htmlReload) {
-    if (htmlReload === null || htmlReload === undefined) htmlReload = document;
-    var actionElements = htmlReload.querySelectorAll('[data-ajax]');
-
-    for (var i = 0; i < actionElements.length; i++) {
-      var eventName = actionElements[i].getAttribute('data-ajax-event-name');
-      catchEvent(actionElements[i], eventName);
-    }
-  }
-
-  function catchEvent(actionElement, eventName) {
-    /**
-     * Перехватываем и отменяем (отправку формы или переход по ссылке)
-     */
-    actionElement.addEventListener(eventName, function (event) {
-      ajaxAfterRequestCount = 1;
-      event.preventDefault();
-      var formParameters = getFormParameters(actionElement);
-      onRouteController(actionElement, formParameters);
-
-      while (actionElement.hasAttribute('data-ajax-method' + ajaxAfterRequestCount)) {
-        onRouteController(actionElement, {}, ajaxAfterRequestCount);
-        ajaxAfterRequestCount++;
-      }
-    });
-  }
-
-  function onRouteController(actionElement, formParameters, pf) {
-    if (pf === undefined) pf = '';
-    var dataset = actionElement.dataset;
-    var pushState = dataset.ajaxPushState;
-    var fullUrl = getFullUrl(actionElement, pf);
-    var ajaxPath = getPath(fullUrl, dataset['ajaxView' + pf]);
-    var queryString = getQueryStringFromHref(fullUrl);
-    queryString = getQueryStringFromObject(formParameters, queryString);
-    var htmlReload = getHtmlReload(actionElement, dataset['ajaxReloadClass' + pf]);
-    sendRequest(dataset['ajaxName' + pf], dataset['ajaxMethod' + pf], queryString, ajaxPath, pushState, htmlReload, function (response) {
-      if (htmlReload !== null) {
-        htmlReload.innerHTML = String(response);
-        initAjaxActionElements(htmlReload);
-      }
-    });
-  }
-
-  function sendRequest(ajaxName, ajaxMethod, queryString, path, pushState, htmlReload, func) {
-    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path);
-
-    ajaxReq.req.onloadstart = function () {
-      onloadstart(htmlReload);
-    }; //todo проверить, если объекта нет, делать submit формы
-
-
-    ajaxReq.req.onreadystatechange = function () {
-      if (ajaxReq.req.readyState !== 4) return;
-      func(ajaxReq.req.responseText);
-      onloadend(htmlReload);
-    };
-
-    ajaxReq.sendRequest();
-    if (pushState) history.pushState('', '', '?' + queryString);
-  }
-
-  function getQueryStringFromHref(fullUrl) {
-    var locationArray = fullUrl.split('?');
-    /**
-     * Мы не кодируем строку с помощью encodeURI,
-     * т.к. ожидаем, что она уже приходит закодированной.
-     */
-
-    return locationArray[1] !== undefined ? locationArray[1] : '';
-  }
-
-  function getQueryStringFromObject(object, queryString) {
-    for (var parameter in object) {
-      if (object.hasOwnProperty(parameter)) {
-        if (queryString !== '') queryString += '&';
-        queryString += parameter + '=' + encodeURIComponent(object[parameter]);
-      }
-    }
-
-    return queryString;
-  }
-
-  function getFormParameters(form) {
-    var formParameters = {};
-    /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
-
-    var formInputs = form.getElementsByTagName('input'); //todo сделать проверку на input class btn
-
-    for (var i = 0; i < formInputs.length; i++) {
-      if (formInputs[i].hasAttribute('name') !== false) {
-        var type = formInputs[i].getAttribute('type');
-
-        switch (type) {
-          case 'checkbox':
-            if (formInputs[i].checked) {
-              formParameters[formInputs[i].name] = formInputs[i].value;
-            }
-
-            break;
-
-          case 'hidden':
-          case 'text':
-            formParameters[formInputs[i].name] = formInputs[i].value;
-            break;
-        }
-      }
-    }
-
-    return formParameters;
-  }
-
-  function getPath(fullUrl, ajaxView) {
-    var locationArray = fullUrl.split('?');
-    var viewpath = '';
-    if (ajaxView !== undefined) viewpath = '/views/' + ajaxView;
-    return locationArray[0] + viewpath;
-  }
-
-  function getFullUrl(actionElement, pf) {
-    if (actionElement.hasAttribute('data-ajax-action' + pf)) {
-      return actionElement.getAttribute('data-ajax-action' + pf);
-    } else if (actionElement.hasAttribute('action')) {
-      return actionElement.getAttribute('action');
-    } else if (actionElement.hasAttribute('href')) {
-      return actionElement.getAttribute('href');
-    }
-  }
-
-  function getHtmlReload(actionElement, className) {
-    if (className !== undefined && className !== null) {
-      if (actionElement.closest('.' + className)) return actionElement.closest('.' + className);else if (document.getElementsByClassName(className)[0]) return document.getElementsByClassName(className)[0];
-    }
-
-    return null;
-  }
-
-  function onloadstart(htmlReload) {
-    if (htmlReload !== null) {
-      htmlReload.style.opacity = 0.25;
-      var spinners = htmlReload.getElementsByClassName('spinner-border');
-
-      for (var i = 0; i < spinners.length; i++) {
-        spinners[i].style.display = 'block';
-      }
-
-      var step, length;
-      step = length = -75;
-      var coordinates = htmlReload.getBoundingClientRect();
-
-      var _int = setInterval(function () {
-        window.scrollBy(0, step);
-        length += step;
-        if (length <= coordinates.y - 100) clearInterval(_int);
-      }, 20);
-    }
-  }
-
-  function onloadend(htmlReload) {
-    if (htmlReload !== null) {
-      var spinners = htmlReload.getElementsByClassName('spinner-border');
-
-      for (var i = 0; i < spinners.length; i++) {
-        spinners[i].style.display = 'none';
-      }
-
-      htmlReload.style.opacity = 1.0;
-    }
-  }
-}
 
 /***/ }),
 

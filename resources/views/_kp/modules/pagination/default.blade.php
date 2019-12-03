@@ -16,6 +16,7 @@
                             data-ajax-method="get"
                             data-ajax-name="shop-filter-product"
                             data-ajax-reload-class="product-list"
+                            data-ajax-effects="scrolltop|spinner"
                     >
                         <i class="fa fa-angle-double-left"></i>
                     </a>
@@ -31,6 +32,7 @@
                             data-ajax-method="get"
                             data-ajax-name="shop-filter-product"
                             data-ajax-reload-class="product-list"
+                            data-ajax-effects="scrolltop|spinner"
                     >
                         <i class="fa fa-angle-left"></i>
                     </a>
@@ -62,6 +64,7 @@
                                 data-ajax-method="get"
                                 data-ajax-name="shop-filter-product"
                                 data-ajax-reload-class="product-list"
+                                data-ajax-effects="scrolltop|spinner"
                         >
                             {{$i}}
                         </a>
@@ -83,6 +86,7 @@
                             data-ajax-method="get"
                             data-ajax-name="shop-filter-product"
                             data-ajax-reload-class="product-list"
+                            data-ajax-effects="scrolltop|spinner"
                     >
                         <i class="fa fa-angle-right"></i>
                     </a>
@@ -98,6 +102,7 @@
                             data-ajax-method="get"
                             data-ajax-name="shop-filter-product"
                             data-ajax-reload-class="product-list"
+                            data-ajax-effects="scrolltop|spinner"
                     >
                         <i class="fa fa-angle-double-right"></i>
                     </a>

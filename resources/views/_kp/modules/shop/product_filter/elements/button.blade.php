@@ -9,7 +9,8 @@
                 data-ajax-method="get"
                 data-ajax-name="shop-filter-product"
                 data-ajax-reload-class="product-list"
-                class="btn btn-outline-danger btn-block btn-xs my-3"
+                data-ajax-effects="spinner"
+                class="btn btn-outline-danger btn-block btn-xs filter-clear my-3"
                 role="button">
             Очистить
         </a>

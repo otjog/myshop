@@ -67,7 +67,6 @@ class Basket extends Model
             ->with('products')
             ->first();
     }
-
     //depricated. New getQuantityProductInBasket
     public function getExistProduct($token, $product_id, $attributes){
         return self::select('id', 'token', 'order_id')
@@ -162,7 +161,16 @@ class Basket extends Model
             $request['order_attributes'] = null;
         }
 
-        $basket->products()->attach($request['product_id'], $request->all());
+        /**
+         * Проверяем есть ли данный товар уже в корзине.
+         *
+         * Актуально для ajax-запросов добавления в корзину.
+         * Когда товар добавляется в корзину, а кнопка не обновляется, повторное нажатие кнопки
+         * Добавить в Корзину делает дубль товара в корзине.
+         */
+        if (!$basket->products->contains('id', $request['product_id']))
+            $basket->products()->attach($request['product_id'], $request->all());
+
     }
 
     public function updateProduct($token, $productId, $request)

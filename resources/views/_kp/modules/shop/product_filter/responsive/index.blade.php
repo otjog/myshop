@@ -34,6 +34,7 @@
                     data-ajax-name="shop-filter-product"
                     data-ajax-reload-class="product-list"
                     data-ajax-view="{{$global_data['template']['name']. '.components.shop.product.list._reload'}}"
+                    data-ajax-effects="spinner"
             >
 
                 @foreach ($filters as $filter)
