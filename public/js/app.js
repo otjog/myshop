@@ -62091,7 +62091,7 @@ __webpack_require__.r(__webpack_exports__);
 function Ajax(method, queryString, headers, requestName, path) {
   if (path === undefined || path === null) this.path = window.location.origin + '/ajax';else this.path = path;
   this.previousUrl = window.location.origin + window.location.pathname;
-  this.method = method;
+  this.method = method.toUpperCase();
   this.headers = headers;
   this.requestName = requestName;
   this.timeout = 30000;
@@ -62186,8 +62186,6 @@ __webpack_require__(/*! ./template */ "./resources/assets/templates/_kp/js/templ
 
 __webpack_require__(/*! ./custom */ "./resources/assets/templates/_kp/js/custom.js");
 
-__webpack_require__(/*! ./product-filter */ "./resources/assets/templates/_kp/js/product-filter.js");
-
 /***/ }),
 
 /***/ "./resources/assets/templates/_kp/js/custom.js":
@@ -62202,7 +62200,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tiny_slider_src_tiny_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-slider/src/tiny-slider */ "./node_modules/tiny-slider/src/tiny-slider.js");
 /* harmony import */ var _dadata__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./dadata */ "./resources/assets/templates/_kp/js/dadata.js");
 /* harmony import */ var _shipment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shipment */ "./resources/assets/templates/_kp/js/shipment.js");
-/* harmony import */ var _product_basket_modal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./product-basket-modal */ "./resources/assets/templates/_kp/js/product-basket-modal.js");
+/* harmony import */ var _init_ajax_modules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./init-ajax-modules */ "./resources/assets/templates/_kp/js/init-ajax-modules.js");
 //FancyBox
 var fancyOptions = {
   openEffect: 'none',
@@ -62343,12 +62341,12 @@ shipment.getOffers();
 shipment.getPoints();
 /*******/
 
-/* PRODUCT BASKET MODAL */
+/* AJAX MODULES */
 
 
-var shopBasket = new _product_basket_modal__WEBPACK_IMPORTED_MODULE_3__["default"]();
-shopBasket.initAjaxSubmitAllForms();
-/* END PRODUCT BASKET MODAL */
+var ajaxModules = new _init_ajax_modules__WEBPACK_IMPORTED_MODULE_3__["default"]();
+ajaxModules.initAjaxModules();
+/* END AJAX MODULES */
 
 /***/ }),
 
@@ -62484,6 +62482,434 @@ function InitMap(geo, zoom) {
       zoom: zoom,
       center: location
     });
+  }
+}
+
+/***/ }),
+
+/***/ "./resources/assets/templates/_kp/js/init-ajax-modules.js":
+/*!****************************************************************!*\
+  !*** ./resources/assets/templates/_kp/js/init-ajax-modules.js ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ProductFilter; });
+/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
+
+function ProductFilter() {
+  var ajaxHeaders = {};
+  var ajaxAfterRequestCount;
+
+  this.initAjaxModules = function () {
+    initAjaxActionElements();
+  };
+
+  function initAjaxActionElements(htmlReload) {
+    if (htmlReload === null || htmlReload === undefined) htmlReload = document;
+    var actionElements = htmlReload.querySelectorAll('[data-ajax]');
+
+    for (var i = 0; i < actionElements.length; i++) {
+      var eventName = actionElements[i].getAttribute('data-ajax-event-name');
+      /**
+       * Перехватываем и отменяем (отправку формы или переход по ссылке)
+       */
+
+      catchEvent(actionElements[i], eventName);
+      /**
+       * Запуск Ajax при изменении любого input
+       */
+
+      sendRequestAfterChangeInput(actionElements[i]);
+      /**
+       * Инициализиуем кнопки очистки формы
+       */
+
+      sendRequestAfterClearFilter(actionElements[i]);
+      /**
+       * Инициализируем слайдеры фильтра
+       */
+
+      initSlider(actionElements[i]);
+    }
+  }
+
+  function catchEvent(actionElement, eventName) {
+    actionElement.addEventListener(eventName, function (event) {
+      ajaxAfterRequestCount = 1;
+      event.preventDefault();
+      onRouteController(actionElement, event);
+    });
+  }
+
+  function sendRequestAfterChangeInput(actionElement) {
+    var textInputs = actionElement.querySelectorAll('input:not([type=hidden])');
+
+    for (var i = 0; i < textInputs.length; i++) {
+      textInputs[i].addEventListener('change', function (event) {
+        onRouteController(actionElement, event);
+      });
+    }
+  }
+
+  function sendRequestAfterClearFilter(actionElement) {
+    var filterClears = actionElement.getElementsByClassName('filter-clear');
+
+    for (var i = 0; i < filterClears.length; i++) {
+      /**/
+      if (filterClears[i].tagName !== 'A' && filterClears[i].tagName !== 'BUTTON') {
+        filterClears[i].style.display = 'inline';
+        filterClears[i].addEventListener('click', function (event) {
+          /*старый участок кода*/
+          var filter = event.target.closest('.filter');
+          if (filter !== null && filter !== undefined) clearOneFilter(filter);
+          onRouteController(actionElement, event);
+        });
+      } else {
+        filterClears[i].addEventListener('click', function (event) {
+          var filters = actionElement.getElementsByClassName('filter');
+
+          for (var _i = 0; _i < filters.length; _i++) {
+            clearOneFilter(filters[_i]);
+          }
+        });
+      }
+    }
+  }
+
+  function onRouteController(actionElement, event, pf) {
+    var formParameters = {};
+
+    if (pf === undefined) {
+      pf = '';
+      formParameters = getFormParameters(actionElement);
+    }
+
+    var dataset = actionElement.dataset;
+    var pushState = dataset.ajaxPushState;
+    var fullUrl = getFullUrl(actionElement, pf);
+    var ajaxPath = getPath(fullUrl, dataset['ajaxView' + pf]);
+    var queryString = getQueryStringFromHref(fullUrl);
+    queryString = getQueryStringFromObject(formParameters, queryString);
+    /*Находим html который нужно перегрузить аяксом*/
+
+    var reloadClassName = dataset['ajaxReloadClass' + pf];
+    var htmlReload = getHtmlReload(event.target.parentNode, reloadClassName);
+    /**/
+
+    var effectsList = getEffectsList(actionElement, dataset, pf);
+    sendRequest(dataset['ajaxName' + pf], dataset['ajaxMethod' + pf], queryString, ajaxPath, pushState, htmlReload, effectsList, function (response) {
+      if (htmlReload !== null) {
+        htmlReload.innerHTML = String(response);
+        initAjaxActionElements(htmlReload);
+      }
+
+      if (pf === '') {
+        for (var i = 1; i < 4; i++) {
+          if (actionElement.hasAttribute('data-ajax-method' + i)) onRouteController(actionElement, event, i);
+        }
+      }
+    });
+  }
+
+  function sendRequest(ajaxName, ajaxMethod, queryString, path, pushState, htmlReload, effectsList, func) {
+    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path);
+
+    ajaxReq.req.onloadstart = function () {
+      onloadstart(htmlReload, effectsList);
+    }; //todo проверить, если объекта нет, делать submit формы
+
+
+    ajaxReq.req.onreadystatechange = function () {
+      if (ajaxReq.req.readyState !== 4) return;
+      func(ajaxReq.req.responseText);
+      onloadend(htmlReload, effectsList);
+    };
+
+    ajaxReq.sendRequest();
+    if (pushState) history.pushState('', '', '?' + queryString);
+  }
+
+  function getQueryStringFromHref(fullUrl) {
+    var locationArray = fullUrl.split('?');
+    /**
+     * Мы не кодируем строку с помощью encodeURI,
+     * т.к. ожидаем, что она уже приходит закодированной.
+     */
+
+    return locationArray[1] !== undefined ? locationArray[1] : '';
+  }
+
+  function getQueryStringFromObject(object, queryString) {
+    for (var parameter in object) {
+      if (object.hasOwnProperty(parameter)) {
+        if (queryString !== '') queryString += '&';
+        queryString += parameter + '=' + encodeURIComponent(object[parameter]);
+      }
+    }
+
+    return queryString;
+  }
+
+  function getFormParameters(form) {
+    var formParameters = {};
+    /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
+
+    var formInputs = form.getElementsByTagName('input'); //todo сделать проверку на input class btn
+
+    for (var i = 0; i < formInputs.length; i++) {
+      if (formInputs[i].hasAttribute('name') !== false) {
+        var type = formInputs[i].getAttribute('type');
+
+        switch (type) {
+          case 'checkbox':
+            if (formInputs[i].checked) {
+              formParameters[formInputs[i].name] = formInputs[i].value;
+            }
+
+            break;
+
+          case 'hidden':
+          case 'text':
+            formParameters[formInputs[i].name] = formInputs[i].value;
+            break;
+        }
+      }
+    }
+
+    return formParameters;
+  }
+
+  function getPath(fullUrl, ajaxView) {
+    var locationArray = fullUrl.split('?');
+    var viewpath = '';
+    if (ajaxView !== undefined) viewpath = '/views/' + ajaxView;
+    return locationArray[0] + viewpath;
+  }
+
+  function getFullUrl(actionElement, pf) {
+    if (actionElement.hasAttribute('data-ajax-action' + pf)) {
+      return actionElement.getAttribute('data-ajax-action' + pf);
+    } else if (actionElement.hasAttribute('action')) {
+      return actionElement.getAttribute('action');
+    } else if (actionElement.hasAttribute('href')) {
+      return actionElement.getAttribute('href');
+    }
+  }
+
+  function getHtmlReload(parentNode, className) {
+    if (className !== undefined && className !== null) {
+      if (parentNode.getElementsByClassName(className)[0]) return parentNode.getElementsByClassName(className)[0];else return getHtmlReload(parentNode.parentNode, className);
+    }
+
+    return null;
+  }
+
+  function onloadstart(htmlReload, effectsList) {
+    if (htmlReload !== null) {
+      for (var i = 0; i < effectsList.length; ++i) {
+        effectFunctions[effectsList[i]].start(htmlReload);
+      }
+    }
+  }
+
+  function onloadend(htmlReload, effectsList) {
+    if (htmlReload !== null) {
+      for (var i = 0; i < effectsList.length; ++i) {
+        effectFunctions[effectsList[i]].end(htmlReload);
+      }
+    }
+  }
+
+  function getEffectsList(actionElement, dataset, pf) {
+    var effectsString = dataset['ajaxEffects' + pf];
+    var defaultEffects = ['default'];
+    var effectsList = [];
+    if (typeof effectsString === 'string') effectsList = effectsString.split('|').concat(defaultEffects);else effectsList = defaultEffects;
+    return effectsList;
+  }
+
+  var effectFunctions = {
+    'default': {
+      'start': function start(htmlReload) {
+        effectFunctions.opacity.start(htmlReload);
+      },
+      'end': function end(htmlReload) {
+        effectFunctions.opacity.end(htmlReload);
+      }
+    },
+    'spinner': {
+      'start': function start(htmlReload) {
+        var spinners = htmlReload.getElementsByClassName('spinner-border');
+
+        for (var i = 0; i < spinners.length; i++) {
+          spinners[i].style.display = 'block';
+        }
+      },
+      'end': function end(htmlReload) {
+        var spinners = htmlReload.getElementsByClassName('spinner-border');
+
+        for (var i = 0; i < spinners.length; i++) {
+          spinners[i].style.display = 'none';
+        }
+      }
+    },
+    'opacity': {
+      'start': function start(htmlReload) {
+        htmlReload.style.opacity = 0.25;
+      },
+      'end': function end(htmlReload) {
+        htmlReload.style.opacity = 1.0;
+      }
+    },
+    'scrolltop': {
+      'start': function start(htmlReload) {
+        var step, length;
+        step = length = -75;
+        var coordinates = htmlReload.getBoundingClientRect();
+
+        var _int = setInterval(function () {
+          window.scrollBy(0, step);
+          length += step;
+          if (length <= coordinates.y - 100) clearInterval(_int);
+        }, 20);
+      },
+      'end': function end(htmlReload) {}
+    }
+  };
+  /*Старый код*/
+
+  function clearOneFilter(filter) {
+    var inputs = $(filter).find('[data-filter-type]');
+
+    for (var i = 0; i < inputs.length; i++) {
+      switch (inputs[i].type) {
+        case 'checkbox':
+          if (inputs[i].checked === true) {
+            inputs[i].checked = false;
+          }
+
+          break;
+
+        case 'text':
+          if (inputs[i].dataset.filterType === 'slider') {
+            var values = [];
+            values[0] = inputs[i].min;
+            values[1] = inputs[i].max;
+            changeInputValue([0, 1], values, filter);
+            changeSliderValue(values, filter);
+          } else {
+            inputs[i].value = '';
+          }
+
+          break;
+
+        case 'select':
+        case 'select-multiple':
+          var options = inputs[i];
+
+          for (var _i2 = 0; _i2 < options.length; _i2++) {
+            if (options[_i2].selected === true) {
+              options[_i2].selected = false;
+            }
+          }
+
+          break;
+      }
+    }
+  }
+
+  function initSlider(actionElement) {
+    /*****************************************************
+     Product Filter (Скорее всего не оптимизированный код)
+     *****************************************************/
+    var sliders = actionElement.getElementsByClassName('filter-slider');
+    $('.filter-slider .slider-show').css('display', 'block');
+
+    for (var i = 0; i < sliders.length; i++) {
+      var values = getValues(sliders[i]);
+      getSliderShow(sliders[i]).slider({
+        range: true,
+        min: values.range[0],
+        max: values.range[1],
+        values: [values.value[0], values.value[1]],
+        slide: function slide(event, ui) {
+          changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
+        },
+        change: function change(event, ui) {
+          onRouteController(actionElement, event);
+        }
+      });
+    }
+
+    $('input[data-filter-type=slider]').on('change', function (e) {
+      e = e || event;
+      var slider = $(e.target).closest('.filter-slider')[0];
+      var values = getValues(slider);
+
+      if ($.isNumeric(Number(e.target.value))) {
+        if (values.value[0] > values.value[1]) {
+          if (values.value[0] > values.range[1]) {
+            values.value[0] = values.range[1];
+            values.value[1] = values.range[1];
+            changeInputValue([0, 1], [values.range[1], values.range[1]], slider);
+          } else if (values.value[1] < values.range[0]) {
+            values.value[1] = values.value[0];
+            changeInputValue([1], [values.value[0]], slider);
+          } else {
+            values.value[1] = values.value[0];
+            changeInputValue([1], [values.value[0]], slider);
+          }
+        } else if (values.value[0] < values.range[0]) {
+          values.value[0] = values.range[0];
+          changeInputValue([0], [values.range[0]], slider);
+        } else if (values.value[1] > values.range[1]) {
+          values.value[1] = values.range[1];
+          changeInputValue([1], [values.range[1]], slider);
+        }
+      } else {
+        var index = e.target.dataset.filterSliderInputIndex;
+        values.value[index] = values.range[index];
+        changeInputValue([index], [values.range[index]], slider);
+      }
+
+      changeSliderValue(values.value, slider);
+    });
+  }
+
+  function getValues(slider) {
+    var inputs = $(slider).find('input[data-filter-type=slider]');
+    var inputsValue = {
+      'value': [],
+      'range': []
+    };
+
+    for (var i = 0; i < inputs.length; i++) {
+      inputsValue.value[i] = Number(inputs[i].value);
+      if (inputs.length === 1) break;
+    }
+
+    inputsValue.range[0] = Number(inputs[0].min);
+    inputsValue.range[1] = Number(inputs[0].max);
+    return inputsValue;
+  }
+
+  function getSliderShow(slider) {
+    return $(slider).find('.slider-show');
+  }
+
+  function changeInputValue(index, values, slider) {
+    var inputs = $(slider).find('input[data-filter-type=slider]');
+
+    for (var i = 0; i < index.length; i++) {
+      inputs[index[i]].value = values[i];
+    }
+  }
+
+  function changeSliderValue(values, slider) {
+    getSliderShow(slider).slider("values", values);
   }
 }
 
@@ -77893,579 +78319,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     return _;
   };
 });
-
-/***/ }),
-
-/***/ "./resources/assets/templates/_kp/js/product-basket-modal.js":
-/*!*******************************************************************!*\
-  !*** ./resources/assets/templates/_kp/js/product-basket-modal.js ***!
-  \*******************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ShopBasket; });
-/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
-
-function ShopBasket() {
-  var module = 'basket';
-  var formClass = 'shop-buy-form';
-  var moduleClass = 'shop-module-basket';
-  var totalClass = 'shop-basket-total';
-  var buttonGroupClass = 'shop-basket-button-group';
-  var ajaxHeaders = {};
-  var qsParams = {};
-
-  this.initAjaxSubmitAllForms = function () {
-    initAjaxSubmitAllForms();
-  };
-
-  function onRouteController(form) {
-    var path = form.getAttribute('action');
-    var qsParams = {};
-    /* Получим данные всех input формы, добавим свои данные для аякс и отправим их. */
-
-    var formInputs = form.getElementsByTagName('input'); //todo сделать проверку на input class btn
-
-    for (var i = 0; i < formInputs.length; i++) {
-      if (formInputs[i].hasAttribute('name') !== false) qsParams[formInputs[i].name] = formInputs[i].value;
-    }
-
-    var queryString = getQueryStringFromObject(qsParams, '');
-    var ajaxName = 'shop-basket-add_product';
-    var ajaxMethod = 'POST';
-    sendRequest(ajaxName, ajaxMethod, queryString, path, function (response) {
-      /*Перегружаем модуль корзины вверху страницы*/
-      var htmlReload = document.getElementsByClassName(moduleClass)[0];
-      if (htmlReload !== undefined && htmlReload !== null) updateHtml('module', htmlReload, function (htmlReload) {});
-      /*Перегружаем total_block на странице корзины*/
-
-      htmlReload = document.getElementsByClassName(totalClass)[0];
-      if (htmlReload !== undefined && htmlReload !== null) updateHtml('total-block', htmlReload, function (htmlReload) {});
-      /*Перегружаем блок с кнопками*/
-
-      htmlReload = form.closest('.' + buttonGroupClass);
-
-      if (htmlReload !== undefined && htmlReload !== null) {
-        updateHtml('buy-button', htmlReload, function (htmlReload) {
-          var forms = htmlReload.getElementsByClassName(formClass);
-          initAjaxSubmitListForms(forms);
-        });
-      }
-    });
-  }
-
-  function updateHtml(name, htmlReload, func) {
-    var ajaxName = 'shop-basket-update_html_' + name;
-    var ajaxMethod = 'GET';
-    var queryString = getQueryStringFromObject(qsParams, '');
-    var path = htmlReload.getAttribute('data-route');
-    sendRequest(ajaxName, ajaxMethod, queryString, path, function (response) {
-      htmlReload.innerHTML = String(response);
-      func(htmlReload);
-    });
-  }
-
-  function sendRequest(ajaxName, ajaxMethod, queryString, path, func) {
-    var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"](ajaxMethod, queryString, ajaxHeaders, ajaxName, path); //todo проверить, если объекта нет, делать submit формы
-
-    ajaxReq.req.onreadystatechange = function () {
-      if (ajaxReq.req.readyState !== 4) return;
-      func(ajaxReq.req.responseText);
-    };
-
-    ajaxReq.sendRequest();
-  }
-
-  function getQueryStringFromObject(object, queryString) {
-    for (var parameter in object) {
-      if (object.hasOwnProperty(parameter)) {
-        if (queryString !== '') queryString += '&';
-        queryString += parameter + '=' + object[parameter];
-      }
-    }
-
-    return queryString;
-  }
-
-  function initAjaxSubmitAllForms() {
-    var forms = document.getElementsByClassName(formClass);
-
-    if (forms !== null && forms !== undefined) {
-      for (var i = 0; i < forms.length; i++) {
-        initAjaxSubmitOneForm(forms[i]);
-      }
-    }
-  }
-
-  function initAjaxSubmitListForms(forms) {
-    if (forms !== null && forms !== undefined) {
-      for (var i = 0; i < forms.length; i++) {
-        initAjaxSubmitOneForm(forms[i]);
-      }
-    }
-  }
-
-  function initAjaxSubmitOneForm(form) {
-    /**
-     * Перехватываем отправку формы и отменяем её.
-     */
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      qsParams = {
-        'module': module
-      };
-      onRouteController(form);
-    });
-    var textInputs = form.querySelectorAll('input[type=text]');
-
-    for (var i = 0; i < textInputs.length; i++) {
-      textInputs[i].addEventListener('blur', function (event) {
-        qsParams = {
-          'module': module
-        };
-        onRouteController(form);
-      });
-    }
-  }
-}
-
-/***/ }),
-
-/***/ "./resources/assets/templates/_kp/js/product-filter.js":
-/*!*************************************************************!*\
-  !*** ./resources/assets/templates/_kp/js/product-filter.js ***!
-  \*************************************************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
-(function () {
-  var filters = document.getElementsByClassName('filter-action');
-
-  for (var _i = 0; _i < filters.length; _i++) {
-    if (filters[_i].className.indexOf('filter-action-select') >= 0) {
-      filters[_i].addEventListener('change', function (e) {
-        prepareRequest(e);
-      });
-    } else {
-      filters[_i].addEventListener('click', function (e) {
-        prepareRequest(e);
-      });
-    }
-  }
-})();
-
-
-
-function prepareRequest(e) {
-  e = e || event;
-  var target = getTarget(e.target);
-  var oldValues = getOldValuesFromQueryString();
-  var values = getValuesForQueryString(target, oldValues);
-  var queryString = getNewQueryString(oldValues, values);
-
-  if (queryString === false) {
-    showErrorMsg(target);
-  } else {
-    sendAjaxRequest(queryString, target);
-  }
-}
-
-function getTarget(target) {
-  if (target.form === undefined || target.form === null) {
-    return {
-      0: target,
-      'length': 1
-    };
-  }
-
-  return target.form;
-}
-
-function getOldValuesFromQueryString() {
-  var pattern = /([a-z0-9_]+)=([\w\%]+)/g;
-  var oldParameters = {};
-  var result;
-  var countObjectKeys = 0;
-
-  while ((result = pattern.exec(window.location.search)) !== null) {
-    oldParameters[result[1]] = result[2].split('%7C').map(function callback(currentValue) {
-      return decodeURIComponent(currentValue);
-    });
-    countObjectKeys++;
-  }
-
-  oldParameters['length'] = countObjectKeys;
-  return oldParameters;
-}
-
-function getValuesForQueryString(target, oldValues) {
-  var values = {};
-
-  for (var _i2 = 0; _i2 < target.length; _i2++) {
-    if (target[_i2].tagName !== 'BUTTON') {
-      var filterName = target[_i2].dataset.filterName;
-      var filterType = target[_i2].dataset.filterType;
-      var filterValue = '';
-
-      if (filterType !== 'multiselect') {
-        filterValue = target[_i2].dataset.filterValue || target[_i2].value;
-      }
-
-      var defaultValue = target[_i2].dataset.filterDefaultValue || '';
-      if (!(filterName in values)) values[filterName] = [];
-
-      switch (filterType) {
-        case 'checkbox':
-        case 'radio':
-          if (!target[_i2].checked) {
-            break;
-          }
-
-        case 'input':
-          if (filterValue === defaultValue) {
-            break;
-          }
-
-        case 'slider': //todo не отправлять дефолтные значения на сервер
-
-        case 'select':
-        case 'hidden':
-        case 'switch':
-          values[filterName].push(filterValue);
-          break;
-
-        case 'multiselect':
-          var options = target[_i2];
-
-          for (var _i3 = 0; _i3 < options.length; _i3++) {
-            if (options[_i3].selected) {
-              values[filterName].push(options[_i3].value);
-            }
-          }
-
-          break;
-
-        case 'delete':
-          for (var y = 0; y < oldValues[filterName].length; y++) {
-            if (oldValues[filterName][y] === filterValue) {
-              if (target[_i2].dataset.filterParentType === 'slider-range') {
-                oldValues[filterName][y] = target[_i2].dataset.filterDefaultValue;
-              } else {
-                oldValues[filterName].splice(y, 1);
-              }
-
-              return oldValues;
-            }
-          }
-
-          break;
-      }
-    }
-  }
-
-  return values;
-}
-
-function getNewQueryString(oldValues, values) {
-  //todo если page=1 не добавлять в querystring
-  for (var valueName in values) {
-    if (values[valueName].length < 1) {
-      if (oldValues[valueName] !== undefined) {
-        delete oldValues[valueName];
-        oldValues['length']--;
-      }
-    } else {
-      if (oldValues['page'] !== undefined && valueName !== 'view' && valueName !== 'sort') {
-        /**
-         * Если мы переходим на страницу 10, а потом в фильтре сужаем круг поиска,
-         * то увидим пустую страницу, т.к. новые результаты не доходят до 10 страницы.
-         * Поэтому при кажлм изменении фильтра мы сбрасываем (удаляем параметр page),
-         * кроме случаев когда мы изменяем сортировку или вид отображения товаров.
-         * */
-        delete oldValues['page']; //todo изменить этот код, когда будет пагинация через Ajax
-
-        oldValues['length']--;
-      }
-
-      if (oldValues[valueName] === undefined) {
-        oldValues['length']++;
-      }
-
-      oldValues[valueName] = values[valueName];
-    }
-  }
-
-  var queryString = '';
-  var i = 0;
-
-  if (oldValues['length'] > 0) {
-    for (var valueName in oldValues) {
-      if (valueName !== 'length') {
-        if (i !== 0) queryString += '&';
-        queryString += valueName + '=';
-
-        for (var y = 0; y < oldValues[valueName].length; y++) {
-          if (y !== 0) queryString += '%7C';
-          /* кодированный знак | разделяющий параметры*/
-
-          queryString += encodeURIComponent(oldValues[valueName][y]);
-        }
-
-        i++;
-      }
-    }
-  }
-
-  if (queryString === window.location.search) return false;
-  return queryString;
-}
-
-function changeElementsBodyAfterRequest(target) {
-  var tagName = target.tagName || target[0].tagName;
-
-  switch (tagName) {
-    case 'A':
-      if (target[0].dataset.filterName === 'view') {
-        switchClassActive(target[0]);
-        break;
-      } else {
-        setDefaultValueForm(target);
-        /*break внутри условия, так что для других A выполнится функция для FORM*/
-      }
-
-    case 'FORM':
-      clearFilterTags();
-      break;
-  }
-}
-
-function setDefaultValueForm(target) {
-  console.log(target);
-  var filterName = target[0].dataset.filterName;
-  var filterValue = target[0].dataset.filterValue || target[i].value;
-  var filterType = target[0].dataset.filterType; //todo подобное определение переменных есть в другой функции
-
-  var filter = document.getElementsByClassName('filter-' + filterName);
-  var inputs = filter[0].getElementsByTagName('input');
-
-  for (var _i4 = 0; _i4 < inputs.length; _i4++) {
-    var inputsFilterValue = inputs[_i4].dataset.filterValue || inputs[_i4].value;
-
-    if (inputsFilterValue === filterValue) {
-      switch (inputs[_i4].type) {
-        case 'checkbox':
-          inputs[_i4].checked = false;
-          break;
-
-        case 'text':
-          inputs[_i4].value = inputs[_i4].dataset.filterDefaultValue || '';
-        //todo описать для остальных полей
-      }
-    }
-  }
-}
-
-function switchClassActive(target) {
-  //работает только для 2 элементов
-  target.className += ' active';
-  var sibling = target.nextElementSibling || target.previousElementSibling;
-  sibling.className = sibling.className.replace('active', '');
-}
-
-function clearFilterTags() {//document.getElementsByClassName('filter-tags')[0].innerHTML = '';
-}
-
-function showErrorMsg(target) {
-  //todo описать вывод сообщения об ошибке пользователю, если он ничего не ввел в поисковой запрос
-  console.log(target);
-}
-
-function sendAjaxRequest(queryString, target) {
-  history.pushState('', '', '?' + queryString);
-  queryString += '&module=product_filter&response=view&view=list';
-  var requestName = 'product_filter';
-  var ajaxReq = new _ajax__WEBPACK_IMPORTED_MODULE_0__["default"]("GET", queryString, '', requestName);
-
-  ajaxReq.req.onloadstart = function () {//
-  };
-
-  ajaxReq.req.ontimeout = function () {//
-  };
-
-  ajaxReq.req.onreadystatechange = function () {
-    if (ajaxReq.req.readyState !== 4) return;
-    var responseText = String(ajaxReq.req.responseText);
-    var productsList = document.getElementById('product-list');
-    changeElementsBodyAfterRequest(target);
-    productsList.innerHTML = responseText;
-
-    (function () {
-      var filters = document.getElementsByClassName('filter-action-delete');
-      /*Вешаем события на динамически появившиеся иконки удаления параметров фильтра*/
-
-      for (var _i5 = 0; _i5 < filters.length; _i5++) {
-        filters[_i5].addEventListener('click', function (e) {
-          prepareRequest(e);
-        });
-      }
-    })();
-  };
-
-  ajaxReq.sendRequest();
-}
-/*****************************************************
-    Product Filter
-*****************************************************/
-
-
-var sliders = $('.filter-slider');
-
-for (var _i6 = 0; _i6 < sliders.length; _i6++) {
-  var values = getValues(sliders[_i6]);
-  getSliderShow(sliders[_i6]).slider({
-    range: true,
-    min: values.range[0],
-    max: values.range[1],
-    values: [values.value[0], values.value[1]],
-    slide: function slide(e, ui) {
-      changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
-    }
-  });
-}
-
-$('input[data-filter-type=slider]').on('change', function (e) {
-  console.log(1);
-  e = e || event;
-  var slider = $(e.target).closest('.filter-slider')[0];
-  var values = getValues(slider);
-
-  if ($.isNumeric(Number(e.target.value))) {
-    if (values.value[0] > values.value[1]) {
-      if (values.value[0] > values.range[1]) {
-        values.value[0] = values.range[1];
-        values.value[1] = values.range[1];
-        changeInputValue([0, 1], [values.range[1], values.range[1]], slider);
-      } else if (values.value[1] < values.range[0]) {
-        values.value[1] = values.value[0];
-        changeInputValue([1], [values.value[0]], slider);
-      } else {
-        values.value[1] = values.value[0];
-        changeInputValue([1], [values.value[0]], slider);
-      }
-    } else if (values.value[0] < values.range[0]) {
-      values.value[0] = values.range[0];
-      changeInputValue([0], [values.range[0]], slider);
-    } else if (values.value[1] > values.range[1]) {
-      values.value[1] = values.range[1];
-      changeInputValue([1], [values.range[1]], slider);
-    }
-  } else {
-    var index = e.target.dataset.filterSliderInputIndex;
-    values.value[index] = values.range[index];
-    changeInputValue([index], [values.range[index]], slider);
-  }
-
-  changeSliderValue(values.value, slider);
-});
-
-function getValues(slider) {
-  var inputs = getInputs(slider);
-  var inputsValue = {
-    'value': [],
-    'range': []
-  };
-
-  for (var i = 0; i < inputs.length; i++) {
-    inputsValue.value[i] = Number(inputs[i].value);
-    if (inputs.length === 1) break; //todo проверить работоспособность break
-  }
-
-  inputsValue.range[0] = Number(inputs[0].min);
-  inputsValue.range[1] = Number(inputs[0].max);
-  return inputsValue;
-}
-
-function getInputs(slider) {
-  return $(slider).find('input[data-filter-type=slider]');
-}
-
-function getSliderShow(slider) {
-  return $(slider).find('.slider-show');
-}
-
-function changeInputValue(index, values, slider) {
-  var inputs = getInputs(slider);
-
-  for (var i = 0; i < index.length; i++) {
-    inputs[index[i]].value = values[i];
-  }
-}
-
-function changeSliderValue(values, slider) {
-  getSliderShow(slider).slider("values", values);
-}
-/*Очистка фильтра. Для каждого типа фильтра */
-
-
-$('.filter-clear').on('click', function (e) {
-  var filter = e.target.closest('.filter');
-
-  if (filter !== null && filter !== undefined) {
-    clearOneFilter(filter);
-  } else {
-    var filterWrap = e.target.closest('.product-filter');
-    var filters = $(filterWrap).find('.filter');
-
-    for (var _i7 = 0; _i7 < filters.length; _i7++) {
-      clearOneFilter(filters[_i7]);
-    }
-  }
-});
-
-function clearOneFilter(filter) {
-  var inputs = $(filter).find('[data-filter-type]');
-
-  for (var _i8 = 0; _i8 < inputs.length; _i8++) {
-    switch (inputs[_i8].type) {
-      case 'checkbox':
-        if (inputs[_i8].checked === true) {
-          inputs[_i8].checked = false;
-        }
-
-        break;
-
-      case 'text':
-        if (inputs[_i8].dataset.filterType === 'slider') {
-          var _values = [];
-          _values[0] = inputs[_i8].min;
-          _values[1] = inputs[_i8].max;
-          changeInputValue([0, 1], _values, filter);
-          changeSliderValue(_values, filter);
-        } else {
-          inputs[_i8].value = '';
-        }
-
-        break;
-
-      case 'select':
-      case 'select-multiple':
-        var options = inputs[_i8];
-
-        for (var _i9 = 0; _i9 < options.length; _i9++) {
-          if (options[_i9].selected === true) {
-            options[_i9].selected = false;
-          }
-        }
-
-        break;
-    }
-  }
-}
 
 /***/ }),
 

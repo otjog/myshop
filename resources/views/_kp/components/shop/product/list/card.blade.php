@@ -24,9 +24,7 @@
                         </div>
 
                         <div class="col-12">
-                            <div class="row shop-basket-button-group"
-                                 data-route="{{route('products.views.show', [$product->id, $global_data['template']['name']. '.components.shop.product..list.card.sell_block'])}}">
-
+                            <div class="row shop-basket-button-group">
                                 @include( $global_data['template']['name']. '.components.shop.product.list.card.sell_block')
                             </div>
                         </div>

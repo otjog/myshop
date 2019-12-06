@@ -25,7 +25,7 @@
                     min="{{$values['static'][0]}}"
                     max="{{$values['static'][1]}}"
                     value="{{$values['dynamic'][$i]}}"
-                    name="{{$filter['alias']}}[ {{$i}} ]"
+                    name="{{$filter['alias']}}[{{$i}}]"
                     size="6"
                     data-filter-type="slider"
                     data-filter-slider-input-index="0"
@@ -35,4 +35,4 @@
         </div>
     @endfor
 </div>
-<div class="slider-show my-2"></div>
+<div class="slider-show my-2" style="display: none"></div>

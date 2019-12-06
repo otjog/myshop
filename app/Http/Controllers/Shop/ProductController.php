@@ -32,7 +32,7 @@ class ProductController extends Controller{
     {
         $photo360 = new Photo360();
 
-        $data['shop']['product'] = $this->products->getActiveProduct($id);
+        $data['shop']['product'] = $this->products->getProduct($id);
 
         $data['photo360'] = $photo360->getPhotos($data['shop']['product']['scu']);
 

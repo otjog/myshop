@@ -36,155 +36,154 @@ class Filter extends Model{
 
     }
 
-    public function getParametersForFilters(Product $products, $filters )
+    public function getParametersForFilters(Product $productModel, $filters )
     {
         $prefix = GlobalData::getParameter('components.shop.filter_prefix');
 
         $temporary = [];
 
-        $routeData = request()->route()->parameters;
+        $old_values = request()->all();
 
-        $old_values = request()->toArray();
+        $routeParameters = request()->route()->parameters;
 
-        $productsOfRoute = $products->getActiveProductsWithFilterParameters($routeData);
+        $products = $productModel->getActiveProductsFromRoute($routeParameters);
 
-        if( count($productsOfRoute) > 0){
+        foreach ($filters as $key => $filter) {
+            foreach ($routeParameters as $routeName => $id) {
+                if ($routeName !== $filter['alias']) {
 
-            foreach($filters as $key => $filter){
+                    if($filter['expanded']){
+                        $filter['expanded'] = 'true';
+                    }else{
+                        $filter['expanded'] = 'false';
+                    }
 
-                if($filter['expanded']){
-                    $filter['expanded'] = 'true';
-                }else{
-                    $filter['expanded'] = 'false';
-                }
+                    switch($filter['alias']){
 
-                switch($filter['alias']){
+                        case 'manufacturer' :
 
-                    case 'manufacturer' :
+                            /* если решим показывать в фильтре товары без производителя
+                            $manufacturers = $productsInCategory->map(function ($value, $key){
+                                $manufacturer = $value->relations['manufacturer'];
 
-                        /* если решим показывать в фильтре товары без производителя
-                        $manufacturers = $productsInCategory->map(function ($value, $key){
-                            $manufacturer = $value->relations['manufacturer'];
+                                 if($manufacturer['id'] !== null && $manufacturer['name'] !== null){
+                                     return [ 'id' => $manufacturer['id'], 'name' => $manufacturer['name'] ];
+                                 }
+                                 return [ 'id' => 0, 'name' => 'Не задан' ];
 
-                             if($manufacturer['id'] !== null && $manufacturer['name'] !== null){
-                                 return [ 'id' => $manufacturer['id'], 'name' => $manufacturer['name'] ];
-                             }
-                             return [ 'id' => 0, 'name' => 'Не задан' ];
+                            });
+        */
 
-                        });
-*/
+                            $manufacturers  = $products->pluck('manufacturer');
 
-                        $manufacturers  = $productsOfRoute->pluck('manufacturer');
+                            $distinctManfs  = $manufacturers->pluck('name', 'id');
 
-                        $distinctManfs  = $manufacturers->pluck('name', 'id');
-
-                        $filter['values']   = $distinctManfs->filter(function ($value, $key) {
-                            return $key !== '' && $value !== null;
-                        });
-
-                        $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
-
-                        break;
-
-                    case 'price'        :
-                        $prices = $productsOfRoute->pluck('price');
-
-                        $values = [
-                            $prices->min('value'),
-                            $prices->max('value'),
-                        ];
-
-                        if($values[0] !== null || $values[1] !== null ){
-                            $filter['values'] = $values;
-                        }else{
-                            $filter['values'] = [];
-                        }
-
-                        $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
-
-                        break;
-
-                    case 'phrase'       :
-
-                        $filter['values']       = [];
-
-                        $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
-
-                        break;
-
-                    case 'category'     :
-
-                        $categories  = $productsOfRoute->pluck('category');
-
-                        $distinctCat  = $categories->pluck('name', 'id');
-
-                        $filter['values']   = $distinctCat->filter(function ($value, $key) {
-                            return $key !== '' && $value !== null;
-                        });
-
-                        $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
-
-                        break;
-
-                    default             :
-                        if($filter['filter_type'] === 'slider-range'){
-
-                            //todo должно отдавать только минимальное и максимальное значение, как в price
-                            //todo проверка значений на null
-                            $filter['values']       = [$filter['value']];
+                            $filter['values']   = $distinctManfs->filter(function ($value, $key) {
+                                return $key !== '' && $value !== null;
+                            });
 
                             $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
 
                             break;
 
-                        }else{
+                        case 'price'        :
+                            $prices = $products->pluck('price');
 
-                            $parameters = $productsOfRoute->pluck('parameters');
+                            $values = [
+                                $prices->min('value'),
+                                $prices->max('value'),
+                            ];
 
-                            $values = [];
+                            if($values[0] !== null || $values[1] !== null ){
+                                $filter['values'] = $values;
+                            }else{
+                                $filter['values'] = [];
+                            }
 
-                            foreach($parameters as $productParameters){
+                            $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
 
-                                foreach($productParameters as $parameter){
+                            break;
 
-                                    if( $parameter->alias === $filter['alias']){
+                        case 'phrase'       :
 
-                                        if( !isset($values[ $parameter->pivot->value ])){
-                                            $values[ $parameter->pivot->value ] = $parameter->pivot->value;
+                            $filter['values']       = [];
+
+                            $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
+
+                            break;
+
+                        case 'category'     :
+
+                            $categories  = $products->pluck('category');
+
+                            $distinctCat  = $categories->pluck('name', 'id');
+
+                            $filter['values']   = $distinctCat->filter(function ($value, $key) {
+                                return $key !== '' && $value !== null;
+                            });
+
+                            $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
+
+                            break;
+
+                        default             :
+                            if($filter['filter_type'] === 'slider-range'){
+
+                                //todo должно отдавать только минимальное и максимальное значение, как в price
+                                //todo проверка значений на null
+                                $filter['values']       = [$filter['value']];
+
+                                $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
+
+                                break;
+
+                            }else{
+
+                                $parameters = $products->pluck('parameters');
+
+                                $values = [];
+
+                                foreach($parameters as $productParameters){
+
+                                    foreach($productParameters as $parameter){
+
+                                        if( $parameter->alias === $filter['alias']){
+
+                                            if( !isset($values[ $parameter->pivot->value ])){
+                                                $values[ $parameter->pivot->value ] = $parameter->pivot->value;
+                                            }
+
                                         }
 
                                     }
-
                                 }
+
+                                $filter['alias']        = $prefix . $filter['alias'];
+
+                                asort($values);
+                                $filter['values']       = array_flip($values);
+
+                                $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
+
+                                break;
+
                             }
+                    }
 
-                            $filter['alias']        = $prefix . $filter['alias'];
+                    if( count( $filter['values'] ) > 0){
+                        $temporary[] = $filter;
+                    }
 
-                            asort($values);
-                            $filter['values']       = array_flip($values);
-
-                            $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
-
-                            break;
-
-                        }
                 }
-
-
-                if( count( $filter['values'] ) > 0){
-                    $temporary[] = $filter;
-                }
-
             }
-
         }
 
-        return ['filters' => $temporary, 'routeData' => $routeData];
+        return ['filters' => $temporary];
     }
 
     private function addOldValues($old_values, $filter_alias){
         if( isset( $old_values[ $filter_alias ] ) ){
-            return explode('|', $old_values[ $filter_alias ]);
+            return $old_values[ $filter_alias ];
         }
         return [];
     }

@@ -1,3 +1,6 @@
+<div class="spinner-border text-primary" role="status" style="display: none">
+    <span class="sr-only">Loading...</span>
+</div>
 
 @if(isset($products) && count($products) > 0)
     @foreach($products->chunk($global_data['components']['shop']['chunk_products']) as $products_row)

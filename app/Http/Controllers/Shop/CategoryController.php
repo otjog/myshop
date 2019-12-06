@@ -50,24 +50,12 @@ class CategoryController extends Controller{
         $category = $this->categories->getCategory($id);
 
         $data['shop']['category']           = $category;
-        $data['shop']['parameters']         = [];
+        $data['shop']['parameters']         = $request->all();
         $data['header_page']                = $category[0]->name;
 
         //todo - продумать функционал для вывода во views component/shop/category/show товары из вложенных категории данной категории
 
-        if ( count( $request->query ) > 0 ) {
-
-            $filterData = $request->toArray();
-
-            $routeData = ['category' => $id];
-
-            $data['shop']['products'] = $products->getFilteredProducts($routeData, $filterData);
-
-            $data['shop']['parameters'] = $request->toArray();
-
-        } else {
-            $data['shop']['products'] = $products->getActiveProductsFromCategory($id);
-        }
+        $data['shop']['products'] = $products->getProductsFromRoute($request->route()->parameters, $request->all());
 
         $globalData = GlobalData::getParametersForController($data, 'shop', 'category', 'show', $id);
 

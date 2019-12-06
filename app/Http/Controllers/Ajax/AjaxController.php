@@ -50,24 +50,6 @@ class AjaxController extends Controller{
 
                     break;
 
-                case 'product_filter' :
-
-                    $products = new Product();
-
-                    $this->data['products'] = $products->getFilteredProducts([], $request->toArray());
-
-                    $url = $request->headers->get('x-previous-url');
-
-                    //Настройка URI для вывода ссылок. Для работы постраничного вывода отфильтрованных товаров
-                    $this->data['products']->setPath($url);
-
-                    $this->data['parameters'] = $request->toArray();
-
-                    //Добавляем заголовки в массив
-                    $this->headers['Cache-Control'] = 'no-store';
-
-                    break;
-
                 case 'geo'  :
 
                     /** Записываем введенную пользователем Геолокацию в Сессию */

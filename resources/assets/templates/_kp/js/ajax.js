@@ -9,7 +9,7 @@ export default function Ajax(method, queryString, headers, requestName, path){
 
     this.previousUrl = window.location.origin + window.location.pathname;
 
-    this.method = method;
+    this.method = method.toUpperCase();
 
     this.headers = headers;
 

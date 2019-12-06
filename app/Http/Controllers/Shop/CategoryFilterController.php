@@ -1,27 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Shop\View;
+namespace App\Http\Controllers\Shop;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Shop\Product\Product;
-use App\Facades\GlobalData;
 
-class ProductViewController extends Controller
+class CategoryFilterController extends Controller
 {
-    protected $products;
-
-    /**
-     * Создание нового экземпляра контроллера.
-     *
-     * @param  Product $products
-     * @return void
-     */
-    public function __construct(Product $products)
-    {
-        $this->products = $products;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -57,16 +42,11 @@ class ProductViewController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @param string $view
      * @return \Illuminate\Http\Response
      */
-    public function show($id, $view)
+    public function show($id)
     {
-        $product = $this->products->getProduct($id);
-
-        $global_data = GlobalData::getParameters();
-
-        return view($view, ['product'=>$product, 'global_data'=>$global_data]);
+        //
     }
 
     /**
