@@ -168,6 +168,5 @@ shipment.getPoints();
 /* AJAX MODULES */
 import AjaxModule from './init-ajax-modules';
 let ajaxModules = new AjaxModule();
-ajaxModules.initProductFilter();
-ajaxModules.initAjaxSubmitForm();
+ajaxModules.initAjaxModules();
 /* END AJAX MODULES */

@@ -2,91 +2,13 @@ import Ajax from './ajax';
 
 export default function ProductFilter()
 {
-    let ajaxModules = {
-        'shop-basket-add_product' : {
-            'unique' : true,
-            'secondRequests' : {
-                'update_html_buy-button' : {
-                    'unique' : true,
-                    'method' : 'get',
-                    'view' : '_kp.components.shop.product.list.card.sell_block',
-                    'reloadClass' : 'shop-basket-button-group',
-                },
-                'update_html_module' : {
-                    'unique' : false,
-                    'method' : 'get',
-                    'view' : '_kp.modules.shop.basket._elements.module',
-                    'reloadClass' : 'shop-module-basket'
-                }
-            }
-        }
-    };
-
     let ajaxHeaders = {};
 
     let ajaxAfterRequestCount;
 
-    this.initAjaxSubmitForm = function ()
+    this.initAjaxModules = function ()
     {
         initAjaxActionElements();
-    };
-
-    this.initProductFilter = function()
-    {
-        /*****************************************************
-         Product Filter (Скорее всего не оптимизированный код)
-         *****************************************************/
-        let sliders = $('.filter-slider');
-
-        $('.filter-slider .slider-show').css('display', 'block');
-
-        for(let i = 0; i < sliders.length; i++){
-            let values = getValues(sliders[i]);
-
-            getSliderShow(sliders[i]).slider({
-                range: true,
-                min: values.range[0],
-                max: values.range[1],
-                values: [values.value[0], values.value[1]],
-                slide: function(e, ui) {
-                    changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
-                }
-            });
-        }
-
-        $('input[data-filter-type=slider]').on('change', function(e){
-            e = e || event;
-            var slider = $(e.target).closest('.filter-slider')[0];
-            var values = getValues(slider);
-            if($.isNumeric(Number(e.target.value))){
-                if(values.value[0] > values.value[1]){
-                    if(values.value[0] > values.range[1]){
-                        values.value[0] = values.range[1];
-                        values.value[1] = values.range[1];
-                        changeInputValue([0,1], [values.range[1], values.range[1]], slider);
-                    }else if(values.value[1] < values.range[0]){
-                        values.value[1] = values.value[0];
-                        changeInputValue([1], [values.value[0]], slider);
-                    }else{
-                        values.value[1] = values.value[0];
-                        changeInputValue([1], [values.value[0]], slider);
-                    }
-                }else if(values.value[0] < values.range[0]){
-                    values.value[0] = values.range[0];
-                    changeInputValue([0], [values.range[0]], slider);
-                }else if(values.value[1] > values.range[1]){
-                    values.value[1] = values.range[1];
-                    changeInputValue([1], [values.range[1]], slider);
-                }
-            }else{
-                var index = e.target.dataset.filterSliderInputIndex;
-                values.value[index] = values.range[index];
-                changeInputValue([index], [values.range[index]], slider);
-            }
-            changeSliderValue(values.value, slider);
-        });
-
-
     };
 
     function initAjaxActionElements(htmlReload)
@@ -105,7 +27,7 @@ export default function ProductFilter()
             catchEvent(actionElements[i], eventName);
 
             /**
-             * Запуск Ajax при изменении лбого input
+             * Запуск Ajax при изменении любого input
              */
             sendRequestAfterChangeInput(actionElements[i]);
 
@@ -113,6 +35,11 @@ export default function ProductFilter()
              * Инициализиуем кнопки очистки формы
              */
             sendRequestAfterClearFilter(actionElements[i]);
+
+            /**
+             * Инициализируем слайдеры фильтра
+             */
+            initSlider(actionElements[i]);
         }
     }
 
@@ -120,10 +47,9 @@ export default function ProductFilter()
     {
         actionElement.addEventListener(eventName, function(event)
         {
-            let formParameters = getFormParameters(actionElement);
             ajaxAfterRequestCount = 1;
             event.preventDefault();
-            onRouteController(actionElement, event.path, formParameters);
+            onRouteController(actionElement, event);
 
         });
 
@@ -135,8 +61,7 @@ export default function ProductFilter()
 
         for (let i = 0; i < textInputs.length; i++) {
             textInputs[i].addEventListener('change', function (event) {
-                let formParameters = getFormParameters(actionElement);
-                onRouteController(actionElement, event.path, formParameters);
+                onRouteController(actionElement, event);
             })
         }
     }
@@ -158,8 +83,7 @@ export default function ProductFilter()
                     if (filter !== null && filter !== undefined)
                         clearOneFilter(filter);
 
-                    let formParameters = getFormParameters(actionElement);
-                    onRouteController(actionElement, event.path, formParameters);
+                    onRouteController(actionElement, event);
                 });
             } else {
                 filterClears[i].addEventListener('click', function (event) {
@@ -173,9 +97,14 @@ export default function ProductFilter()
         }
     }
 
-    function onRouteController(actionElement, bublesPath, formParameters, pf)
+    function onRouteController(actionElement, event, pf)
     {
-        if (pf === undefined) pf = '';
+        let formParameters = {};
+
+        if (pf === undefined) {
+            pf = '';
+            formParameters = getFormParameters(actionElement)
+        }
 
         let dataset = actionElement.dataset;
 
@@ -190,7 +119,7 @@ export default function ProductFilter()
         queryString = getQueryStringFromObject(formParameters, queryString);
         /*Находим html который нужно перегрузить аяксом*/
         let reloadClassName = dataset['ajaxReloadClass'+pf];
-        let htmlReload  = getHtmlReload(bublesPath, reloadClassName);
+        let htmlReload  = getHtmlReload(event.target.parentNode, reloadClassName);
         /**/
 
         let effectsList = getEffectsList(actionElement, dataset, pf);
@@ -205,7 +134,7 @@ export default function ProductFilter()
             if (pf === '') {
                 for (let i = 1; i < 4; i++) {
                     if ((actionElement.hasAttribute('data-ajax-method' + i)))
-                        onRouteController(actionElement, bublesPath, {}, i);
+                        onRouteController(actionElement, event, i);
                 }
 
             }
@@ -321,20 +250,15 @@ export default function ProductFilter()
         }
     }
 
-    function getHtmlReload(bublesPath, className)
+    function getHtmlReload(parentNode, className)
     {
         if (className !== undefined && className !== null){
-
-            for (let i=0; i < bublesPath.length; i++) {
-
-                if (bublesPath[i].getElementsByClassName(className)[0]) {
-                    return bublesPath[i].getElementsByClassName(className)[0];
-                }
-
-            }
-
+            if (parentNode.getElementsByClassName(className)[0])
+                return parentNode.getElementsByClassName(className)[0];
+            else
+                return getHtmlReload(parentNode.parentNode, className)
         }
-        return null
+        return null;
 
     }
 
@@ -427,8 +351,8 @@ export default function ProductFilter()
         }
     };
 
-    function clearOneFilter(filter)
-    {
+    /*Старый код*/
+    function clearOneFilter(filter){
         let inputs = $(filter).find('[data-filter-type]');
 
         for(let i = 0; i < inputs.length; i++){
@@ -465,11 +389,69 @@ export default function ProductFilter()
         }
     }
 
-    /*Старый код*/
+    function initSlider(actionElement){
+        /*****************************************************
+         Product Filter (Скорее всего не оптимизированный код)
+         *****************************************************/
+        let sliders = actionElement.getElementsByClassName('filter-slider');
+
+        $('.filter-slider .slider-show').css('display', 'block');
+
+        for(let i = 0; i < sliders.length; i++){
+            let values = getValues(sliders[i]);
+
+            getSliderShow(sliders[i]).slider({
+                range: true,
+                min: values.range[0],
+                max: values.range[1],
+                values: [values.value[0], values.value[1]],
+                slide: function(event, ui) {
+                    changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
+                },
+                change: function(event, ui) {
+                    onRouteController(actionElement, event);
+                }
+            });
+        }
+
+        $('input[data-filter-type=slider]').on('change', function(e){
+
+            e = e || event;
+            let slider = $(e.target).closest('.filter-slider')[0];
+            let values = getValues(slider);
+            if($.isNumeric(Number(e.target.value))){
+                if(values.value[0] > values.value[1]){
+                    if(values.value[0] > values.range[1]){
+                        values.value[0] = values.range[1];
+                        values.value[1] = values.range[1];
+                        changeInputValue([0,1], [values.range[1], values.range[1]], slider);
+                    }else if(values.value[1] < values.range[0]){
+                        values.value[1] = values.value[0];
+                        changeInputValue([1], [values.value[0]], slider);
+                    }else{
+                        values.value[1] = values.value[0];
+                        changeInputValue([1], [values.value[0]], slider);
+                    }
+                }else if(values.value[0] < values.range[0]){
+                    values.value[0] = values.range[0];
+                    changeInputValue([0], [values.range[0]], slider);
+                }else if(values.value[1] > values.range[1]){
+                    values.value[1] = values.range[1];
+                    changeInputValue([1], [values.range[1]], slider);
+                }
+            }else{
+                let index = e.target.dataset.filterSliderInputIndex;
+                values.value[index] = values.range[index];
+                changeInputValue([index], [values.range[index]], slider);
+            }
+            changeSliderValue(values.value, slider);
+        });
+    }
+
     function getValues(slider){
-        var inputs = getInputs(slider);
-        var inputsValue = {'value':[], 'range':[]};
-        for(var i = 0; i < inputs.length ;i++){
+        let inputs = $(slider).find('input[data-filter-type=slider]');
+        let inputsValue = {'value':[], 'range':[]};
+        for(let i = 0; i < inputs.length; i++){
             inputsValue.value[i] = Number(inputs[i].value);
             if(inputs.length === 1) break;
         }
@@ -479,19 +461,16 @@ export default function ProductFilter()
         return inputsValue;
     }
 
-    function getInputs(slider){
-        return $(slider).find('input[data-filter-type=slider]');
-    }
-
     function getSliderShow(slider){
         return $(slider).find('.slider-show');
     }
 
     function changeInputValue(index, values, slider){
-        var inputs = getInputs(slider);
-        for(var i = 0; i < index.length; i++){
+        let inputs = $(slider).find('input[data-filter-type=slider]');
+        for(let i = 0; i < index.length; i++){
             inputs[index[i]].value = values[i];
         }
+
     }
 
     function changeSliderValue(values, slider){

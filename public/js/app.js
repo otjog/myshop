@@ -62345,8 +62345,7 @@ shipment.getPoints();
 
 
 var ajaxModules = new _init_ajax_modules__WEBPACK_IMPORTED_MODULE_3__["default"]();
-ajaxModules.initProductFilter();
-ajaxModules.initAjaxSubmitForm();
+ajaxModules.initAjaxModules();
 /* END AJAX MODULES */
 
 /***/ }),
@@ -62501,85 +62500,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ajax__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ajax */ "./resources/assets/templates/_kp/js/ajax.js");
 
 function ProductFilter() {
-  var ajaxModules = {
-    'shop-basket-add_product': {
-      'unique': true,
-      'secondRequests': {
-        'update_html_buy-button': {
-          'unique': true,
-          'method': 'get',
-          'view': '_kp.components.shop.product.list.card.sell_block',
-          'reloadClass': 'shop-basket-button-group'
-        },
-        'update_html_module': {
-          'unique': false,
-          'method': 'get',
-          'view': '_kp.modules.shop.basket._elements.module',
-          'reloadClass': 'shop-module-basket'
-        }
-      }
-    }
-  };
   var ajaxHeaders = {};
   var ajaxAfterRequestCount;
 
-  this.initAjaxSubmitForm = function () {
+  this.initAjaxModules = function () {
     initAjaxActionElements();
-  };
-
-  this.initProductFilter = function () {
-    /*****************************************************
-     Product Filter (Скорее всего не оптимизированный код)
-     *****************************************************/
-    var sliders = $('.filter-slider');
-    $('.filter-slider .slider-show').css('display', 'block');
-
-    for (var i = 0; i < sliders.length; i++) {
-      var values = getValues(sliders[i]);
-      getSliderShow(sliders[i]).slider({
-        range: true,
-        min: values.range[0],
-        max: values.range[1],
-        values: [values.value[0], values.value[1]],
-        slide: function slide(e, ui) {
-          changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
-        }
-      });
-    }
-
-    $('input[data-filter-type=slider]').on('change', function (e) {
-      e = e || event;
-      var slider = $(e.target).closest('.filter-slider')[0];
-      var values = getValues(slider);
-
-      if ($.isNumeric(Number(e.target.value))) {
-        if (values.value[0] > values.value[1]) {
-          if (values.value[0] > values.range[1]) {
-            values.value[0] = values.range[1];
-            values.value[1] = values.range[1];
-            changeInputValue([0, 1], [values.range[1], values.range[1]], slider);
-          } else if (values.value[1] < values.range[0]) {
-            values.value[1] = values.value[0];
-            changeInputValue([1], [values.value[0]], slider);
-          } else {
-            values.value[1] = values.value[0];
-            changeInputValue([1], [values.value[0]], slider);
-          }
-        } else if (values.value[0] < values.range[0]) {
-          values.value[0] = values.range[0];
-          changeInputValue([0], [values.range[0]], slider);
-        } else if (values.value[1] > values.range[1]) {
-          values.value[1] = values.range[1];
-          changeInputValue([1], [values.range[1]], slider);
-        }
-      } else {
-        var index = e.target.dataset.filterSliderInputIndex;
-        values.value[index] = values.range[index];
-        changeInputValue([index], [values.range[index]], slider);
-      }
-
-      changeSliderValue(values.value, slider);
-    });
   };
 
   function initAjaxActionElements(htmlReload) {
@@ -62594,7 +62519,7 @@ function ProductFilter() {
 
       catchEvent(actionElements[i], eventName);
       /**
-       * Запуск Ajax при изменении лбого input
+       * Запуск Ajax при изменении любого input
        */
 
       sendRequestAfterChangeInput(actionElements[i]);
@@ -62603,15 +62528,19 @@ function ProductFilter() {
        */
 
       sendRequestAfterClearFilter(actionElements[i]);
+      /**
+       * Инициализируем слайдеры фильтра
+       */
+
+      initSlider(actionElements[i]);
     }
   }
 
   function catchEvent(actionElement, eventName) {
     actionElement.addEventListener(eventName, function (event) {
-      var formParameters = getFormParameters(actionElement);
       ajaxAfterRequestCount = 1;
       event.preventDefault();
-      onRouteController(actionElement, event.path, formParameters);
+      onRouteController(actionElement, event);
     });
   }
 
@@ -62620,8 +62549,7 @@ function ProductFilter() {
 
     for (var i = 0; i < textInputs.length; i++) {
       textInputs[i].addEventListener('change', function (event) {
-        var formParameters = getFormParameters(actionElement);
-        onRouteController(actionElement, event.path, formParameters);
+        onRouteController(actionElement, event);
       });
     }
   }
@@ -62637,8 +62565,7 @@ function ProductFilter() {
           /*старый участок кода*/
           var filter = event.target.closest('.filter');
           if (filter !== null && filter !== undefined) clearOneFilter(filter);
-          var formParameters = getFormParameters(actionElement);
-          onRouteController(actionElement, event.path, formParameters);
+          onRouteController(actionElement, event);
         });
       } else {
         filterClears[i].addEventListener('click', function (event) {
@@ -62652,8 +62579,14 @@ function ProductFilter() {
     }
   }
 
-  function onRouteController(actionElement, bublesPath, formParameters, pf) {
-    if (pf === undefined) pf = '';
+  function onRouteController(actionElement, event, pf) {
+    var formParameters = {};
+
+    if (pf === undefined) {
+      pf = '';
+      formParameters = getFormParameters(actionElement);
+    }
+
     var dataset = actionElement.dataset;
     var pushState = dataset.ajaxPushState;
     var fullUrl = getFullUrl(actionElement, pf);
@@ -62663,7 +62596,7 @@ function ProductFilter() {
     /*Находим html который нужно перегрузить аяксом*/
 
     var reloadClassName = dataset['ajaxReloadClass' + pf];
-    var htmlReload = getHtmlReload(bublesPath, reloadClassName);
+    var htmlReload = getHtmlReload(event.target.parentNode, reloadClassName);
     /**/
 
     var effectsList = getEffectsList(actionElement, dataset, pf);
@@ -62675,7 +62608,7 @@ function ProductFilter() {
 
       if (pf === '') {
         for (var i = 1; i < 4; i++) {
-          if (actionElement.hasAttribute('data-ajax-method' + i)) onRouteController(actionElement, bublesPath, {}, i);
+          if (actionElement.hasAttribute('data-ajax-method' + i)) onRouteController(actionElement, event, i);
         }
       }
     });
@@ -62766,13 +62699,9 @@ function ProductFilter() {
     }
   }
 
-  function getHtmlReload(bublesPath, className) {
+  function getHtmlReload(parentNode, className) {
     if (className !== undefined && className !== null) {
-      for (var i = 0; i < bublesPath.length; i++) {
-        if (bublesPath[i].getElementsByClassName(className)[0]) {
-          return bublesPath[i].getElementsByClassName(className)[0];
-        }
-      }
+      if (parentNode.getElementsByClassName(className)[0]) return parentNode.getElementsByClassName(className)[0];else return getHtmlReload(parentNode.parentNode, className);
     }
 
     return null;
@@ -62850,6 +62779,7 @@ function ProductFilter() {
       'end': function end(htmlReload) {}
     }
   };
+  /*Старый код*/
 
   function clearOneFilter(filter) {
     var inputs = $(filter).find('[data-filter-type]');
@@ -62890,11 +62820,67 @@ function ProductFilter() {
       }
     }
   }
-  /*Старый код*/
 
+  function initSlider(actionElement) {
+    /*****************************************************
+     Product Filter (Скорее всего не оптимизированный код)
+     *****************************************************/
+    var sliders = actionElement.getElementsByClassName('filter-slider');
+    $('.filter-slider .slider-show').css('display', 'block');
+
+    for (var i = 0; i < sliders.length; i++) {
+      var values = getValues(sliders[i]);
+      getSliderShow(sliders[i]).slider({
+        range: true,
+        min: values.range[0],
+        max: values.range[1],
+        values: [values.value[0], values.value[1]],
+        slide: function slide(event, ui) {
+          changeInputValue([ui.handleIndex], [ui.value], $(ui.handle.parentNode).closest('.filter-slider')[0]);
+        },
+        change: function change(event, ui) {
+          onRouteController(actionElement, event);
+        }
+      });
+    }
+
+    $('input[data-filter-type=slider]').on('change', function (e) {
+      e = e || event;
+      var slider = $(e.target).closest('.filter-slider')[0];
+      var values = getValues(slider);
+
+      if ($.isNumeric(Number(e.target.value))) {
+        if (values.value[0] > values.value[1]) {
+          if (values.value[0] > values.range[1]) {
+            values.value[0] = values.range[1];
+            values.value[1] = values.range[1];
+            changeInputValue([0, 1], [values.range[1], values.range[1]], slider);
+          } else if (values.value[1] < values.range[0]) {
+            values.value[1] = values.value[0];
+            changeInputValue([1], [values.value[0]], slider);
+          } else {
+            values.value[1] = values.value[0];
+            changeInputValue([1], [values.value[0]], slider);
+          }
+        } else if (values.value[0] < values.range[0]) {
+          values.value[0] = values.range[0];
+          changeInputValue([0], [values.range[0]], slider);
+        } else if (values.value[1] > values.range[1]) {
+          values.value[1] = values.range[1];
+          changeInputValue([1], [values.range[1]], slider);
+        }
+      } else {
+        var index = e.target.dataset.filterSliderInputIndex;
+        values.value[index] = values.range[index];
+        changeInputValue([index], [values.range[index]], slider);
+      }
+
+      changeSliderValue(values.value, slider);
+    });
+  }
 
   function getValues(slider) {
-    var inputs = getInputs(slider);
+    var inputs = $(slider).find('input[data-filter-type=slider]');
     var inputsValue = {
       'value': [],
       'range': []
@@ -62910,16 +62896,12 @@ function ProductFilter() {
     return inputsValue;
   }
 
-  function getInputs(slider) {
-    return $(slider).find('input[data-filter-type=slider]');
-  }
-
   function getSliderShow(slider) {
     return $(slider).find('.slider-show');
   }
 
   function changeInputValue(index, values, slider) {
-    var inputs = getInputs(slider);
+    var inputs = $(slider).find('input[data-filter-type=slider]');
 
     for (var i = 0; i < index.length; i++) {
       inputs[index[i]].value = values[i];
