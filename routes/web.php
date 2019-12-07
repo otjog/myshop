@@ -86,7 +86,11 @@
         Route::post('/redirect/{msg}', 'Shop\PayController@redirect');
     });
 
-
+    //Messages
+    Route::post('/message', function(\Illuminate\Http\Request $request){
+        \Illuminate\Support\Facades\Mail::send(new \App\Mail\SendMessage($request->all()));
+        return back();
+    })->name('sendmessage');
 
     Route::get('/mailling/unsubscribe/{email}', 'Mailling\RunMaillingController@unsubscribe')->name('unsubscribe');
 
