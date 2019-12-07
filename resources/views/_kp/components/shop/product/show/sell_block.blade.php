@@ -8,7 +8,12 @@
 
     @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
         <div class="my-1 d-flex flex-row">
-            @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.forms')
+            <div class="order-1 mr-2 ">
+                @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.forms')
+            </div>
+            <div class="order-2">
+                @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.fastbuy')
+            </div>
         </div>
     @endif
 
@@ -17,3 +22,8 @@
         Мы не смогли отобразить цену. Позвоните нам и мы всё исправим.
     </div>
 @endif
+
+@include( $global_data['template']['name']. '.components.shop.product.show.sell_block.mobile')
+@include( $global_data['template']['name']. '.positions.modals.forms.fastbuy')
+{{-- Создать модуль и переместить туда --}}
+@include( $global_data['template']['name']. '.positions.modals.forms.callback')
