@@ -25,5 +25,3 @@
 
 @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.mobile')
 @include( $global_data['template']['name']. '.positions.modals.forms.fastbuy')
-{{-- Создать модуль и переместить туда --}}
-@include( $global_data['template']['name']. '.positions.modals.forms.callback')
