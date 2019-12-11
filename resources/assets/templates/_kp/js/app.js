@@ -12,4 +12,4 @@ require('@fancyapps/fancybox/dist/jquery.fancybox');
 require('suggestions-jquery/dist/js/jquery.suggestions.min');
 require('./template');
 require('./custom');
-require('./product-filter');
+

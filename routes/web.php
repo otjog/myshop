@@ -24,6 +24,9 @@
         //Categories
         Route::resource('/categories',  'Shop\CategoryController',  [ 'only' => [ 'index', 'show' ]]);
 
+        //CategoryFilter
+        Route::resource('/categories.filters',  'Shop\CategoryController',  [ 'only' => 'show' ]);
+
         //Brands
         Route::resource('/brands',      'Shop\BrandController',     [ 'only' => [ 'index', 'show' ]]);
 
@@ -34,7 +37,7 @@
         Route::resource('/pages',       'Info\PageController',      [ 'only' => [ 'show' ]]);
 
         //Basket
-        Route::resource('/baskets',     'Shop\BasketController',    [ 'only' => [ 'store', 'edit', 'update' ]]);
+        Route::resource('/baskets',     'Shop\BasketController',    [ 'only' => [ 'show', 'store', 'edit', 'update' ]]);
 
         //ProductInBasket
         Route::resource('/baskets.products', 'Shop\BasketProductController');
@@ -64,10 +67,13 @@
         });
 
     //ProductView
-    Route::resource('/products.views',    'Shop\View\ProductViewController',   [ 'only' => [ 'show' ]]);
+    Route::resource('/products.views',      'Shop\View\ProductViewController',  [ 'only' => [ 'show' ]]);
+
+    //CategoryView
+    Route::resource('/categories.views',    'Shop\View\CategoryViewController', [ 'only' => [ 'show' ]]);
 
     //BasketView
-    Route::resource('/baskets.views',     'Shop\View\BasketViewController',    [ 'only' => [ 'show' ]]);
+    Route::resource('/baskets.views',       'Shop\View\BasketViewController',   [ 'only' => [ 'show' ]]);
 
 
     //Pay
@@ -80,7 +86,11 @@
         Route::post('/redirect/{msg}', 'Shop\PayController@redirect');
     });
 
-
+    //Messages
+    Route::post('/message', function(\Illuminate\Http\Request $request){
+        \Illuminate\Support\Facades\Mail::send(new \App\Mail\SendMessage($request->all()));
+        return back();
+    })->name('sendmessage');
 
     Route::get('/mailling/unsubscribe/{email}', 'Mailling\RunMaillingController@unsubscribe')->name('unsubscribe');
 

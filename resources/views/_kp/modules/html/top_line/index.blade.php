@@ -20,6 +20,9 @@
                     </div>
                     @include($global_data['template']['name'] .'.modules.change-geo.header')
                 </div>
+                <div class="top_bar_contact_item d-none d-sm-block">
+                    @include($global_data['template']['name'] .'.modules.html.callback.default')
+                </div>
                 <div class="top_bar_content ml-auto">
                     <div class="top_bar_user">
                         <div class="user_icon"><img src="{{asset('storage/_kp/images/user.svg')}}" alt=""></div>
@@ -56,19 +59,15 @@
 <div class="top_bar top_bar_responsive d-md-none">
     <div class="container">
         <div class="row text-center">
-            <div class="col">
-                <div class="py-2">
+            <div class="col d-flex flex-row">
+                <div class="py-2 flex-grow-0 flex-shrink-0">
                     <a href="/" class="text-muted"><i class="fas fa-home"></i></a>
                 </div>
-            </div>
-            <div class="col">
-                <div class="py-2">
+                <div class="py-2 flex-grow-1 flex-shrink-1">
                     <i class="fas fa-map-marker-alt"></i>
                     @include($global_data['template']['name'] .'.modules.change-geo.header')
                 </div>
-            </div>
-            <div class="col">
-                <div class="py-2">
+                <div class="py-2 flex-grow-0 flex-shrink-0">
                     @guest
                         <a href="{{ route('login') }}" class="text-muted"><i class="far fa-user"></i> Войти</a>
                     @else

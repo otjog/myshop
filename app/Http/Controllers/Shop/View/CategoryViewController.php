@@ -7,21 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
 use App\Facades\GlobalData;
 
-class ProductViewController extends Controller
+class CategoryViewController extends Controller
 {
-    protected $products;
-
-    /**
-     * Создание нового экземпляра контроллера.
-     *
-     * @param  Product $products
-     * @return void
-     */
-    public function __construct(Product $products)
-    {
-        $this->products = $products;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -60,13 +47,21 @@ class ProductViewController extends Controller
      * @param string $view
      * @return \Illuminate\Http\Response
      */
-    public function show($id, $view)
+    public function show(Request $request, Product $products, $id, $view)
     {
-        $product = $this->products->getProduct($id);
+        $data['parameters'] = $request->all();
 
-        $global_data = GlobalData::getParameters();
+        $data['products'] = $products->getProductsFromRoute($request->route()->parameters, $request->all());
 
-        return view($view, ['product'=>$product, 'global_data'=>$global_data]);
+        $path = str_replace(['/views', '/'.$view], '', $request->url());
+
+        /*Убирает у ссылок пагинации параметр views/... */
+        $data['products']->setPath($path);
+
+
+        $data['global_data'] = GlobalData::getParameters();
+
+        return view($view, $data);
     }
 
     /**

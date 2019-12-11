@@ -165,9 +165,8 @@ shipment.getOffers();
 shipment.getPoints();
 /*******/
 
-/* PRODUCT BASKET MODAL */
-
-import ShopBasket from './product-basket-modal';
-let shopBasket = new ShopBasket();
-shopBasket.initAjaxSubmitAllForms();
-/* END PRODUCT BASKET MODAL */
+/* AJAX MODULES */
+import AjaxModule from './init-ajax-modules';
+let ajaxModules = new AjaxModule();
+ajaxModules.initAjaxModules();
+/* END AJAX MODULES */
