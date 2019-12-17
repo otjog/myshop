@@ -46,7 +46,7 @@ class Filter extends Model{
 
         $routeParameters = request()->route()->parameters;
 
-        $products = $productModel->getActiveProductsFromRoute($routeParameters);
+        $products = $productModel->getProductsFromRoute($routeParameters, [], false);
 
         foreach ($filters as $key => $filter) {
             foreach ($routeParameters as $routeName => $id) {

@@ -66,7 +66,7 @@ class PricelistController extends Controller
     {
         $categories = $this->categoryModel->getActiveCategories();
 
-        $products = $this->productModel->getActiveProducts();
+        $products = $this->productModel->getProductsFromRoute([], [], false);
 
         $xmlString = $this->pricelistModel->getPriceList($products, $categories, $pl_alias);
 
