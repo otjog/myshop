@@ -69,13 +69,17 @@ class MarketplacePricelistController extends Controller
      * @param  string  $pl_alias Alias of PriceList, ex.: yml
      * @return \Illuminate\Http\Response
      */
-    public function show($mp_alias, $pl_alias)
+    public function show(Request $request, $mp_alias, $pl_alias)
     {
         $categories = $this->categoryModel->getActiveCategories();
 
         $marketplace = $this->marketplaceModel->select('id')->where('alias', $mp_alias)->first();
 
-        $products = $this->productModel->getActiveProductsToMarketplace($marketplace->id);
+        $routeParameters = $request->route()->parameters;
+
+        $routeParameters['marketplace'] = $marketplace->id;
+
+        $products = $this->productModel->getProductsFromRoute($routeParameters, $request->all(), false);
 
         $xmlString = $this->pricelistModel->getPriceList($products, $categories, $pl_alias);
 

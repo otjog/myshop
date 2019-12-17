@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Shop\Product\Product;
 use App\Facades\GlobalData;
 use App\Models\Site\Photo360;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller{
 
@@ -28,11 +29,13 @@ class ProductController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $photo360 = new Photo360();
 
-        $data['shop']['product'] = $this->products->getProduct($id);
+        $productsFromRoute = $this->products->getProductsFromRoute($request->route()->parameters, [], false);
+
+        $data['shop']['product'] = $productsFromRoute[0];
 
         $data['photo360'] = $photo360->getPhotos($data['shop']['product']['scu']);
 
