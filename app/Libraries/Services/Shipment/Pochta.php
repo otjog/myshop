@@ -97,6 +97,7 @@ class Pochta implements ShipmentServices
         $services   = [];
 
         if( ($mass/1000) < $this->maxMass && $volume < $this->maxVolume ){
+
             $data       = [
                 "courier"               => false,
                 "declared-value"        => (int)$parcelData['declaredValue']*100,
@@ -104,7 +105,7 @@ class Pochta implements ShipmentServices
                 "fragile"               => false,
                 "index-from"            => $this->indexFrom,
                 "index-to"              => $this->geoData['index-to'],
-                "mail-category"         => "ORDINARY",
+                "mail-category"         => "WITH_DECLARED_VALUE",
                 "mass"                  => $mass,
                 "payment-method"        => "CASHLESS",
                 "with-order-of-notice"  => false,
@@ -229,7 +230,8 @@ class Pochta implements ShipmentServices
 
         $response = [
             'id_response' => 'pochta_' . $this->destinationType,
-            'type' => $this->destinationType
+            'type' => $this->destinationType,
+            'price' => [0]
         ];
 
         foreach($data as $key => $value){
@@ -238,7 +240,10 @@ class Pochta implements ShipmentServices
                     $response['service_id'] = $value;
                     break;
                 case 'total-rate'   :
-                    $response['price'][] = (int)($value / 100);
+                    $response['price'][0] += (int)($value / 100);
+                    break;
+                case 'total-vat'   :
+                    $response['price'][0] += (int)($value / 100);
                     break;
                 case 'delivery-time'  :
                     if(isset($value["min-days"]) && $value["min-days"] !== $value["max-days"] )
@@ -260,7 +265,8 @@ class Pochta implements ShipmentServices
         return $response;
     }
 
-    private function getOptimalService($services){
+    private function getOptimalService($services)
+    {
 
         $cost = array_column($services, 'total-rate');
 

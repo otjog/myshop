@@ -245,8 +245,9 @@ export default function Shipment(){
 
                     let result = String(ajaxReq.req.responseText);
                     self.reloadBlock.innerHTML = result;
-                    if(result !== ''){
 
+                    if(result !== ''){
+                        
                         let arrayReqName = self.requestName.split('_');
 
                         if (arrayReqName[arrayReqName.length -1 ] === 'toDoor' && arrayReqName[arrayReqName.length - 2 ] !== 'toDoor') {

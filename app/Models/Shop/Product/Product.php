@@ -438,7 +438,8 @@ class Product extends Model
             /************BASKET*****************/
             ->with(['baskets' => function($query)
             {
-                $query->where('token', session('_token'));
+                $query->where('token', session('_token'))
+                    ->where('order_id', null);
             }])
 
             /************CATEGORY***************/

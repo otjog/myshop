@@ -4,6 +4,7 @@ namespace App\Models\Geo;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Libraries\Geo\GeoLite;
+use GeoIp2\Exception\AddressNotFoundException;
 
 class GeoData extends Model{
 
@@ -67,35 +68,50 @@ class GeoData extends Model{
 
     public function setGeoIp()
     {
-        if (!isset($_SERVER['REMOTE_ADDR']) || $_SERVER['REMOTE_ADDR'] === '127.0.0.1')
-            $ipAddress = '213.87.147.113'; //Москва
-        else
+        //if (!isset($_SERVER['REMOTE_ADDR']) || $_SERVER['REMOTE_ADDR'] === '127.0.0.1')
+          //  $ipAddress = '213.87.147.113'; //Москва
+        //else
             $ipAddress = $_SERVER['REMOTE_ADDR'];
 
         $geolite = new GeoLite();
 
         $objectData = $geolite->getGeoCity($ipAddress);
 
-        $geoData = [
-            'postal_code'   => $objectData->postal->code,
-            'country_code'  => $objectData->raw['country']['iso_code'],
-            'country_name'  => $objectData->country->names['ru'],
-            'city_name'     => $objectData->city->names['ru'],
-            'latitude'      => $objectData->location->latitude,
-            'longitude'     => $objectData->location->longitude,
-        ];
+        if ($objectData !== null) {
+            $geoData = [
+                'postal_code'   => $objectData->postal->code,
+                'country_code'  => $objectData->raw['country']['iso_code'],
+                'latitude'      => $objectData->location->latitude,
+                'longitude'     => $objectData->location->longitude,
+            ];
 
-        if( isset( $objectData->subdivisions[0]->names['ru'] ) ){
+            $countryIsoCodeStrLower = strtolower($geoData['country_code']);
 
-            $regionData = $this->getRegionData($objectData->subdivisions[0]->names['ru']);
+            if (isset($objectData->country->names[$countryIsoCodeStrLower]))
+                $geoData['country_name'] = $objectData->country->names[$countryIsoCodeStrLower];
+            else
+                $objectData->country->names['en'];
 
-            $geoData = array_merge( $geoData, $regionData );
+            if (isset($objectData->city->names[$countryIsoCodeStrLower]))
+                $geoData['city_name'] = $objectData->city->names[$countryIsoCodeStrLower];
+            else
+                $objectData->city->names['en'];
 
-            session(['geoIp' => $geoData]);
+            if( isset( $objectData->subdivisions[0]->names['ru'] ) ){
 
-        }else{
-            session(['geoIp' => null]);// todo что отдавать, если geoIp NULL????
+                $regionData = $this->getRegionData($objectData->subdivisions[0]->names['ru']);
+
+                $geoData = array_merge( $geoData, $regionData );
+
+                session(['geoIp' => $geoData]);
+
+            }else{
+                session(['geoIp' => null]); // todo что отдавать, если geoIp NULL????
+            }
+        } else {
+            session(['geoIp' => null]);
         }
+
     }
 
     private function getCountryCode($countryName)

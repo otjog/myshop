@@ -51,8 +51,8 @@
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <label class="form-check-label">
-                                        <input class="form-check-input" type="radio" name="callType" value="WeChat">
-                                        WeChat
+                                        <input class="form-check-input" type="radio" name="callType" value="Skype">
+                                        Skype
                                     </label>
                                 </div>
                             </div>
