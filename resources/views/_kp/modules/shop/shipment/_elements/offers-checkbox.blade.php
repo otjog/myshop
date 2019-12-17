@@ -6,7 +6,7 @@
             <h5 class="text-center">Самовывоз с пункта выдачи</h5>
 
             @foreach($shipments as $service)
-                @if($service['is_service'] || $service['alias'] === 'toTerminal')
+                @if($service['is_service'])
                     <div class="reload"
                          data-alias="{{$service['alias']}}"
                          data-view="offer-checkbox"
@@ -15,6 +15,15 @@
                     >
                         @include( $global_data['template']['name'] .'.modules.shop.shipment._reload.offer-checkbox')
                     </div>
+                @elseif( $service['alias'] === 'toTerminal')
+                    <div
+                            data-alias="{{$service['alias']}}"
+                            data-view="offer-checkbox"
+                            data-parcel_data="{{$parcelData}}"
+                            data-type="toTerminal"
+                    >
+                        @include( $global_data['template']['name'] .'.modules.shop.shipment._elements.offer-checkbox')
+                    </div>
                 @endif
             @endforeach
         </div>
@@ -22,7 +31,7 @@
             <h5 class="text-center">Курьерская доставка до дверей</h5>
 
             @foreach($shipments as $service)
-                @if($service['is_service'] || $service['alias'] === 'toDoor')
+                @if($service['is_service'])
                     <div class="reload"
                          data-alias="{{$service['alias']}}"
                          data-view="offer-checkbox"
@@ -30,6 +39,15 @@
                          data-type="toDoor"
                     >
                         @include( $global_data['template']['name'] .'.modules.shop.shipment._reload.offer-checkbox')
+                    </div>
+                @elseif( $service['alias'] === 'toDoor')
+                    <div
+                            data-alias="{{$service['alias']}}"
+                            data-view="offer-checkbox"
+                            data-parcel_data="{{$parcelData}}"
+                            data-type="toDoor"
+                    >
+                        @include( $global_data['template']['name'] .'.modules.shop.shipment._elements.offer-checkbox')
                     </div>
                 @endif
             @endforeach

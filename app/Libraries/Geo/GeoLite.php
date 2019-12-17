@@ -3,6 +3,7 @@
 namespace App\Libraries\Geo;
 
 use GeoIp2\Database\Reader;
+use Illuminate\Support\Facades\Log;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 use GeoIp2\Exception\AddressNotFoundException;
 
@@ -26,20 +27,15 @@ class GeoLite {
 
     }
 
-    public function getGeoCity($ip_address){
-
+    public function getGeoCity($ip_address)
+    {
         try{
-
             $city = $this->reader->city($ip_address);
-
         } catch ( AddressNotFoundException $exception){
-
-            return $exception;
-
+            Log::info($exception->getMessage());
+            return null;
         }
-
         return $city;
-
     }
 
 }

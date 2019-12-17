@@ -18,43 +18,59 @@ class ShipmentService extends Model
 {
     public function getPrices($shipmentData)
     {
-        $shipments = new Shipment();
+        $geo = new GeoData();
 
-        $shipmentService = $shipments->getShipmentMethodByAlias($shipmentData['alias']);
+        $geoData = $geo->getGeoData();
 
-        $shipmentData['parcel_data'] = $this->getParcelParameters($shipmentData['parcel_data']);
+        $result = null;
 
-        $serviceObj = $this->getServiceObject($shipmentService);
+        if ($geoData !== null) {
+            $shipments = new Shipment();
 
-        if ($serviceObj !== null) {
-            $data = $serviceObj->getDeliveryCost($shipmentData['parcel_data'], $shipmentData['type']);
-            if ($data !== null ) {
-                $data['days'][] = $this->getDeclisionOfDays($data['days'][0]);
-                $data['price'][] = GlobalData::getParameter('components.shop.currency.symbol');
-                $shipmentService[0]->offer = $data;
+            $shipmentService = $shipments->getShipmentMethodByAlias($shipmentData['alias']);
+
+            $shipmentData['parcel_data'] = $this->getParcelParameters($shipmentData['parcel_data']);
+
+            $serviceObj = $this->getServiceObject($shipmentService, $geoData);
+
+            if ($serviceObj !== null) {
+                $data = $serviceObj->getDeliveryCost($shipmentData['parcel_data'], $shipmentData['type']);
+
+                if ($data !== null ) {
+                    $data['days'][] = $this->getDeclisionOfDays($data['days'][0]);
+                    $data['price'][] = GlobalData::getParameter('components.shop.currency.symbol');
+                    $shipmentService[0]->offer = $data;
+                }
             }
+
+            $result = $shipmentService[0];
         }
 
-        return $shipmentService[0];
-
+        return $result;
     }
 
     public function getPoints($shipmentServiceAlias)
     {
-        $shipments = new Shipment();
+        $geo = new GeoData();
 
-        $shipmentService = $shipments->getShipmentMethodByAlias($shipmentServiceAlias);
-
-        $image = new Image();
+        $geoData = $geo->getGeoData();
 
         $data = [];
 
-        $serviceObj = $this->getServiceObject($shipmentService);
+        if ($geoData !== null) {
+            $shipments = new Shipment();
 
-        if ($serviceObj !== null) {
-            $data[$shipmentServiceAlias]['points'] = $serviceObj->getPointsInCity();
-            if(count($data[$shipmentServiceAlias]['points']) > 0)
-                $data[$shipmentServiceAlias]['mapMarker'] = $image->getSrcImage('default', 'marker', $shipmentService[0]->images[0]->src, $shipmentService[0]->id, 'png');
+            $shipmentService = $shipments->getShipmentMethodByAlias($shipmentServiceAlias);
+
+            $image = new Image();
+
+            $serviceObj = $this->getServiceObject($shipmentService, $geoData);
+
+            if ($serviceObj !== null) {
+                $data[$shipmentServiceAlias]['points'] = $serviceObj->getPointsInCity();
+                if(count($data[$shipmentServiceAlias]['points']) > 0)
+                    $data[$shipmentServiceAlias]['mapMarker'] = $image->getSrcImage('default', 'marker', $shipmentService[0]->images[0]->src, $shipmentService[0]->id, 'png');
+            }
         }
 
         return $data;
@@ -82,12 +98,8 @@ class ShipmentService extends Model
 
     }
 
-    private function getServiceObject($shipmentService)
+    private function getServiceObject($shipmentService, $geoData)
     {
-        $geo = new GeoData();
-
-        $geoData = $geo->getGeoData();
-
         $serviceObj = null;
 
         switch ($shipmentService[0]->alias) {
