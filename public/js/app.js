@@ -8832,14 +8832,14 @@ module.exports = function isBuffer (obj) {
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
-  * Bootstrap v4.3.1 (https://getbootstrap.com/)
+  * Bootstrap v4.4.1 (https://getbootstrap.com/)
   * Copyright 2011-2019 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
    true ? factory(exports, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js"), __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js")) :
   undefined;
-}(this, function (exports, $, Popper) { 'use strict';
+}(this, (function (exports, $, Popper) { 'use strict';
 
   $ = $ && $.hasOwnProperty('default') ? $['default'] : $;
   Popper = Popper && Popper.hasOwnProperty('default') ? Popper['default'] : Popper;
@@ -8875,20 +8875,35 @@ module.exports = function isBuffer (obj) {
     return obj;
   }
 
-  function _objectSpread(target) {
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
 
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
       }
-
-      ownKeys.forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
     }
 
     return target;
@@ -8902,7 +8917,7 @@ module.exports = function isBuffer (obj) {
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.3.1): util.js
+   * Bootstrap (v4.4.1): util.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
@@ -9051,8 +9066,25 @@ module.exports = function isBuffer (obj) {
       }
 
       return Util.findShadowRoot(element.parentNode);
+    },
+    jQueryDetection: function jQueryDetection() {
+      if (typeof $ === 'undefined') {
+        throw new TypeError('Bootstrap\'s JavaScript requires jQuery. jQuery must be included before Bootstrap\'s JavaScript.');
+      }
+
+      var version = $.fn.jquery.split(' ')[0].split('.');
+      var minMajor = 1;
+      var ltMajor = 2;
+      var minMinor = 9;
+      var minPatch = 1;
+      var maxMajor = 4;
+
+      if (version[0] < ltMajor && version[1] < minMinor || version[0] === minMajor && version[1] === minMinor && version[2] < minPatch || version[0] >= maxMajor) {
+        throw new Error('Bootstrap\'s JavaScript requires at least jQuery v1.9.1 but less than v4.0.0');
+      }
     }
   };
+  Util.jQueryDetection();
   setTransitionEndSupport();
 
   /**
@@ -9062,7 +9094,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME = 'alert';
-  var VERSION = '4.3.1';
+  var VERSION = '4.4.1';
   var DATA_KEY = 'bs.alert';
   var EVENT_KEY = "." + DATA_KEY;
   var DATA_API_KEY = '.data-api';
@@ -9079,13 +9111,12 @@ module.exports = function isBuffer (obj) {
     ALERT: 'alert',
     FADE: 'fade',
     SHOW: 'show'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Alert =
   /*#__PURE__*/
@@ -9227,7 +9258,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$1 = 'button';
-  var VERSION$1 = '4.3.1';
+  var VERSION$1 = '4.4.1';
   var DATA_KEY$1 = 'bs.button';
   var EVENT_KEY$1 = "." + DATA_KEY$1;
   var DATA_API_KEY$1 = '.data-api';
@@ -9239,21 +9270,23 @@ module.exports = function isBuffer (obj) {
   };
   var Selector$1 = {
     DATA_TOGGLE_CARROT: '[data-toggle^="button"]',
-    DATA_TOGGLE: '[data-toggle="buttons"]',
+    DATA_TOGGLES: '[data-toggle="buttons"]',
+    DATA_TOGGLE: '[data-toggle="button"]',
+    DATA_TOGGLES_BUTTONS: '[data-toggle="buttons"] .btn',
     INPUT: 'input:not([type="hidden"])',
     ACTIVE: '.active',
     BUTTON: '.btn'
   };
   var Event$1 = {
     CLICK_DATA_API: "click" + EVENT_KEY$1 + DATA_API_KEY$1,
-    FOCUS_BLUR_DATA_API: "focus" + EVENT_KEY$1 + DATA_API_KEY$1 + " " + ("blur" + EVENT_KEY$1 + DATA_API_KEY$1)
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
+    FOCUS_BLUR_DATA_API: "focus" + EVENT_KEY$1 + DATA_API_KEY$1 + " " + ("blur" + EVENT_KEY$1 + DATA_API_KEY$1),
+    LOAD_DATA_API: "load" + EVENT_KEY$1 + DATA_API_KEY$1
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Button =
   /*#__PURE__*/
@@ -9269,7 +9302,7 @@ module.exports = function isBuffer (obj) {
     _proto.toggle = function toggle() {
       var triggerChangeEvent = true;
       var addAriaPressed = true;
-      var rootElement = $(this._element).closest(Selector$1.DATA_TOGGLE)[0];
+      var rootElement = $(this._element).closest(Selector$1.DATA_TOGGLES)[0];
 
       if (rootElement) {
         var input = this._element.querySelector(Selector$1.INPUT);
@@ -9285,13 +9318,16 @@ module.exports = function isBuffer (obj) {
                 $(activeElement).removeClass(ClassName$1.ACTIVE);
               }
             }
+          } else if (input.type === 'checkbox') {
+            if (this._element.tagName === 'LABEL' && input.checked === this._element.classList.contains(ClassName$1.ACTIVE)) {
+              triggerChangeEvent = false;
+            }
+          } else {
+            // if it's not a radio button or checkbox don't add a pointless/invalid checked property to the input
+            triggerChangeEvent = false;
           }
 
           if (triggerChangeEvent) {
-            if (input.hasAttribute('disabled') || rootElement.hasAttribute('disabled') || input.classList.contains('disabled') || rootElement.classList.contains('disabled')) {
-              return;
-            }
-
             input.checked = !this._element.classList.contains(ClassName$1.ACTIVE);
             $(input).trigger('change');
           }
@@ -9301,12 +9337,14 @@ module.exports = function isBuffer (obj) {
         }
       }
 
-      if (addAriaPressed) {
-        this._element.setAttribute('aria-pressed', !this._element.classList.contains(ClassName$1.ACTIVE));
-      }
+      if (!(this._element.hasAttribute('disabled') || this._element.classList.contains('disabled'))) {
+        if (addAriaPressed) {
+          this._element.setAttribute('aria-pressed', !this._element.classList.contains(ClassName$1.ACTIVE));
+        }
 
-      if (triggerChangeEvent) {
-        $(this._element).toggleClass(ClassName$1.ACTIVE);
+        if (triggerChangeEvent) {
+          $(this._element).toggleClass(ClassName$1.ACTIVE);
+        }
       }
     };
 
@@ -9348,17 +9386,57 @@ module.exports = function isBuffer (obj) {
 
 
   $(document).on(Event$1.CLICK_DATA_API, Selector$1.DATA_TOGGLE_CARROT, function (event) {
-    event.preventDefault();
     var button = event.target;
 
     if (!$(button).hasClass(ClassName$1.BUTTON)) {
-      button = $(button).closest(Selector$1.BUTTON);
+      button = $(button).closest(Selector$1.BUTTON)[0];
     }
 
-    Button._jQueryInterface.call($(button), 'toggle');
+    if (!button || button.hasAttribute('disabled') || button.classList.contains('disabled')) {
+      event.preventDefault(); // work around Firefox bug #1540995
+    } else {
+      var inputBtn = button.querySelector(Selector$1.INPUT);
+
+      if (inputBtn && (inputBtn.hasAttribute('disabled') || inputBtn.classList.contains('disabled'))) {
+        event.preventDefault(); // work around Firefox bug #1540995
+
+        return;
+      }
+
+      Button._jQueryInterface.call($(button), 'toggle');
+    }
   }).on(Event$1.FOCUS_BLUR_DATA_API, Selector$1.DATA_TOGGLE_CARROT, function (event) {
     var button = $(event.target).closest(Selector$1.BUTTON)[0];
     $(button).toggleClass(ClassName$1.FOCUS, /^focus(in)?$/.test(event.type));
+  });
+  $(window).on(Event$1.LOAD_DATA_API, function () {
+    // ensure correct active class is set to match the controls' actual values/states
+    // find all checkboxes/readio buttons inside data-toggle groups
+    var buttons = [].slice.call(document.querySelectorAll(Selector$1.DATA_TOGGLES_BUTTONS));
+
+    for (var i = 0, len = buttons.length; i < len; i++) {
+      var button = buttons[i];
+      var input = button.querySelector(Selector$1.INPUT);
+
+      if (input.checked || input.hasAttribute('checked')) {
+        button.classList.add(ClassName$1.ACTIVE);
+      } else {
+        button.classList.remove(ClassName$1.ACTIVE);
+      }
+    } // find all button toggles
+
+
+    buttons = [].slice.call(document.querySelectorAll(Selector$1.DATA_TOGGLE));
+
+    for (var _i = 0, _len = buttons.length; _i < _len; _i++) {
+      var _button = buttons[_i];
+
+      if (_button.getAttribute('aria-pressed') === 'true') {
+        _button.classList.add(ClassName$1.ACTIVE);
+      } else {
+        _button.classList.remove(ClassName$1.ACTIVE);
+      }
+    }
   });
   /**
    * ------------------------------------------------------------------------
@@ -9381,7 +9459,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$2 = 'carousel';
-  var VERSION$2 = '4.3.1';
+  var VERSION$2 = '4.4.1';
   var DATA_KEY$2 = 'bs.carousel';
   var EVENT_KEY$2 = "." + DATA_KEY$2;
   var DATA_API_KEY$2 = '.data-api';
@@ -9454,13 +9532,12 @@ module.exports = function isBuffer (obj) {
   var PointerType = {
     TOUCH: 'touch',
     PEN: 'pen'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Carousel =
   /*#__PURE__*/
@@ -9580,7 +9657,7 @@ module.exports = function isBuffer (obj) {
     ;
 
     _proto._getConfig = function _getConfig(config) {
-      config = _objectSpread({}, Default, config);
+      config = _objectSpread2({}, Default, {}, config);
       Util.typeCheckConfig(NAME$2, config, DefaultType);
       return config;
     };
@@ -9592,7 +9669,8 @@ module.exports = function isBuffer (obj) {
         return;
       }
 
-      var direction = absDeltax / this.touchDeltaX; // swipe left
+      var direction = absDeltax / this.touchDeltaX;
+      this.touchDeltaX = 0; // swipe left
 
       if (direction > 0) {
         this.prev();
@@ -9718,8 +9796,6 @@ module.exports = function isBuffer (obj) {
           event.preventDefault();
           this.next();
           break;
-
-        default:
       }
     };
 
@@ -9871,10 +9947,10 @@ module.exports = function isBuffer (obj) {
       return this.each(function () {
         var data = $(this).data(DATA_KEY$2);
 
-        var _config = _objectSpread({}, Default, $(this).data());
+        var _config = _objectSpread2({}, Default, {}, $(this).data());
 
         if (typeof config === 'object') {
-          _config = _objectSpread({}, _config, config);
+          _config = _objectSpread2({}, _config, {}, config);
         }
 
         var action = typeof config === 'string' ? config : _config.slide;
@@ -9912,7 +9988,7 @@ module.exports = function isBuffer (obj) {
         return;
       }
 
-      var config = _objectSpread({}, $(target).data(), $(this).data());
+      var config = _objectSpread2({}, $(target).data(), {}, $(this).data());
 
       var slideIndex = this.getAttribute('data-slide-to');
 
@@ -9981,7 +10057,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$3 = 'collapse';
-  var VERSION$3 = '4.3.1';
+  var VERSION$3 = '4.4.1';
   var DATA_KEY$3 = 'bs.collapse';
   var EVENT_KEY$3 = "." + DATA_KEY$3;
   var DATA_API_KEY$3 = '.data-api';
@@ -10014,13 +10090,12 @@ module.exports = function isBuffer (obj) {
   var Selector$3 = {
     ACTIVES: '.show, .collapsing',
     DATA_TOGGLE: '[data-toggle="collapse"]'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Collapse =
   /*#__PURE__*/
@@ -10207,7 +10282,7 @@ module.exports = function isBuffer (obj) {
     ;
 
     _proto._getConfig = function _getConfig(config) {
-      config = _objectSpread({}, Default$1, config);
+      config = _objectSpread2({}, Default$1, {}, config);
       config.toggle = Boolean(config.toggle); // Coerce string values
 
       Util.typeCheckConfig(NAME$3, config, DefaultType$1);
@@ -10261,7 +10336,7 @@ module.exports = function isBuffer (obj) {
         var $this = $(this);
         var data = $this.data(DATA_KEY$3);
 
-        var _config = _objectSpread({}, Default$1, $this.data(), typeof config === 'object' && config ? config : {});
+        var _config = _objectSpread2({}, Default$1, {}, $this.data(), {}, typeof config === 'object' && config ? config : {});
 
         if (!data && _config.toggle && /show|hide/.test(config)) {
           _config.toggle = false;
@@ -10341,7 +10416,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$4 = 'dropdown';
-  var VERSION$4 = '4.3.1';
+  var VERSION$4 = '4.4.1';
   var DATA_KEY$4 = 'bs.dropdown';
   var EVENT_KEY$4 = "." + DATA_KEY$4;
   var DATA_API_KEY$4 = '.data-api';
@@ -10401,21 +10476,22 @@ module.exports = function isBuffer (obj) {
     flip: true,
     boundary: 'scrollParent',
     reference: 'toggle',
-    display: 'dynamic'
+    display: 'dynamic',
+    popperConfig: null
   };
   var DefaultType$2 = {
     offset: '(number|string|function)',
     flip: 'boolean',
     boundary: '(string|element)',
     reference: '(string|element)',
-    display: 'string'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
+    display: 'string',
+    popperConfig: '(null|object)'
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Dropdown =
   /*#__PURE__*/
@@ -10439,8 +10515,6 @@ module.exports = function isBuffer (obj) {
         return;
       }
 
-      var parent = Dropdown._getParentFromElement(this._element);
-
       var isActive = $(this._menu).hasClass(ClassName$4.SHOW);
 
       Dropdown._clearMenus();
@@ -10449,10 +10523,25 @@ module.exports = function isBuffer (obj) {
         return;
       }
 
+      this.show(true);
+    };
+
+    _proto.show = function show(usePopper) {
+      if (usePopper === void 0) {
+        usePopper = false;
+      }
+
+      if (this._element.disabled || $(this._element).hasClass(ClassName$4.DISABLED) || $(this._menu).hasClass(ClassName$4.SHOW)) {
+        return;
+      }
+
       var relatedTarget = {
         relatedTarget: this._element
       };
       var showEvent = $.Event(Event$4.SHOW, relatedTarget);
+
+      var parent = Dropdown._getParentFromElement(this._element);
+
       $(parent).trigger(showEvent);
 
       if (showEvent.isDefaultPrevented()) {
@@ -10460,7 +10549,7 @@ module.exports = function isBuffer (obj) {
       } // Disable totally Popper.js for Dropdown in Navbar
 
 
-      if (!this._inNavbar) {
+      if (!this._inNavbar && usePopper) {
         /**
          * Check for Popper dependency
          * Popper - https://popper.js.org
@@ -10507,28 +10596,6 @@ module.exports = function isBuffer (obj) {
       $(parent).toggleClass(ClassName$4.SHOW).trigger($.Event(Event$4.SHOWN, relatedTarget));
     };
 
-    _proto.show = function show() {
-      if (this._element.disabled || $(this._element).hasClass(ClassName$4.DISABLED) || $(this._menu).hasClass(ClassName$4.SHOW)) {
-        return;
-      }
-
-      var relatedTarget = {
-        relatedTarget: this._element
-      };
-      var showEvent = $.Event(Event$4.SHOW, relatedTarget);
-
-      var parent = Dropdown._getParentFromElement(this._element);
-
-      $(parent).trigger(showEvent);
-
-      if (showEvent.isDefaultPrevented()) {
-        return;
-      }
-
-      $(this._menu).toggleClass(ClassName$4.SHOW);
-      $(parent).toggleClass(ClassName$4.SHOW).trigger($.Event(Event$4.SHOWN, relatedTarget));
-    };
-
     _proto.hide = function hide() {
       if (this._element.disabled || $(this._element).hasClass(ClassName$4.DISABLED) || !$(this._menu).hasClass(ClassName$4.SHOW)) {
         return;
@@ -10545,6 +10612,10 @@ module.exports = function isBuffer (obj) {
 
       if (hideEvent.isDefaultPrevented()) {
         return;
+      }
+
+      if (this._popper) {
+        this._popper.destroy();
       }
 
       $(this._menu).toggleClass(ClassName$4.SHOW);
@@ -10585,7 +10656,7 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._getConfig = function _getConfig(config) {
-      config = _objectSpread({}, this.constructor.Default, $(this._element).data(), config);
+      config = _objectSpread2({}, this.constructor.Default, {}, $(this._element).data(), {}, config);
       Util.typeCheckConfig(NAME$4, config, this.constructor.DefaultType);
       return config;
     };
@@ -10634,7 +10705,7 @@ module.exports = function isBuffer (obj) {
 
       if (typeof this._config.offset === 'function') {
         offset.fn = function (data) {
-          data.offsets = _objectSpread({}, data.offsets, _this2._config.offset(data.offsets, _this2._element) || {});
+          data.offsets = _objectSpread2({}, data.offsets, {}, _this2._config.offset(data.offsets, _this2._element) || {});
           return data;
         };
       } else {
@@ -10655,9 +10726,8 @@ module.exports = function isBuffer (obj) {
           preventOverflow: {
             boundariesElement: this._config.boundary
           }
-        } // Disable Popper.js if we have a static display
-
-      };
+        }
+      }; // Disable Popper.js if we have a static display
 
       if (this._config.display === 'static') {
         popperConfig.modifiers.applyStyle = {
@@ -10665,7 +10735,7 @@ module.exports = function isBuffer (obj) {
         };
       }
 
-      return popperConfig;
+      return _objectSpread2({}, popperConfig, {}, this._config.popperConfig);
     } // Static
     ;
 
@@ -10737,6 +10807,11 @@ module.exports = function isBuffer (obj) {
         }
 
         toggles[i].setAttribute('aria-expanded', 'false');
+
+        if (context._popper) {
+          context._popper.destroy();
+        }
+
         $(dropdownMenu).removeClass(ClassName$4.SHOW);
         $(parent).removeClass(ClassName$4.SHOW).trigger($.Event(Event$4.HIDDEN, relatedTarget));
       }
@@ -10777,6 +10852,10 @@ module.exports = function isBuffer (obj) {
 
       var isActive = $(parent).hasClass(ClassName$4.SHOW);
 
+      if (!isActive && event.which === ESCAPE_KEYCODE) {
+        return;
+      }
+
       if (!isActive || isActive && (event.which === ESCAPE_KEYCODE || event.which === SPACE_KEYCODE)) {
         if (event.which === ESCAPE_KEYCODE) {
           var toggle = parent.querySelector(Selector$4.DATA_TOGGLE);
@@ -10787,7 +10866,9 @@ module.exports = function isBuffer (obj) {
         return;
       }
 
-      var items = [].slice.call(parent.querySelectorAll(Selector$4.VISIBLE_ITEMS));
+      var items = [].slice.call(parent.querySelectorAll(Selector$4.VISIBLE_ITEMS)).filter(function (item) {
+        return $(item).is(':visible');
+      });
 
       if (items.length === 0) {
         return;
@@ -10867,7 +10948,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$5 = 'modal';
-  var VERSION$5 = '4.3.1';
+  var VERSION$5 = '4.4.1';
   var DATA_KEY$5 = 'bs.modal';
   var EVENT_KEY$5 = "." + DATA_KEY$5;
   var DATA_API_KEY$5 = '.data-api';
@@ -10888,6 +10969,7 @@ module.exports = function isBuffer (obj) {
   };
   var Event$5 = {
     HIDE: "hide" + EVENT_KEY$5,
+    HIDE_PREVENTED: "hidePrevented" + EVENT_KEY$5,
     HIDDEN: "hidden" + EVENT_KEY$5,
     SHOW: "show" + EVENT_KEY$5,
     SHOWN: "shown" + EVENT_KEY$5,
@@ -10905,7 +10987,8 @@ module.exports = function isBuffer (obj) {
     BACKDROP: 'modal-backdrop',
     OPEN: 'modal-open',
     FADE: 'fade',
-    SHOW: 'show'
+    SHOW: 'show',
+    STATIC: 'modal-static'
   };
   var Selector$5 = {
     DIALOG: '.modal-dialog',
@@ -10914,13 +10997,12 @@ module.exports = function isBuffer (obj) {
     DATA_DISMISS: '[data-dismiss="modal"]',
     FIXED_CONTENT: '.fixed-top, .fixed-bottom, .is-fixed, .sticky-top',
     STICKY_CONTENT: '.sticky-top'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Modal =
   /*#__PURE__*/
@@ -11066,15 +11148,40 @@ module.exports = function isBuffer (obj) {
     ;
 
     _proto._getConfig = function _getConfig(config) {
-      config = _objectSpread({}, Default$3, config);
+      config = _objectSpread2({}, Default$3, {}, config);
       Util.typeCheckConfig(NAME$5, config, DefaultType$3);
       return config;
     };
 
-    _proto._showElement = function _showElement(relatedTarget) {
+    _proto._triggerBackdropTransition = function _triggerBackdropTransition() {
       var _this3 = this;
 
+      if (this._config.backdrop === 'static') {
+        var hideEventPrevented = $.Event(Event$5.HIDE_PREVENTED);
+        $(this._element).trigger(hideEventPrevented);
+
+        if (hideEventPrevented.defaultPrevented) {
+          return;
+        }
+
+        this._element.classList.add(ClassName$5.STATIC);
+
+        var modalTransitionDuration = Util.getTransitionDurationFromElement(this._element);
+        $(this._element).one(Util.TRANSITION_END, function () {
+          _this3._element.classList.remove(ClassName$5.STATIC);
+        }).emulateTransitionEnd(modalTransitionDuration);
+
+        this._element.focus();
+      } else {
+        this.hide();
+      }
+    };
+
+    _proto._showElement = function _showElement(relatedTarget) {
+      var _this4 = this;
+
       var transition = $(this._element).hasClass(ClassName$5.FADE);
+      var modalBody = this._dialog ? this._dialog.querySelector(Selector$5.MODAL_BODY) : null;
 
       if (!this._element.parentNode || this._element.parentNode.nodeType !== Node.ELEMENT_NODE) {
         // Don't move modal's DOM position
@@ -11087,8 +11194,8 @@ module.exports = function isBuffer (obj) {
 
       this._element.setAttribute('aria-modal', true);
 
-      if ($(this._dialog).hasClass(ClassName$5.SCROLLABLE)) {
-        this._dialog.querySelector(Selector$5.MODAL_BODY).scrollTop = 0;
+      if ($(this._dialog).hasClass(ClassName$5.SCROLLABLE) && modalBody) {
+        modalBody.scrollTop = 0;
       } else {
         this._element.scrollTop = 0;
       }
@@ -11108,12 +11215,12 @@ module.exports = function isBuffer (obj) {
       });
 
       var transitionComplete = function transitionComplete() {
-        if (_this3._config.focus) {
-          _this3._element.focus();
+        if (_this4._config.focus) {
+          _this4._element.focus();
         }
 
-        _this3._isTransitioning = false;
-        $(_this3._element).trigger(shownEvent);
+        _this4._isTransitioning = false;
+        $(_this4._element).trigger(shownEvent);
       };
 
       if (transition) {
@@ -11125,25 +11232,23 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._enforceFocus = function _enforceFocus() {
-      var _this4 = this;
+      var _this5 = this;
 
       $(document).off(Event$5.FOCUSIN) // Guard against infinite focus loop
       .on(Event$5.FOCUSIN, function (event) {
-        if (document !== event.target && _this4._element !== event.target && $(_this4._element).has(event.target).length === 0) {
-          _this4._element.focus();
+        if (document !== event.target && _this5._element !== event.target && $(_this5._element).has(event.target).length === 0) {
+          _this5._element.focus();
         }
       });
     };
 
     _proto._setEscapeEvent = function _setEscapeEvent() {
-      var _this5 = this;
+      var _this6 = this;
 
       if (this._isShown && this._config.keyboard) {
         $(this._element).on(Event$5.KEYDOWN_DISMISS, function (event) {
           if (event.which === ESCAPE_KEYCODE$1) {
-            event.preventDefault();
-
-            _this5.hide();
+            _this6._triggerBackdropTransition();
           }
         });
       } else if (!this._isShown) {
@@ -11152,11 +11257,11 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._setResizeEvent = function _setResizeEvent() {
-      var _this6 = this;
+      var _this7 = this;
 
       if (this._isShown) {
         $(window).on(Event$5.RESIZE, function (event) {
-          return _this6.handleUpdate(event);
+          return _this7.handleUpdate(event);
         });
       } else {
         $(window).off(Event$5.RESIZE);
@@ -11164,7 +11269,7 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._hideModal = function _hideModal() {
-      var _this7 = this;
+      var _this8 = this;
 
       this._element.style.display = 'none';
 
@@ -11177,11 +11282,11 @@ module.exports = function isBuffer (obj) {
       this._showBackdrop(function () {
         $(document.body).removeClass(ClassName$5.OPEN);
 
-        _this7._resetAdjustments();
+        _this8._resetAdjustments();
 
-        _this7._resetScrollbar();
+        _this8._resetScrollbar();
 
-        $(_this7._element).trigger(Event$5.HIDDEN);
+        $(_this8._element).trigger(Event$5.HIDDEN);
       });
     };
 
@@ -11193,7 +11298,7 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._showBackdrop = function _showBackdrop(callback) {
-      var _this8 = this;
+      var _this9 = this;
 
       var animate = $(this._element).hasClass(ClassName$5.FADE) ? ClassName$5.FADE : '';
 
@@ -11207,8 +11312,8 @@ module.exports = function isBuffer (obj) {
 
         $(this._backdrop).appendTo(document.body);
         $(this._element).on(Event$5.CLICK_DISMISS, function (event) {
-          if (_this8._ignoreBackdropClick) {
-            _this8._ignoreBackdropClick = false;
+          if (_this9._ignoreBackdropClick) {
+            _this9._ignoreBackdropClick = false;
             return;
           }
 
@@ -11216,11 +11321,7 @@ module.exports = function isBuffer (obj) {
             return;
           }
 
-          if (_this8._config.backdrop === 'static') {
-            _this8._element.focus();
-          } else {
-            _this8.hide();
-          }
+          _this9._triggerBackdropTransition();
         });
 
         if (animate) {
@@ -11244,7 +11345,7 @@ module.exports = function isBuffer (obj) {
         $(this._backdrop).removeClass(ClassName$5.SHOW);
 
         var callbackRemove = function callbackRemove() {
-          _this8._removeBackdrop();
+          _this9._removeBackdrop();
 
           if (callback) {
             callback();
@@ -11291,7 +11392,7 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._setScrollbar = function _setScrollbar() {
-      var _this9 = this;
+      var _this10 = this;
 
       if (this._isBodyOverflowing) {
         // Note: DOMNode.style.paddingRight returns the actual value or '' if not set
@@ -11302,13 +11403,13 @@ module.exports = function isBuffer (obj) {
         $(fixedContent).each(function (index, element) {
           var actualPadding = element.style.paddingRight;
           var calculatedPadding = $(element).css('padding-right');
-          $(element).data('padding-right', actualPadding).css('padding-right', parseFloat(calculatedPadding) + _this9._scrollbarWidth + "px");
+          $(element).data('padding-right', actualPadding).css('padding-right', parseFloat(calculatedPadding) + _this10._scrollbarWidth + "px");
         }); // Adjust sticky content margin
 
         $(stickyContent).each(function (index, element) {
           var actualMargin = element.style.marginRight;
           var calculatedMargin = $(element).css('margin-right');
-          $(element).data('margin-right', actualMargin).css('margin-right', parseFloat(calculatedMargin) - _this9._scrollbarWidth + "px");
+          $(element).data('margin-right', actualMargin).css('margin-right', parseFloat(calculatedMargin) - _this10._scrollbarWidth + "px");
         }); // Adjust body padding
 
         var actualPadding = document.body.style.paddingRight;
@@ -11357,7 +11458,7 @@ module.exports = function isBuffer (obj) {
       return this.each(function () {
         var data = $(this).data(DATA_KEY$5);
 
-        var _config = _objectSpread({}, Default$3, $(this).data(), typeof config === 'object' && config ? config : {});
+        var _config = _objectSpread2({}, Default$3, {}, $(this).data(), {}, typeof config === 'object' && config ? config : {});
 
         if (!data) {
           data = new Modal(this, _config);
@@ -11398,7 +11499,7 @@ module.exports = function isBuffer (obj) {
 
 
   $(document).on(Event$5.CLICK_DATA_API, Selector$5.DATA_TOGGLE, function (event) {
-    var _this10 = this;
+    var _this11 = this;
 
     var target;
     var selector = Util.getSelectorFromElement(this);
@@ -11407,7 +11508,7 @@ module.exports = function isBuffer (obj) {
       target = document.querySelector(selector);
     }
 
-    var config = $(target).data(DATA_KEY$5) ? 'toggle' : _objectSpread({}, $(target).data(), $(this).data());
+    var config = $(target).data(DATA_KEY$5) ? 'toggle' : _objectSpread2({}, $(target).data(), {}, $(this).data());
 
     if (this.tagName === 'A' || this.tagName === 'AREA') {
       event.preventDefault();
@@ -11420,8 +11521,8 @@ module.exports = function isBuffer (obj) {
       }
 
       $target.one(Event$5.HIDDEN, function () {
-        if ($(_this10).is(':visible')) {
-          _this10.focus();
+        if ($(_this11).is(':visible')) {
+          _this11.focus();
         }
       });
     });
@@ -11444,7 +11545,7 @@ module.exports = function isBuffer (obj) {
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.3.1): tools/sanitizer.js
+   * Bootstrap (v4.4.1): tools/sanitizer.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
@@ -11482,13 +11583,13 @@ module.exports = function isBuffer (obj) {
     strong: [],
     u: [],
     ul: []
-    /**
-     * A pattern that recognizes a commonly useful subset of URLs that are safe.
-     *
-     * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
-     */
-
   };
+  /**
+   * A pattern that recognizes a commonly useful subset of URLs that are safe.
+   *
+   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+   */
+
   var SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^&:/?#]*(?:[/?#]|$))/gi;
   /**
    * A pattern that matches safe data URLs. Only matches image, video and audio types.
@@ -11555,7 +11656,7 @@ module.exports = function isBuffer (obj) {
     };
 
     for (var i = 0, len = elements.length; i < len; i++) {
-      var _ret = _loop(i, len);
+      var _ret = _loop(i);
 
       if (_ret === "continue") continue;
     }
@@ -11570,7 +11671,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$6 = 'tooltip';
-  var VERSION$6 = '4.3.1';
+  var VERSION$6 = '4.4.1';
   var DATA_KEY$6 = 'bs.tooltip';
   var EVENT_KEY$6 = "." + DATA_KEY$6;
   var JQUERY_NO_CONFLICT$6 = $.fn[NAME$6];
@@ -11592,7 +11693,8 @@ module.exports = function isBuffer (obj) {
     boundary: '(string|element)',
     sanitize: 'boolean',
     sanitizeFn: '(null|function)',
-    whiteList: 'object'
+    whiteList: 'object',
+    popperConfig: '(null|object)'
   };
   var AttachmentMap$1 = {
     AUTO: 'auto',
@@ -11616,7 +11718,8 @@ module.exports = function isBuffer (obj) {
     boundary: 'scrollParent',
     sanitize: true,
     sanitizeFn: null,
-    whiteList: DefaultWhitelist
+    whiteList: DefaultWhitelist,
+    popperConfig: null
   };
   var HoverState = {
     SHOW: 'show',
@@ -11648,22 +11751,17 @@ module.exports = function isBuffer (obj) {
     FOCUS: 'focus',
     CLICK: 'click',
     MANUAL: 'manual'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Tooltip =
   /*#__PURE__*/
   function () {
     function Tooltip(element, config) {
-      /**
-       * Check for Popper dependency
-       * Popper - https://popper.js.org
-       */
       if (typeof Popper === 'undefined') {
         throw new TypeError('Bootstrap\'s tooltips require Popper.js (https://popper.js.org/)');
       } // private
@@ -11734,7 +11832,7 @@ module.exports = function isBuffer (obj) {
       clearTimeout(this._timeout);
       $.removeData(this.element, this.constructor.DATA_KEY);
       $(this.element).off(this.constructor.EVENT_KEY);
-      $(this.element).closest('.modal').off('hide.bs.modal');
+      $(this.element).closest('.modal').off('hide.bs.modal', this._hideModalHandler);
 
       if (this.tip) {
         $(this.tip).remove();
@@ -11745,7 +11843,7 @@ module.exports = function isBuffer (obj) {
       this._hoverState = null;
       this._activeTrigger = null;
 
-      if (this._popper !== null) {
+      if (this._popper) {
         this._popper.destroy();
       }
 
@@ -11798,29 +11896,7 @@ module.exports = function isBuffer (obj) {
         }
 
         $(this.element).trigger(this.constructor.Event.INSERTED);
-        this._popper = new Popper(this.element, tip, {
-          placement: attachment,
-          modifiers: {
-            offset: this._getOffset(),
-            flip: {
-              behavior: this.config.fallbackPlacement
-            },
-            arrow: {
-              element: Selector$6.ARROW
-            },
-            preventOverflow: {
-              boundariesElement: this.config.boundary
-            }
-          },
-          onCreate: function onCreate(data) {
-            if (data.originalPlacement !== data.placement) {
-              _this._handlePopperPlacementChange(data);
-            }
-          },
-          onUpdate: function onUpdate(data) {
-            return _this._handlePopperPlacementChange(data);
-          }
-        });
+        this._popper = new Popper(this.element, tip, this._getPopperConfig(attachment));
         $(tip).addClass(ClassName$6.SHOW); // If this is a touch-enabled device we add extra
         // empty mouseover listeners to the body's immediate children;
         // only needed because of broken event delegation on iOS
@@ -11968,14 +12044,43 @@ module.exports = function isBuffer (obj) {
     } // Private
     ;
 
-    _proto._getOffset = function _getOffset() {
+    _proto._getPopperConfig = function _getPopperConfig(attachment) {
       var _this3 = this;
+
+      var defaultBsConfig = {
+        placement: attachment,
+        modifiers: {
+          offset: this._getOffset(),
+          flip: {
+            behavior: this.config.fallbackPlacement
+          },
+          arrow: {
+            element: Selector$6.ARROW
+          },
+          preventOverflow: {
+            boundariesElement: this.config.boundary
+          }
+        },
+        onCreate: function onCreate(data) {
+          if (data.originalPlacement !== data.placement) {
+            _this3._handlePopperPlacementChange(data);
+          }
+        },
+        onUpdate: function onUpdate(data) {
+          return _this3._handlePopperPlacementChange(data);
+        }
+      };
+      return _objectSpread2({}, defaultBsConfig, {}, this.config.popperConfig);
+    };
+
+    _proto._getOffset = function _getOffset() {
+      var _this4 = this;
 
       var offset = {};
 
       if (typeof this.config.offset === 'function') {
         offset.fn = function (data) {
-          data.offsets = _objectSpread({}, data.offsets, _this3.config.offset(data.offsets, _this3.element) || {});
+          data.offsets = _objectSpread2({}, data.offsets, {}, _this4.config.offset(data.offsets, _this4.element) || {});
           return data;
         };
       } else {
@@ -12002,32 +12107,35 @@ module.exports = function isBuffer (obj) {
     };
 
     _proto._setListeners = function _setListeners() {
-      var _this4 = this;
+      var _this5 = this;
 
       var triggers = this.config.trigger.split(' ');
       triggers.forEach(function (trigger) {
         if (trigger === 'click') {
-          $(_this4.element).on(_this4.constructor.Event.CLICK, _this4.config.selector, function (event) {
-            return _this4.toggle(event);
+          $(_this5.element).on(_this5.constructor.Event.CLICK, _this5.config.selector, function (event) {
+            return _this5.toggle(event);
           });
         } else if (trigger !== Trigger.MANUAL) {
-          var eventIn = trigger === Trigger.HOVER ? _this4.constructor.Event.MOUSEENTER : _this4.constructor.Event.FOCUSIN;
-          var eventOut = trigger === Trigger.HOVER ? _this4.constructor.Event.MOUSELEAVE : _this4.constructor.Event.FOCUSOUT;
-          $(_this4.element).on(eventIn, _this4.config.selector, function (event) {
-            return _this4._enter(event);
-          }).on(eventOut, _this4.config.selector, function (event) {
-            return _this4._leave(event);
+          var eventIn = trigger === Trigger.HOVER ? _this5.constructor.Event.MOUSEENTER : _this5.constructor.Event.FOCUSIN;
+          var eventOut = trigger === Trigger.HOVER ? _this5.constructor.Event.MOUSELEAVE : _this5.constructor.Event.FOCUSOUT;
+          $(_this5.element).on(eventIn, _this5.config.selector, function (event) {
+            return _this5._enter(event);
+          }).on(eventOut, _this5.config.selector, function (event) {
+            return _this5._leave(event);
           });
-        }
-      });
-      $(this.element).closest('.modal').on('hide.bs.modal', function () {
-        if (_this4.element) {
-          _this4.hide();
         }
       });
 
+      this._hideModalHandler = function () {
+        if (_this5.element) {
+          _this5.hide();
+        }
+      };
+
+      $(this.element).closest('.modal').on('hide.bs.modal', this._hideModalHandler);
+
       if (this.config.selector) {
-        this.config = _objectSpread({}, this.config, {
+        this.config = _objectSpread2({}, this.config, {
           trigger: 'manual',
           selector: ''
         });
@@ -12127,7 +12235,7 @@ module.exports = function isBuffer (obj) {
           delete dataAttributes[dataAttr];
         }
       });
-      config = _objectSpread({}, this.constructor.Default, dataAttributes, typeof config === 'object' && config ? config : {});
+      config = _objectSpread2({}, this.constructor.Default, {}, dataAttributes, {}, typeof config === 'object' && config ? config : {});
 
       if (typeof config.delay === 'number') {
         config.delay = {
@@ -12287,21 +12395,21 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$7 = 'popover';
-  var VERSION$7 = '4.3.1';
+  var VERSION$7 = '4.4.1';
   var DATA_KEY$7 = 'bs.popover';
   var EVENT_KEY$7 = "." + DATA_KEY$7;
   var JQUERY_NO_CONFLICT$7 = $.fn[NAME$7];
   var CLASS_PREFIX$1 = 'bs-popover';
   var BSCLS_PREFIX_REGEX$1 = new RegExp("(^|\\s)" + CLASS_PREFIX$1 + "\\S+", 'g');
 
-  var Default$5 = _objectSpread({}, Tooltip.Default, {
+  var Default$5 = _objectSpread2({}, Tooltip.Default, {
     placement: 'right',
     trigger: 'click',
     content: '',
     template: '<div class="popover" role="tooltip">' + '<div class="arrow"></div>' + '<h3 class="popover-header"></h3>' + '<div class="popover-body"></div></div>'
   });
 
-  var DefaultType$5 = _objectSpread({}, Tooltip.DefaultType, {
+  var DefaultType$5 = _objectSpread2({}, Tooltip.DefaultType, {
     content: '(string|element|function)'
   });
 
@@ -12324,13 +12432,12 @@ module.exports = function isBuffer (obj) {
     FOCUSOUT: "focusout" + EVENT_KEY$7,
     MOUSEENTER: "mouseenter" + EVENT_KEY$7,
     MOUSELEAVE: "mouseleave" + EVENT_KEY$7
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Popover =
   /*#__PURE__*/
@@ -12474,7 +12581,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$8 = 'scrollspy';
-  var VERSION$8 = '4.3.1';
+  var VERSION$8 = '4.4.1';
   var DATA_KEY$8 = 'bs.scrollspy';
   var EVENT_KEY$8 = "." + DATA_KEY$8;
   var DATA_API_KEY$6 = '.data-api';
@@ -12513,13 +12620,12 @@ module.exports = function isBuffer (obj) {
   var OffsetMethod = {
     OFFSET: 'offset',
     POSITION: 'position'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var ScrollSpy =
   /*#__PURE__*/
@@ -12601,7 +12707,7 @@ module.exports = function isBuffer (obj) {
     ;
 
     _proto._getConfig = function _getConfig(config) {
-      config = _objectSpread({}, Default$6, typeof config === 'object' && config ? config : {});
+      config = _objectSpread2({}, Default$6, {}, typeof config === 'object' && config ? config : {});
 
       if (typeof config.target !== 'string') {
         var id = $(config.target).attr('id');
@@ -12781,7 +12887,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$9 = 'tab';
-  var VERSION$9 = '4.3.1';
+  var VERSION$9 = '4.4.1';
   var DATA_KEY$9 = 'bs.tab';
   var EVENT_KEY$9 = "." + DATA_KEY$9;
   var DATA_API_KEY$7 = '.data-api';
@@ -12808,13 +12914,12 @@ module.exports = function isBuffer (obj) {
     DATA_TOGGLE: '[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]',
     DROPDOWN_TOGGLE: '.dropdown-toggle',
     DROPDOWN_ACTIVE_CHILD: '> .dropdown-menu .active'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Tab =
   /*#__PURE__*/
@@ -13016,7 +13121,7 @@ module.exports = function isBuffer (obj) {
    */
 
   var NAME$a = 'toast';
-  var VERSION$a = '4.3.1';
+  var VERSION$a = '4.4.1';
   var DATA_KEY$a = 'bs.toast';
   var EVENT_KEY$a = "." + DATA_KEY$a;
   var JQUERY_NO_CONFLICT$a = $.fn[NAME$a];
@@ -13045,13 +13150,12 @@ module.exports = function isBuffer (obj) {
   };
   var Selector$a = {
     DATA_DISMISS: '[data-dismiss="toast"]'
-    /**
-     * ------------------------------------------------------------------------
-     * Class Definition
-     * ------------------------------------------------------------------------
-     */
-
   };
+  /**
+   * ------------------------------------------------------------------------
+   * Class Definition
+   * ------------------------------------------------------------------------
+   */
 
   var Toast =
   /*#__PURE__*/
@@ -13071,7 +13175,12 @@ module.exports = function isBuffer (obj) {
     _proto.show = function show() {
       var _this = this;
 
-      $(this._element).trigger(Event$a.SHOW);
+      var showEvent = $.Event(Event$a.SHOW);
+      $(this._element).trigger(showEvent);
+
+      if (showEvent.isDefaultPrevented()) {
+        return;
+      }
 
       if (this._config.animation) {
         this._element.classList.add(ClassName$a.FADE);
@@ -13085,11 +13194,15 @@ module.exports = function isBuffer (obj) {
         $(_this._element).trigger(Event$a.SHOWN);
 
         if (_this._config.autohide) {
-          _this.hide();
+          _this._timeout = setTimeout(function () {
+            _this.hide();
+          }, _this._config.delay);
         }
       };
 
       this._element.classList.remove(ClassName$a.HIDE);
+
+      Util.reflow(this._element);
 
       this._element.classList.add(ClassName$a.SHOWING);
 
@@ -13101,22 +13214,19 @@ module.exports = function isBuffer (obj) {
       }
     };
 
-    _proto.hide = function hide(withoutTimeout) {
-      var _this2 = this;
-
+    _proto.hide = function hide() {
       if (!this._element.classList.contains(ClassName$a.SHOW)) {
         return;
       }
 
-      $(this._element).trigger(Event$a.HIDE);
+      var hideEvent = $.Event(Event$a.HIDE);
+      $(this._element).trigger(hideEvent);
 
-      if (withoutTimeout) {
-        this._close();
-      } else {
-        this._timeout = setTimeout(function () {
-          _this2._close();
-        }, this._config.delay);
+      if (hideEvent.isDefaultPrevented()) {
+        return;
       }
+
+      this._close();
     };
 
     _proto.dispose = function dispose() {
@@ -13135,26 +13245,26 @@ module.exports = function isBuffer (obj) {
     ;
 
     _proto._getConfig = function _getConfig(config) {
-      config = _objectSpread({}, Default$7, $(this._element).data(), typeof config === 'object' && config ? config : {});
+      config = _objectSpread2({}, Default$7, {}, $(this._element).data(), {}, typeof config === 'object' && config ? config : {});
       Util.typeCheckConfig(NAME$a, config, this.constructor.DefaultType);
       return config;
     };
 
     _proto._setListeners = function _setListeners() {
-      var _this3 = this;
+      var _this2 = this;
 
       $(this._element).on(Event$a.CLICK_DISMISS, Selector$a.DATA_DISMISS, function () {
-        return _this3.hide(true);
+        return _this2.hide();
       });
     };
 
     _proto._close = function _close() {
-      var _this4 = this;
+      var _this3 = this;
 
       var complete = function complete() {
-        _this4._element.classList.add(ClassName$a.HIDE);
+        _this3._element.classList.add(ClassName$a.HIDE);
 
-        $(_this4._element).trigger(Event$a.HIDDEN);
+        $(_this3._element).trigger(Event$a.HIDDEN);
       };
 
       this._element.classList.remove(ClassName$a.SHOW);
@@ -13224,31 +13334,6 @@ module.exports = function isBuffer (obj) {
     return Toast._jQueryInterface;
   };
 
-  /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v4.3.1): index.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-   * --------------------------------------------------------------------------
-   */
-
-  (function () {
-    if (typeof $ === 'undefined') {
-      throw new TypeError('Bootstrap\'s JavaScript requires jQuery. jQuery must be included before Bootstrap\'s JavaScript.');
-    }
-
-    var version = $.fn.jquery.split(' ')[0].split('.');
-    var minMajor = 1;
-    var ltMajor = 2;
-    var minMinor = 9;
-    var minPatch = 1;
-    var maxMajor = 4;
-
-    if (version[0] < ltMajor && version[1] < minMinor || version[0] === minMajor && version[1] === minMinor && version[2] < minPatch || version[0] >= maxMajor) {
-      throw new Error('Bootstrap\'s JavaScript requires at least jQuery v1.9.1 but less than v4.0.0');
-    }
-  })();
-
-  exports.Util = Util;
   exports.Alert = Alert;
   exports.Button = Button;
   exports.Carousel = Carousel;
@@ -13260,10 +13345,11 @@ module.exports = function isBuffer (obj) {
   exports.Tab = Tab;
   exports.Toast = Toast;
   exports.Tooltip = Tooltip;
+  exports.Util = Util;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=bootstrap.js.map
 
 
@@ -52476,7 +52562,7 @@ return jQuery;
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/**!
  * @fileOverview Kickass library to create and place poppers near their reference elements.
- * @version 1.14.7
+ * @version 1.16.0
  * @license
  * Copyright (c) 2016 Federico Zivolo and contributors
  *
@@ -52498,16 +52584,17 @@ __webpack_require__.r(__webpack_exports__);
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof navigator !== 'undefined';
 
-var longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
-var timeoutDuration = 0;
-for (var i = 0; i < longerTimeoutBrowsers.length; i += 1) {
-  if (isBrowser && navigator.userAgent.indexOf(longerTimeoutBrowsers[i]) >= 0) {
-    timeoutDuration = 1;
-    break;
+var timeoutDuration = function () {
+  var longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
+  for (var i = 0; i < longerTimeoutBrowsers.length; i += 1) {
+    if (isBrowser && navigator.userAgent.indexOf(longerTimeoutBrowsers[i]) >= 0) {
+      return 1;
+    }
   }
-}
+  return 0;
+}();
 
 function microtaskDebounce(fn) {
   var called = false;
@@ -52625,6 +52712,17 @@ function getScrollParent(element) {
   }
 
   return getScrollParent(getParentNode(element));
+}
+
+/**
+ * Returns the reference node of the reference object, or the reference object itself.
+ * @method
+ * @memberof Popper.Utils
+ * @param {Element|Object} reference - the reference element (the popper will be relative to this)
+ * @returns {Element} parent
+ */
+function getReferenceNode(reference) {
+  return reference && reference.referenceNode ? reference.referenceNode : reference;
 }
 
 var isIE11 = isBrowser && !!(window.MSInputMethodContext && document.documentMode);
@@ -52935,8 +53033,8 @@ function getBoundingClientRect(element) {
 
   // subtract scrollbar size from sizes
   var sizes = element.nodeName === 'HTML' ? getWindowSizes(element.ownerDocument) : {};
-  var width = sizes.width || element.clientWidth || result.right - result.left;
-  var height = sizes.height || element.clientHeight || result.bottom - result.top;
+  var width = sizes.width || element.clientWidth || result.width;
+  var height = sizes.height || element.clientHeight || result.height;
 
   var horizScrollbar = element.offsetWidth - width;
   var vertScrollbar = element.offsetHeight - height;
@@ -53088,7 +53186,7 @@ function getBoundaries(popper, reference, padding, boundariesElement) {
   // NOTE: 1 DOM access here
 
   var boundaries = { top: 0, left: 0 };
-  var offsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, reference);
+  var offsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, getReferenceNode(reference));
 
   // Handle viewport case
   if (boundariesElement === 'viewport') {
@@ -53216,7 +53314,7 @@ function computeAutoPlacement(placement, refRect, popper, reference, boundariesE
 function getReferenceOffsets(state, popper, reference) {
   var fixedPosition = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
-  var commonOffsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, reference);
+  var commonOffsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, getReferenceNode(reference));
   return getOffsetRectRelativeToArbitraryNode(reference, commonOffsetParent, fixedPosition);
 }
 
@@ -53478,7 +53576,7 @@ function destroy() {
 
   this.disableEventListeners();
 
-  // remove the popper if user explicity asked for the deletion on destroy
+  // remove the popper if user explicitly asked for the deletion on destroy
   // do not use `remove` because IE11 doesn't support it
   if (this.options.removeOnDestroy) {
     this.popper.parentNode.removeChild(this.popper);
@@ -54080,7 +54178,14 @@ function flip(data, options) {
 
     // flip the variation if required
     var isVertical = ['top', 'bottom'].indexOf(placement) !== -1;
-    var flippedVariation = !!options.flipVariations && (isVertical && variation === 'start' && overflowsLeft || isVertical && variation === 'end' && overflowsRight || !isVertical && variation === 'start' && overflowsTop || !isVertical && variation === 'end' && overflowsBottom);
+
+    // flips variation if reference element overflows boundaries
+    var flippedVariationByRef = !!options.flipVariations && (isVertical && variation === 'start' && overflowsLeft || isVertical && variation === 'end' && overflowsRight || !isVertical && variation === 'start' && overflowsTop || !isVertical && variation === 'end' && overflowsBottom);
+
+    // flips variation if popper content overflows boundaries
+    var flippedVariationByContent = !!options.flipVariationsByContent && (isVertical && variation === 'start' && overflowsRight || isVertical && variation === 'end' && overflowsLeft || !isVertical && variation === 'start' && overflowsBottom || !isVertical && variation === 'end' && overflowsTop);
+
+    var flippedVariation = flippedVariationByRef || flippedVariationByContent;
 
     if (overlapsRef || overflowsBoundaries || flippedVariation) {
       // this boolean to detect any flip loop
@@ -54687,7 +54792,23 @@ var modifiers = {
      * The popper will never be placed outside of the defined boundaries
      * (except if `keepTogether` is enabled)
      */
-    boundariesElement: 'viewport'
+    boundariesElement: 'viewport',
+    /**
+     * @prop {Boolean} flipVariations=false
+     * The popper will switch placement variation between `-start` and `-end` when
+     * the reference element overlaps its boundaries.
+     *
+     * The original placement should have a set variation.
+     */
+    flipVariations: false,
+    /**
+     * @prop {Boolean} flipVariationsByContent=false
+     * The popper will switch placement variation between `-start` and `-end` when
+     * the popper element overlaps its reference boundaries.
+     *
+     * The original placement should have a set variation.
+     */
+    flipVariationsByContent: false
   },
 
   /**
@@ -54904,8 +55025,8 @@ var Popper = function () {
   /**
    * Creates a new Popper.js instance.
    * @class Popper
-   * @param {HTMLElement|referenceObject} reference - The reference element used to position the popper
-   * @param {HTMLElement} popper - The HTML element used as the popper
+   * @param {Element|referenceObject} reference - The reference element used to position the popper
+   * @param {Element} popper - The HTML / XML element used as the popper
    * @param {Object} options - Your custom options to override the ones defined in [Defaults](#defaults)
    * @return {Object} instance - The generated Popper.js instance
    */
@@ -55263,12 +55384,12 @@ process.umask = function() { return 0; };
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * ScrollMagic v2.0.6 (2018-10-08)
+ * ScrollMagic v2.0.7 (2019-05-07)
  * The javascript library for magical scroll interactions.
- * (c) 2018 Jan Paepke (@janpaepke)
+ * (c) 2019 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.6
+ * @version 2.0.7
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -55293,7 +55414,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
 
-	ScrollMagic.version = "2.0.6";
+	ScrollMagic.version = "2.0.7";
 
 	// TODO: temporary workaround for chrome's scroll jitter bug
 	window.addEventListener("mousewheel", function () {});
@@ -55318,51 +55439,51 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
 	 * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollMagic.Scene}.
 	 * @param {number} [options.loglevel=2] Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
-	 ** `0` => silent
-	 ** `1` => errors
-	 ** `2` => errors, warnings
-	 ** `3` => errors, warnings, debuginfo
+											 ** `0` => silent
+											 ** `1` => errors
+											 ** `2` => errors, warnings
+											 ** `3` => errors, warnings, debuginfo
 	 * @param {boolean} [options.refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
-	 This interval polls these parameters to fire the necessary events.  
-	 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
+	 																										 This interval polls these parameters to fire the necessary events.  
+	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	ScrollMagic.Controller = function (options) {
-/*
-	 * ----------------------------------------------------------------
-	 * settings
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * settings
+		 * ----------------------------------------------------------------
+		 */
 		var
-		NAMESPACE = 'ScrollMagic.Controller',
+			NAMESPACE = 'ScrollMagic.Controller',
 			SCROLL_DIRECTION_FORWARD = 'FORWARD',
 			SCROLL_DIRECTION_REVERSE = 'REVERSE',
 			SCROLL_DIRECTION_PAUSED = 'PAUSED',
 			DEFAULT_OPTIONS = CONTROLLER_OPTIONS.defaults;
 
-/*
-	 * ----------------------------------------------------------------
-	 * private vars
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * private vars
+		 * ----------------------------------------------------------------
+		 */
 		var
-		Controller = this,
+			Controller = this,
 			_options = _util.extend({}, DEFAULT_OPTIONS, options),
 			_sceneObjects = [],
-			_updateScenesOnNextCycle = false,
-			// can be boolean (true => all scenes) or an array of scenes to be updated
+			_updateScenesOnNextCycle = false, // can be boolean (true => all scenes) or an array of scenes to be updated
 			_scrollPos = 0,
 			_scrollDirection = SCROLL_DIRECTION_PAUSED,
 			_isDocument = true,
 			_viewPortSize = 0,
 			_enabled = true,
-			_updateTimeout, _refreshTimeout;
+			_updateTimeout,
+			_refreshTimeout;
 
-/*
-	 * ----------------------------------------------------------------
-	 * private functions
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * private functions
+		 * ----------------------------------------------------------------
+		 */
 
 		/**
 		 * Internal constructor function of the ScrollMagic Controller
@@ -55647,27 +55768,27 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		};
 
 		/**
-		 * Update one ore more scene(s) according to the scroll position of the container.  
-		 * This is the equivalent to `Scene.update()`.  
-		 * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
-		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.  
-		 * _**Note:** This method gets called constantly whenever Controller detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
-		 * @public
-		 * @example
-		 * // update a specific scene on next cycle
-		 * controller.updateScene(scene);
-		 *
-		 * // update a specific scene immediately
-		 * controller.updateScene(scene, true);
-		 *
-		 * // update multiple scenes scene on next cycle
-		 * controller.updateScene([scene1, scene2, scene3]);
-		 *
-		 * @param {ScrollMagic.Scene} Scene - ScrollMagic Scene or Array of Scenes that is/are supposed to be updated.
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle.  
-		 This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (updateScenes).
-		 * @return {Controller} Parent object for chaining.
-		 */
+	 * Update one ore more scene(s) according to the scroll position of the container.  
+	 * This is the equivalent to `Scene.update()`.  
+	 * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
+	 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.  
+	 * _**Note:** This method gets called constantly whenever Controller detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
+	 * @public
+	 * @example
+	 * // update a specific scene on next cycle
+ 	 * controller.updateScene(scene);
+ 	 *
+	 * // update a specific scene immediately
+	 * controller.updateScene(scene, true);
+ 	 *
+	 * // update multiple scenes scene on next cycle
+	 * controller.updateScene([scene1, scene2, scene3]);
+	 *
+	 * @param {ScrollMagic.Scene} Scene - ScrollMagic Scene or Array of Scenes that is/are supposed to be updated.
+	 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle.  
+	 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (updateScenes).
+	 * @return {Controller} Parent object for chaining.
+	 */
 		this.updateScene = function (Scene, immediately) {
 			if (_util.type.Array(Scene)) {
 				Scene.forEach(function (scene, index) {
@@ -55798,10 +55919,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 					}
 
 					var
-					param = _options.vertical ? "top" : "left",
-						// which param is of interest ?
-						containerOffset = _util.get.offset(_options.container),
-						// container position is needed because element offset is returned in relation to document, not in relation to container.
+						param = _options.vertical ? "top" : "left", // which param is of interest ?
+						containerOffset = _util.get.offset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 						elementOffset = _util.get.offset(elem);
 
 					if (!_isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
@@ -55869,19 +55988,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		 * var infos = controller.info();
 		 *
 		 * @param {string} [about] - If passed only this info will be returned instead of an object containing all.  
-		 Valid options are:
-		 ** `"size"` => the current viewport size of the container
-		 ** `"vertical"` => true if vertical scrolling, otherwise false
-		 ** `"scrollPos"` => the current scroll position
-		 ** `"scrollDirection"` => the last known direction of the scroll
-		 ** `"container"` => the container element
-		 ** `"isDocument"` => true if container element is the document.
+		 							 Valid options are:
+		 							 ** `"size"` => the current viewport size of the container
+		 							 ** `"vertical"` => true if vertical scrolling, otherwise false
+		 							 ** `"scrollPos"` => the current scroll position
+		 							 ** `"scrollDirection"` => the last known direction of the scroll
+		 							 ** `"container"` => the container element
+		 							 ** `"isDocument"` => true if container element is the document.
 		 * @returns {(mixed|object)} The requested info(s).
 		 */
 		this.info = function (about) {
 			var values = {
-				size: _viewPortSize,
-				// contains height or width (in regard to orientation);
+				size: _viewPortSize, // contains height or width (in regard to orientation);
 				vertical: _options.vertical,
 				scrollPos: _scrollPos,
 				scrollDirection: _scrollDirection,
@@ -55940,7 +56058,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			if (!arguments.length) { // get
 				return _enabled;
 			} else if (_enabled != newState) { // set
-				_enabled = !! newState;
+				_enabled = !!newState;
 				Controller.updateScene(_sceneObjects, true);
 			}
 			return Controller;
@@ -55988,9 +56106,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			refreshInterval: 100
 		}
 	};
-/*
- * method used to add an option to ScrollMagic Scenes.
- */
+	/*
+	 * method used to add an option to ScrollMagic Scenes.
+	 */
 	ScrollMagic.Controller.addOption = function (name, defaultValue) {
 		CONTROLLER_OPTIONS.defaults[name] = defaultValue;
 	};
@@ -56027,60 +56145,59 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * });
 	 *
 	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.  
-	 Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
-	 When a scene is added to the controller the options defined using the Scene constructor will be overwritten by those set in `globalSceneOptions`.
-	 * @param {(number|function)} [options.duration=0] - The duration of the scene. 
-	 If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.  
-	 A function retuning the duration value is also supported. Please see `Scene.duration()` for details.
+	 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
+	 							   When a scene is added to the controller the options defined using the Scene constructor will be overwritten by those set in `globalSceneOptions`.
+	 * @param {(number|string|function)} [options.duration=0] - The duration of the scene. 
+	 					Please see `Scene.duration()` for details.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
 	 * @param {(string|object)} [options.triggerElement=null] - Selector or DOM object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
 	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  
-	 Can also be defined using a string:
-	 ** `"onEnter"` => `1`
-	 ** `"onCenter"` => `0.5`
-	 ** `"onLeave"` => `0`
+	 															  Can also be defined using a string:
+	 															  ** `"onEnter"` => `1`
+	 															  ** `"onCenter"` => `0.5`
+	 															  ** `"onLeave"` => `0`
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
-	 ** `0` => silent
-	 ** `1` => errors
-	 ** `2` => errors, warnings
-	 ** `3` => errors, warnings, debuginfo
+	 										  ** `0` => silent
+	 										  ** `1` => errors
+	 										  ** `2` => errors, warnings
+	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
 	ScrollMagic.Scene = function (options) {
 
-/*
-	 * ----------------------------------------------------------------
-	 * settings
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * settings
+		 * ----------------------------------------------------------------
+		 */
 
 		var
-		NAMESPACE = 'ScrollMagic.Scene',
+			NAMESPACE = 'ScrollMagic.Scene',
 			SCENE_STATE_BEFORE = 'BEFORE',
 			SCENE_STATE_DURING = 'DURING',
 			SCENE_STATE_AFTER = 'AFTER',
 			DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
-/*
-	 * ----------------------------------------------------------------
-	 * private vars
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * private vars
+		 * ----------------------------------------------------------------
+		 */
 
 		var
-		Scene = this,
+			Scene = this,
 			_options = _util.extend({}, DEFAULT_OPTIONS, options),
 			_state = SCENE_STATE_BEFORE,
 			_progress = 0,
 			_scrollOffset = {
 				start: 0,
 				end: 0
-			},
-			// reflects the controllers's scroll position for the start and end of the scene respectively
+			}, // reflects the controllers's scroll position for the start and end of the scene respectively
 			_triggerPos = 0,
 			_enabled = true,
-			_durationUpdateMethod, _controller;
+			_durationUpdateMethod,
+			_controller;
 
 		/**
 		 * Internal constructor function of the ScrollMagic Scene
@@ -56101,11 +56218,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			validateOption();
 		};
 
-/*
- * ----------------------------------------------------------------
- * Event Management
- * ----------------------------------------------------------------
- */
+		/*
+		 * ----------------------------------------------------------------
+		 * Event Management
+		 * ----------------------------------------------------------------
+		 */
 
 		var _listeners = {};
 		/**
@@ -56349,7 +56466,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				names = names.trim().split(' ');
 				names.forEach(function (fullname) {
 					var
-					nameparts = fullname.split('.'),
+						nameparts = fullname.split('.'),
 						eventname = nameparts[0],
 						namespace = nameparts[1];
 					if (eventname != "*") { // disallow wildcards
@@ -56393,13 +56510,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			names = names.trim().split(' ');
 			names.forEach(function (fullname, key) {
 				var
-				nameparts = fullname.split('.'),
+					nameparts = fullname.split('.'),
 					eventname = nameparts[0],
 					namespace = nameparts[1] || '',
 					removeList = eventname === '*' ? Object.keys(_listeners) : [eventname];
 				removeList.forEach(function (remove) {
 					var
-					list = _listeners[remove] || [],
+						list = _listeners[remove] || [],
 						i = list.length;
 					while (i--) {
 						var listener = list[i];
@@ -56429,7 +56546,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		this.trigger = function (name, vars) {
 			if (name) {
 				var
-				nameparts = name.trim().split('.'),
+					nameparts = name.trim().split('.'),
 					eventname = nameparts[0],
 					namespace = nameparts[1],
 					listeners = _listeners[eventname];
@@ -56448,18 +56565,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		};
 
 		// set event listeners
-		Scene.on("change.internal", function (e) {
-			if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
-				if (e.what === "triggerElement") {
-					updateTriggerElementPosition();
-				} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
-					Scene.update();
+		Scene
+			.on("change.internal", function (e) {
+				if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
+					if (e.what === "triggerElement") {
+						updateTriggerElementPosition();
+					} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
+						Scene.update();
+					}
 				}
-			}
-		}).on("shift.internal", function (e) {
-			updateScrollOffset();
-			Scene.update(); // update scene to reflect new position
-		});
+			})
+			.on("shift.internal", function (e) {
+				updateScrollOffset();
+				Scene.update(); // update scene to reflect new position
+			});
 
 		/**
 		 * Send a debug message to the console.
@@ -56531,7 +56650,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			if (!arguments.length) { // get
 				return _enabled;
 			} else if (_enabled != newState) { // set
-				_enabled = !! newState;
+				_enabled = !!newState;
 				Scene.update(true);
 			}
 			return Scene;
@@ -56610,7 +56729,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				if (immediately) {
 					if (_controller.enabled() && _enabled) {
 						var
-						scrollPos = _controller.info("scrollPos"),
+							scrollPos = _controller.info("scrollPos"),
 							newProgress;
 
 						if (_options.duration > 0) {
@@ -56716,7 +56835,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				return _progress;
 			} else { // set
 				var
-				doUpdate = false,
+					doUpdate = false,
 					oldState = _state,
 					scrollDirection = _controller ? _controller.info("scrollDirection") : 'PAUSED',
 					reverseOrForward = _options.reverse || progress >= _progress;
@@ -56747,11 +56866,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				if (doUpdate) {
 					// fire events
 					var
-					eventVars = {
-						progress: _progress,
-						state: _state,
-						scrollDirection: scrollDirection
-					},
+						eventVars = {
+							progress: _progress,
+							state: _state,
+							scrollDirection: scrollDirection
+						},
 						stateChanged = _state != oldState;
 
 					var trigger = function (eventName) { // tmp helper to simplify code
@@ -56839,16 +56958,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		 */
 		var updateTriggerElementPosition = function (suppressEvents) {
 			var
-			elementPos = 0,
+				elementPos = 0,
 				telem = _options.triggerElement;
 			if (_controller && (telem || _triggerPos > 0)) { // either an element exists or was removed and the triggerPos is still > 0
 				if (telem) { // there currently a triggerElement set
 					if (telem.parentNode) { // check if element is still attached to DOM
 						var
-						controllerInfo = _controller.info(),
-							containerOffset = _util.get.offset(controllerInfo.container),
-							// container position is needed because element offset is returned in relation to document, not in relation to container.
+							controllerInfo = _controller.info(),
+							containerOffset = _util.get.offset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 							param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+
 						// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
 						while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
 							telem = telem.parentNode;
@@ -56905,7 +57024,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 					// function
 					_durationUpdateMethod = val;
 					try {
-						val = parseFloat(_durationUpdateMethod());
+						val = parseFloat(_durationUpdateMethod.call(Scene));
 					} catch (e) {
 						val = -1; // will cause error below
 					}
@@ -56958,7 +57077,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		 */
 		var changeOption = function (varname, newval) {
 			var
-			changed = false,
+				changed = false,
 				oldval = _options[varname];
 			if (_options[varname] != newval) {
 				_options[varname] = newval;
@@ -56997,13 +57116,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 		/**
 		 * **Get** or **Set** the duration option value.
-		 * As a setter it also accepts a function returning a numeric value.  
-		 * This is particularly useful for responsive setups.
 		 *
-		 * The duration is updated using the supplied function every time `Scene.refresh()` is called, which happens periodically from the controller (see ScrollMagic.Controller option `refreshInterval`).  
-		 * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
-		 * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
-		 * This counts double if you use the same function for multiple scenes._
+		 * As a **setter** it accepts three types of parameters:
+		 * 1. `number`: Sets the duration of the scene to exactly this amount of pixels.  
+		 *   This means the scene will last for exactly this amount of pixels scrolled. Sub-Pixels are also valid.
+		 *   A value of `0` means that the scene is 'open end' and no end will be triggered. Pins will never unpin and animations will play independently of scroll progress.
+		 * 2. `string`: Always updates the duration relative to parent scroll container.  
+		 *   For example `"100%"` will keep the duration always exactly at the inner height of the scroll container.
+		 *   When scrolling vertically the width is used for reference respectively.
+		 * 3. `function`: The supplied function will be called to return the scene duration.
+		 *   This is useful in setups where the duration depends on other elements who might change size. By supplying a function you can return a value instead of updating potentially multiple scene durations.  
+		 *   The scene can be referenced inside the callback using `this`.
+		 *   _**WARNING:** This is an easy way to kill performance, as the callback will be executed every time `Scene.refresh()` is called, which happens a lot. The interval is defined by the controller (see ScrollMagic.Controller option `refreshInterval`).  
+		 *   It's recomended to avoid calculations within the function and use cached variables as return values.  
+		 *   This counts double if you use the same function for multiple scenes._
 		 *
 		 * @method ScrollMagic.Scene#duration
 		 * @example
@@ -57013,21 +57139,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		 * // set a new duration
 		 * scene.duration(300);
 		 *
-		 * // use a function to automatically adjust the duration to the window height.
+		 * // set duration responsively to container size
+		 * scene.duration("100%");
+		 *
+		 * // use a function to randomize the duration for some reason.
 		 * var durationValueCache;
-		 * function getDuration () {
+		 * function durationCallback () {
 		 *   return durationValueCache;
 		 * }
-		 * function updateDuration (e) {
-		 *   durationValueCache = window.innerHeight;
+		 * function updateDuration () {
+		 *   durationValueCache = Math.random() * 100;
 		 * }
-		 * $(window).on("resize", updateDuration); // update the duration when the window size changes
-		 * $(window).triggerHandler("resize"); // set to initial value
-		 * scene.duration(getDuration); // supply duration method
+		 * updateDuration(); // set to initial value
+		 * scene.duration(durationCallback); // set duration callback
 		 *
 		 * @fires {@link Scene.change}, when used as setter
 		 * @fires {@link Scene.shift}, when used as setter
-		 * @param {(number|function)} [newDuration] - The new duration of the scene.
+		 * @param {(number|string|function)} [newDuration] - The new duration setting for the scene.
 		 * @returns {number} `get` -  Current scene duration.
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
@@ -57186,25 +57314,31 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			return pos;
 		};
 
-		var
-		_pin, _pinOptions;
 
-		Scene.on("shift.internal", function (e) {
-			var durationChanged = e.reason === "duration";
-			if ((_state === SCENE_STATE_AFTER && durationChanged) || (_state === SCENE_STATE_DURING && _options.duration === 0)) {
-				// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
+		var
+			_pin,
+			_pinOptions;
+
+		Scene
+			.on("shift.internal", function (e) {
+				var durationChanged = e.reason === "duration";
+				if ((_state === SCENE_STATE_AFTER && durationChanged) || (_state === SCENE_STATE_DURING && _options.duration === 0)) {
+					// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
+					updatePinState();
+				}
+				if (durationChanged) {
+					updatePinDimensions();
+				}
+			})
+			.on("progress.internal", function (e) {
 				updatePinState();
-			}
-			if (durationChanged) {
+			})
+			.on("add.internal", function (e) {
 				updatePinDimensions();
-			}
-		}).on("progress.internal", function (e) {
-			updatePinState();
-		}).on("add.internal", function (e) {
-			updatePinDimensions();
-		}).on("destroy.internal", function (e) {
-			Scene.removePin(e.reset);
-		});
+			})
+			.on("destroy.internal", function (e) {
+				Scene.removePin(e.reset);
+			});
 		/**
 		 * Update the pin state.
 		 * @private
@@ -57212,8 +57346,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		var updatePinState = function (forceUnpin) {
 			if (_pin && _controller) {
 				var
-				containerInfo = _controller.info(),
+					containerInfo = _controller.info(),
 					pinTarget = _pinOptions.spacer.firstChild; // may be pin element or another spacer, if cascading pins
+
 				if (!forceUnpin && _state === SCENE_STATE_DURING) { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
 					if (_util.css(pinTarget, "position") != "fixed") {
@@ -57226,10 +57361,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 					}
 
 					var
-					fixedPos = _util.get.offset(_pinOptions.spacer, true),
-						// get viewport position of spacer
-						scrollDistance = _options.reverse || _options.duration === 0 ? containerInfo.scrollPos - _scrollOffset.start // quicker
-						: Math.round(_progress * _options.duration * 10) / 10; // if no reverse and during pin the position needs to be recalculated using the progress
+						fixedPos = _util.get.offset(_pinOptions.spacer, true), // get viewport position of spacer
+						scrollDistance = _options.reverse || _options.duration === 0 ?
+						containerInfo.scrollPos - _scrollOffset.start // quicker
+						:
+						Math.round(_progress * _options.duration * 10) / 10; // if no reverse and during pin the position needs to be recalculated using the progress
+
 					// add scrollDistance
 					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
@@ -57241,11 +57378,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				} else {
 					// unpinned state
 					var
-					newCSS = {
-						position: _pinOptions.inFlow ? "relative" : "absolute",
-						top: 0,
-						left: 0
-					},
+						newCSS = {
+							position: _pinOptions.inFlow ? "relative" : "absolute",
+							top: 0,
+							left: 0
+						},
 						change = _util.css(pinTarget, "position") != newCSS.position;
 
 					if (!_pinOptions.pushFollowers) {
@@ -57275,12 +57412,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		var updatePinDimensions = function () {
 			if (_pin && _controller && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 				var
-				after = (_state === SCENE_STATE_AFTER),
+					after = (_state === SCENE_STATE_AFTER),
 					before = (_state === SCENE_STATE_BEFORE),
 					during = (_state === SCENE_STATE_DURING),
 					vertical = _controller.info("vertical"),
-					pinTarget = _pinOptions.spacer.firstChild,
-					// usually the pined element but can also be another spacer (cascaded pins)
+					pinTarget = _pinOptions.spacer.firstChild, // usually the pined element but can also be another spacer (cascaded pins)
 					marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 					css = {};
 
@@ -57347,9 +57483,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		 */
 		var updateRelativePinSpacer = function () {
 			if (_controller && _pin && // well, duh
-			_state === SCENE_STATE_DURING && // element in pinned state?
-			( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-			((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) || (_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode)))) {
+				_state === SCENE_STATE_DURING && // element in pinned state?
+				( // is width or height relatively sized, but not in relation to body? then we need to recalc.
+					((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) ||
+					(_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode))
+				)
+			) {
 				updatePinDimensions();
 			}
 		};
@@ -57367,7 +57506,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		};
 
 		/**
-		 * Pin an element for the duration of the tween.  
+		 * Pin an element for the duration of the scene.
 		 * If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.  
 		 * Make sure only one pin is applied to an element at the same time.
 		 * An element can be pinned multiple times, but only successively.
@@ -57383,17 +57522,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		 * @param {(string|object)} element - A Selector targeting an element or a DOM object that is supposed to be pinned.
 		 * @param {object} [settings] - settings for the pin
 		 * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
-		 Ignored, when duration is `0`.
+		 												   Ignored, when duration is `0`.
 		 * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element.
 		 *
 		 * @returns {Scene} Parent object for chaining.
 		 */
 		this.setPin = function (element, settings) {
 			var
-			defaultSettings = {
-				pushFollowers: true,
-				spacerClass: "scrollmagic-pin-spacer"
-			};
+				defaultSettings = {
+					pushFollowers: true,
+					spacerClass: "scrollmagic-pin-spacer"
+				};
+			var pushFollowersActivelySet = settings && settings.hasOwnProperty('pushFollowers');
 			settings = _util.extend({}, defaultSettings, settings);
 
 			// validate Element
@@ -57419,28 +57559,29 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 			_pin = element;
 
 			var
-			parentDisplay = _pin.parentNode.style.display,
+				parentDisplay = _pin.parentNode.style.display,
 				boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
 
 			_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 			var
-			inFlow = _util.css(_pin, "position") != "absolute",
+				inFlow = _util.css(_pin, "position") != "absolute",
 				pinCSS = _util.css(_pin, boundsParams.concat(["display"])),
 				sizeCSS = _util.css(_pin, ["width", "height"]);
 			_pin.parentNode.style.display = parentDisplay; // hack end.
+
 			if (!inFlow && settings.pushFollowers) {
 				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers will be disabled.");
 				settings.pushFollowers = false;
 			}
 			window.setTimeout(function () { // wait until all finished, because with responsive duration it will only be set after scene is added to controller
-				if (_pin && _options.duration === 0 && settings.pushFollowers) {
+				if (_pin && _options.duration === 0 && pushFollowersActivelySet && settings.pushFollowers) {
 					log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
 				}
 			}, 0);
 
 			// create spacer and insert
 			var
-			spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin),
+				spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin),
 				spacerCSS = _util.extend(pinCSS, {
 					position: inFlow ? "relative" : "absolute",
 					boxSizing: "content-box",
@@ -57465,14 +57606,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 					autoFullWidth: sizeCSS.width === "auto" && inFlow && _util.isMarginCollapseType(pinCSS.display)
 				},
 				pushFollowers: settings.pushFollowers,
-				inFlow: inFlow,
-				// stores if the element takes up space in the document flow
+				inFlow: inFlow, // stores if the element takes up space in the document flow
 			};
 
 			if (!_pin.___origStyle) {
 				_pin.___origStyle = {};
 				var
-				pinInlineCSS = _pin.style,
+					pinInlineCSS = _pin.style,
 					copyStyles = boundsParams.concat(["width", "height", "position", "boxSizing", "mozBoxSizing", "webkitBoxSizing"]);
 				copyStyles.forEach(function (val) {
 					_pin.___origStyle[val] = pinInlineCSS[val] || "";
@@ -57549,7 +57689,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 					var pinTarget = _pinOptions.spacer.firstChild; // usually the pin element, but may be another spacer (cascaded pins)...
 					if (pinTarget.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
 						var
-						style = _pinOptions.spacer.style,
+							style = _pinOptions.spacer.style,
 							values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
 							margins = {};
 						values.forEach(function (val) {
@@ -57578,11 +57718,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 
 		var
-		_cssClasses, _cssClassElems = [];
+			_cssClasses,
+			_cssClassElems = [];
 
-		Scene.on("destroy.internal", function (e) {
-			Scene.removeClassToggle(e.reset);
-		});
+		Scene
+			.on("destroy.internal", function (e) {
+				Scene.removeClassToggle(e.reset);
+			});
 		/**
 		 * Define a css class modification while the scene is active.  
 		 * When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
@@ -57706,15 +57848,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				}
 				return val;
 			}
-		},
-		// holder for  validation methods. duration validation is handled in 'getters-setters.js'
-		shifts: ["duration", "offset", "triggerHook"],
-		// list of options that trigger a `shift` event
+		}, // holder for  validation methods. duration validation is handled in 'getters-setters.js'
+		shifts: ["duration", "offset", "triggerHook"], // list of options that trigger a `shift` event
 	};
-/*
- * method used to add an option to ScrollMagic Scenes.
- * TODO: DOC (private for dev)
- */
+	/*
+	 * method used to add an option to ScrollMagic Scenes.
+	 * TODO: DOC (private for dev)
+	 */
 	ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, shifts) {
 		if (!(name in SCENE_OPTIONS.defaults)) {
 			SCENE_OPTIONS.defaults[name] = defaultValue;
@@ -57760,9 +57900,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		return this;
 	};
 
-/*
- * TODO: DOCS (private for dev)
- */
+	/*
+	 * TODO: DOCS (private for dev)
+	 */
 
 	var _util = ScrollMagic._util = (function (window) {
 		var U = {},
@@ -57836,7 +57976,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		// implementation of requestAnimationFrame
 		// based on https://gist.github.com/paulirish/1579671
 		var
-		lastTime = 0,
+			lastTime = 0,
 			vendors = ['ms', 'moz', 'webkit', 'o'];
 		var _requestAnimationFrame = window.requestAnimationFrame;
 		var _cancelAnimationFrame = window.cancelAnimationFrame;
@@ -57850,7 +57990,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		if (!_requestAnimationFrame) {
 			_requestAnimationFrame = function (callback) {
 				var
-				currTime = new Date().getTime(),
+					currTime = new Date().getTime(),
 					timeToCall = Math.max(0, 16 - (currTime - lastTime)),
 					id = window.setTimeout(function () {
 						callback(currTime + timeToCall);
@@ -57868,11 +58008,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		U.cAF = _cancelAnimationFrame.bind(window);
 
 		var
-		loglevels = ["error", "warn", "log"],
+			loglevels = ["error", "warn", "log"],
 			console = window.console || {};
 
-		console.log = console.log ||
-		function () {}; // no console log, well - do nothing then...
+		console.log = console.log || function () {}; // no console log, well - do nothing then...
 		// make sure methods for all levels exist.
 		for (i = 0; i < loglevels.length; i++) {
 			var method = loglevels[i];
@@ -57914,8 +58053,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		};
 		_type.DomElement = function (o) {
 			return (
-			typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-			o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
+				typeof HTMLElement === "object" || typeof HTMLElement === "function" ? o instanceof HTMLElement || o instanceof SVGElement : //DOM2
+				o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
+			);
 		};
 
 		/**
@@ -57934,7 +58074,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 					return arr;
 				}
 			}
-			if (_type(selector) === 'nodelist' || _type.Array(selector)) {
+			if (_type(selector) === 'nodelist' || _type.Array(selector) || selector instanceof NodeList) {
 				for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
 					var elem = selector[i];
 					arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively
@@ -57987,14 +58127,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 		U.addClass = function (elem, classname) {
 			if (classname) {
-				if (elem.classList) elem.classList.add(classname);
-				else elem.className += ' ' + classname;
+				if (elem.classList)
+					elem.classList.add(classname);
+				else
+					elem.className += ' ' + classname;
 			}
 		};
 		U.removeClass = function (elem, classname) {
 			if (classname) {
-				if (elem.classList) elem.classList.remove(classname);
-				else elem.className = elem.className.replace(new RegExp('(^|\\b)' + classname.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+				if (elem.classList)
+					elem.classList.remove(classname);
+				else
+					elem.className = elem.className.replace(new RegExp('(^|\\b)' + classname.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 			}
 		};
 		// if options is string -> returns css value
@@ -58005,7 +58149,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 				return _getComputedStyle(elem)[_camelCase(options)];
 			} else if (_type.Array(options)) {
 				var
-				obj = {},
+					obj = {},
 					style = _getComputedStyle(elem);
 				options.forEach(function (option, key) {
 					obj[option] = style[_camelCase(option)];
@@ -58024,6 +58168,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 		return U;
 	}(window || {}));
+
 
 	ScrollMagic.Scene.prototype.addIndicators = function () {
 		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling addIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
@@ -58062,8 +58207,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(e,t){ true?t(__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")):undefined}(this,function(e){"use strict";function t(e){return function(t){if(0===t.length)return!1;if(1===t.length)return!0;var n=e(t[0].value);return 0===t.filter(function(t){return 0!==e(t.value).indexOf(n)}).length}}function n(e,t){return function(n,i){var s,o=[];return t(i)&&(s=P.splitTokens(P.split(n,e)),v.each(i,function(t,i){var a=t.value;if(P.stringEncloses(n,a))return!1;var r=P.splitTokens(P.split(a,e));0===v.minus(s,r).length&&o.push(i)})),1===o.length?o[0]:-1}}function i(e,t){var n=e.data&&e.data[t];return n&&new RegExp("^"+P.escapeRegExChars(n)+"(["+C+"]|$)","i").test(e.value)}function s(e,t){var n=/<strong>/;return n.test(t)&&!n.test(e)?t:e}function o(e,t,n,i,o){var a=this;return s(a.highlightMatches(e,n,i,o),a.highlightMatches(t,n,i,o))}function a(e){this.urlSuffix=e.toLowerCase(),this.noSuggestionsHint="Неизвестное значение",this.matchers=[D.matchByNormalizedQuery(),D.matchByWords()]}function r(t,n){var i=this;i.element=t,i.el=e(t),i.suggestions=[],i.badQueries=[],i.selectedIndex=-1,i.currentValue=i.element.value,i.intervalId=0,i.cachedResponse={},i.enrichmentCache={},i.currentRequest=null,i.inputPhase=e.Deferred(),i.fetchPhase=e.Deferred(),i.enrichPhase=e.Deferred(),i.onChangeTimeout=null,i.triggering={},i.$wrapper=null,i.options=e.extend({},L,n),i.classes=S,i.disabled=!1,i.selection=null,i.$viewport=e(window),i.$body=e(document.body),i.type=null,i.status={},i.setupElement(),i.initializer=e.Deferred(),i.el.is(":visible")?i.initializer.resolve():i.deferInitialization(),i.initializer.done(e.proxy(i.initialize,i))}function l(){B.each(K,function(e){e.abort()}),K={}}function u(){J=null,L.geoLocation=X}function c(t){return e.map(t,function(e){var t=B.escapeHtml(e.text);return t&&e.matched&&(t="<strong>"+t+"</strong>"),t}).join("")}function d(t,n){var i=t.split(", ");return 1===i.length?t:e.map(i,function(e){return'<span class="'+n+'">'+e+"</span>"}).join(", ")}function f(t,n){var i=!1;return e.each(t,function(e,t){if(i=t.value==n.value&&t!=n)return!1}),i}function p(e,t){var n=t.selection,i=n&&n.data&&t.bounds;return i&&v.each(t.bounds.all,function(t,s){return i=n.data[t]===e.data[t]}),i}function h(e){var t=e.replace(/^(\d{2})(\d*?)(0+)$/g,"$1$2"),n=t.length,i=-1;return n<=2?i=2:n>2&&n<=5?i=5:n>5&&n<=8?i=8:n>8&&n<=11?i=11:n>11&&n<=15?i=15:n>15&&(i=19),P.padEnd(t,i,"0")}function g(e){this.plan=e.status.plan,this.isMobile=e.isMobile;var t=e.getContainer();this.element=ge.selectByClass(S.promo,t)}function m(){new g(this).show()}e=e&&"default"in e?e.default:e;var y={isArray:function(e){return Array.isArray(e)},isFunction:function(e){return"[object Function]"===Object.prototype.toString.call(e)},isEmptyObject:function(e){return 0===Object.keys(e).length&&e.constructor===Object},isPlainObject:function(e){return void 0!==e&&"object"==typeof e&&null!==e&&!e.nodeType&&e!==e.window&&!(e.constructor&&!Object.prototype.hasOwnProperty.call(e.constructor.prototype,"isPrototypeOf"))}},v={compact:function(e){return e.filter(function(e){return!!e})},each:function(e,t){if(Array.isArray(e))return void e.some(function(e,n){return!1===t(e,n)});Object.keys(e).some(function(n){var i=e[n];return!1===t(i,n)})},intersect:function(e,t){var n=[];return Array.isArray(e)&&Array.isArray(t)?e.filter(function(e){return-1!==t.indexOf(e)}):n},minus:function(e,t){return t&&0!==t.length?e.filter(function(e){return-1===t.indexOf(e)}):e},makeArray:function(e){return y.isArray(e)?Array.prototype.slice.call(e):[e]},minusWithPartialMatching:function(e,t){return t&&0!==t.length?e.filter(function(e){return!t.some(function(t){return 0===t.indexOf(e)})}):e},slice:function(e,t){return Array.prototype.slice.call(e,t)}},b={delay:function(e,t){return setTimeout(e,t||0)}},_={areSame:function e(t,n){var i=!0;return typeof t==typeof n&&("object"==typeof t&&null!=t&&null!=n?(v.each(t,function(t,s){return i=e(t,n[s])}),i):t===n)},assign:function(e,t){if("function"==typeof Object.assign)return Object.assign.apply(null,arguments);if(null==e)throw new TypeError("Cannot convert undefined or null to object");for(var n=Object(e),i=1;i<arguments.length;i++){var s=arguments[i];if(null!=s)for(var o in s)Object.prototype.hasOwnProperty.call(s,o)&&(n[o]=s[o])}return n},clone:function(e){return JSON.parse(JSON.stringify(e))},compact:function(e){var t=_.clone(e);return v.each(t,function(e,n){null!==e&&void 0!==e&&""!==e||delete t[n]}),t},fieldsAreNotEmpty:function(e,t){if(!y.isPlainObject(e))return!1;var n=!0;return v.each(t,function(t,i){return n=!!e[t]}),n},getDeepValue:function e(t,n){var i=n.split("."),s=i.shift();return t&&(i.length?e(t[s],i.join(".")):t[s])},indexObjectsById:function(e,t,n){var i={};return v.each(e,function(e,s){var o=e[t],a={};n&&(a[n]=s),i[o]=_.assign(a,e)}),i}},x={ENTER:13,ESC:27,TAB:9,SPACE:32,UP:38,DOWN:40},S={hint:"suggestions-hint",mobile:"suggestions-mobile",nowrap:"suggestions-nowrap",promo:"suggestions-promo",promo_desktop:"suggestions-promo-desktop",selected:"suggestions-selected",suggestion:"suggestions-suggestion",subtext:"suggestions-subtext",subtext_inline:"suggestions-subtext suggestions-subtext_inline",subtext_delimiter:"suggestions-subtext-delimiter",subtext_label:"suggestions-subtext suggestions-subtext_label",removeConstraint:"suggestions-remove",value:"suggestions-value"},w=".suggestions",C="\\s\"'~\\*\\.,:\\|\\[\\]\\(\\)\\{\\}<>№",E=new RegExp("["+C+"]+","g"),k=new RegExp("[\\-\\+\\\\\\?!@#$%^&]+","g"),P={escapeHtml:function(e){var t={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#x27;","/":"&#x2F;"};return e&&v.each(t,function(t,n){e=e.replace(new RegExp(n,"g"),t)}),e},escapeRegExChars:function(e){return e.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,"\\$&")},formatToken:function(e){return e&&e.toLowerCase().replace(/[ёЁ]/g,"е")},getWordExtractorRegExp:function(){return new RegExp("([^"+C+"]*)(["+C+"]*)","g")},normalize:function(e,t){return P.split(e,t).join(" ")},padEnd:function(e,t,n){return String.prototype.padEnd?e.padEnd(t,n):(t>>=0,n=String(void 0!==n?n:" "),e.length>t?String(e):(t-=e.length,t>n.length&&(n+=n.repeat(t/n.length)),String(e)+n.slice(0,t)))},split:function(e,t){e=e.toLowerCase(),e=e.replace("ё","е").replace(/(\d+)([а-я]{2,})/g,"$1 $2").replace(/([а-я]+)(\d+)/g,"$1 $2");var n=v.compact(e.split(E)),i=n.pop(),s=v.minus(n,t);return s.push(i),s},splitTokens:function(e){var t=[];return v.each(e,function(e,n){var i=e.split(k);t=t.concat(v.compact(i))}),t},stringEncloses:function(e,t){return e.length>t.length&&-1!==e.toLowerCase().indexOf(t.toLowerCase())},tokenize:function(e,t){var n=v.compact(P.formatToken(e).split(E)),i=v.minus(n,t),s=v.minus(n,i);return n=P.withSubTokens(i.concat(s))},withSubTokens:function(e){var t=[];return v.each(e,function(e,n){var i=e.split(k);t.push(e),i.length>1&&(t=t.concat(v.compact(i)))}),t}},T={Deferred:function(){return e.Deferred()},ajax:function(t){return e.ajax(t)},extend:function(){return e.extend.apply(null,arguments)},isJqObject:function(t){return t instanceof e},param:function(t){return e.param(t)},proxy:function(t,n){return e.proxy(t,n)},select:function(t){return e(t)},supportsCors:function(){return e.support.cors}},V={getDefaultType:function(){return T.supportsCors()?"POST":"GET"},getDefaultContentType:function(){return T.supportsCors()?"application/json":"application/x-www-form-urlencoded"},fixURLProtocol:function(e){return T.supportsCors()?e:e.replace(/^https?:/,location.protocol)},addUrlParams:function(e,t){return e+(/\?/.test(e)?"&":"?")+T.param(t)},serialize:function(e){return T.supportsCors()?JSON.stringify(e,function(e,t){return null===t?void 0:t}):(e=_.compact(e),T.param(e,!0))}},j=function(){var e=0;return function(t){return(t||"")+ ++e}}(),B={escapeRegExChars:P.escapeRegExChars,escapeHtml:P.escapeHtml,formatToken:P.formatToken,normalize:P.normalize,reWordExtractor:P.getWordExtractorRegExp,stringEncloses:P.stringEncloses,addUrlParams:V.addUrlParams,getDefaultContentType:V.getDefaultContentType,getDefaultType:V.getDefaultType,fixURLProtocol:V.fixURLProtocol,serialize:V.serialize,arrayMinus:v.minus,arrayMinusWithPartialMatching:v.minusWithPartialMatching,arraysIntersection:v.intersect,compact:v.compact,each:v.each,makeArray:v.makeArray,slice:v.slice,delay:b.delay,areSame:_.areSame,compactObject:_.compact,getDeepValue:_.getDeepValue,fieldsNotEmpty:_.fieldsAreNotEmpty,indexBy:_.indexObjectsById,isArray:y.isArray,isEmptyObject:y.isEmptyObject,isFunction:y.isFunction,isPlainObject:y.isPlainObject,uniqueId:j},L={autoSelectFirst:!1,serviceUrl:"https://suggestions.dadata.ru/suggestions/api/4_1/rs",url:null,onSearchStart:e.noop,onSearchComplete:e.noop,onSearchError:e.noop,onSuggestionsFetch:null,onSelect:null,onSelectNothing:null,onInvalidateSelection:null,minChars:1,deferRequestBy:100,enrichmentEnabled:!0,params:{},paramName:"query",timeout:3e3,formatResult:null,formatSelected:null,noCache:!1,containerClass:"suggestions-suggestions",tabDisabled:!1,triggerSelectOnSpace:!1,triggerSelectOnEnter:!0,triggerSelectOnBlur:!0,preventBadQueries:!1,hint:"Выберите вариант или продолжите ввод",noSuggestionsHint:null,type:null,requestMode:"suggest",count:5,$helpers:null,headers:null,scrollOnFocus:!0,mobileWidth:980,initializeInterval:100},O=t(function(e){return e}),R=t(function(e){return e.replace(/, (?:д|вл|двлд|к) .+$/,"")}),D={matchByNormalizedQuery:function(e){return function(t,n){var i=P.normalize(t,e),s=[];return v.each(n,function(n,o){var a=n.value.toLowerCase();return!P.stringEncloses(t,a)&&(!(a.indexOf(i)>0)&&void(i===P.normalize(a,e)&&s.push(o)))}),1===s.length?s[0]:-1}},matchByWords:function(e){return n(e,O)},matchByWordsAddress:function(e){return n(e,R)},matchByFields:function(e){return function(t,n){var i=P.splitTokens(P.split(t)),s=[];return 1===n.length&&(e&&v.each(e,function(e,t){var i=_.getDeepValue(n[0],t),o=i&&P.splitTokens(P.split(i,e));o&&o.length&&(s=s.concat(o))}),0===v.minusWithPartialMatching(i,s).length)?0:-1}}},I=["ао","аобл","дом","респ","а/я","аал","автодорога","аллея","арбан","аул","б-р","берег","бугор","вал","вл","волость","въезд","высел","г","городок","гск","д","двлд","днп","дор","дп","ж/д_будка","ж/д_казарм","ж/д_оп","ж/д_платф","ж/д_пост","ж/д_рзд","ж/д_ст","жилзона","жилрайон","жт","заезд","заимка","зона","к","казарма","канал","кв","кв-л","км","кольцо","комн","кордон","коса","кп","край","линия","лпх","м","массив","местность","мкр","мост","н/п","наб","нп","обл","округ","остров","оф","п","п/о","п/р","п/ст","парк","пгт","пер","переезд","пл","пл-ка","платф","погост","полустанок","починок","пр-кт","проезд","промзона","просек","просека","проселок","проток","протока","проулок","р-н","рзд","россия","рп","ряды","с","с/а","с/мо","с/о","с/п","с/с","сад","сквер","сл","снт","спуск","ст","ст-ца","стр","тер","тракт","туп","у","ул","уч-к","ф/х","ферма","х","ш","бульвар","владение","выселки","гаражно-строительный","город","деревня","домовладение","дорога","квартал","километр","комната","корпус","литер","леспромхоз","местечко","микрорайон","набережная","область","переулок","платформа","площадка","площадь","поселение","поселок","проспект","разъезд","район","республика","село","сельсовет","слобода","сооружение","станица","станция","строение","территория","тупик","улица","улус","участок","хутор","шоссе"],q=[{id:"kladr_id",fields:["kladr_id"],forBounds:!1,forLocations:!0},{id:"postal_code",fields:["postal_code"],forBounds:!1,forLocations:!0},{id:"country",fields:["country"],forBounds:!1,forLocations:!0},{id:"region_fias_id",fields:["region_fias_id"],forBounds:!1,forLocations:!0},{id:"region_type_full",fields:["region_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:2,zeros:11},fiasType:"region_fias_id"},{id:"region",fields:["region","region_type","region_type_full","region_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:2,zeros:11},fiasType:"region_fias_id"},{id:"area_fias_id",fields:["area_fias_id"],forBounds:!1,forLocations:!0},{id:"area_type_full",fields:["area_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:5,zeros:8},fiasType:"area_fias_id"},{id:"area",fields:["area","area_type","area_type_full","area_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:5,zeros:8},fiasType:"area_fias_id"},{id:"city_fias_id",fields:["city_fias_id"],forBounds:!1,forLocations:!0},{id:"city_type_full",fields:["city_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:8,zeros:5},fiasType:"city_fias_id"},{id:"city",fields:["city","city_type","city_type_full","city_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:8,zeros:5},fiasType:"city_fias_id"},{id:"city_district_fias_id",fields:["city_district_fias_id"],forBounds:!1,forLocations:!0},{id:"city_district_type_full",fields:["city_district_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"city_district_fias_id"},{id:"city_district",fields:["city_district","city_district_type","city_district_type_full","city_district_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"city_district_fias_id"},{id:"settlement_fias_id",fields:["settlement_fias_id"],forBounds:!1,forLocations:!0},{id:"settlement_type_full",fields:["settlement_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"settlement_fias_id"},{id:"settlement",fields:["settlement","settlement_type","settlement_type_full","settlement_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"settlement_fias_id"},{id:"street_fias_id",fields:["street_fias_id"],forBounds:!1,forLocations:!0},{id:"street_type_full",fields:["street_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:15,zeros:2},fiasType:"street_fias_id"},{id:"street",fields:["street","street_type","street_type_full","street_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:15,zeros:2},fiasType:"street_fias_id"},{id:"house",fields:["house","house_type","house_type_full","block","block_type"],forBounds:!0,forLocations:!1,kladrFormat:{digits:19}}],$={urlSuffix:"address",noSuggestionsHint:"Неизвестный адрес",matchers:[D.matchByNormalizedQuery(I),D.matchByWordsAddress(I)],dataComponents:q,dataComponentsById:_.indexObjectsById(q,"id","index"),unformattableTokens:I,enrichmentEnabled:!0,enrichmentMethod:"suggest",enrichmentParams:{count:1,locations:null,locations_boost:null,from_bound:null,to_bound:null},getEnrichmentQuery:function(e){return e.unrestricted_value},geoEnabled:!0,isDataComplete:function(e){var t=[this.bounds.to||"flat"],n=e.data;return!y.isPlainObject(n)||_.fieldsAreNotEmpty(n,t)},composeValue:function(e,t){var n=e.region_with_type||v.compact([e.region,e.region_type]).join(" ")||e.region_type_full,i=e.area_with_type||v.compact([e.area_type,e.area]).join(" ")||e.area_type_full,s=e.city_with_type||v.compact([e.city_type,e.city]).join(" ")||e.city_type_full,o=e.settlement_with_type||v.compact([e.settlement_type,e.settlement]).join(" ")||e.settlement_type_full,a=e.city_district_with_type||v.compact([e.city_district_type,e.city_district]).join(" ")||e.city_district_type_full,r=e.street_with_type||v.compact([e.street_type,e.street]).join(" ")||e.street_type_full,l=v.compact([e.house_type,e.house,e.block_type,e.block]).join(" "),u=v.compact([e.flat_type,e.flat]).join(" "),c=e.postal_box&&"а/я "+e.postal_box;return n===s&&(n=""),t&&t.saveCityDistrict||(t&&t.excludeCityDistrict?a="":a&&!e.city_district_fias_id&&(a="")),v.compact([n,i,s,a,o,r,l,u,c]).join(", ")},formatResult:function(){var e=[],t=!1;return q.forEach(function(n){t&&e.push(n.id),"city_district"===n.id&&(t=!0)}),function(t,n,i,s){var o,a,r,l=this,u=i.data&&i.data.city_district_with_type,c=s&&s.unformattableTokens,d=i.data&&i.data.history_values;return d&&d.length>0&&(o=P.tokenize(n,c),a=this.type.findUnusedTokens(o,t),(r=this.type.getFormattedHistoryValues(a,d))&&(t+=r)),t=l.highlightMatches(t,n,i,s),t=l.wrapFormattedValue(t,i),u&&(!l.bounds.own.length||l.bounds.own.indexOf("street")>=0)&&!y.isEmptyObject(l.copyDataComponents(i.data,e))&&(t+='<div class="'+l.classes.subtext+'">'+l.highlightMatches(u,n,i)+"</div>"),t}}(),findUnusedTokens:function(e,t){return e.filter(function(e){return-1===t.indexOf(e)})},getFormattedHistoryValues:function(e,t){var n=[],i="";return t.forEach(function(t){v.each(e,function(e){if(t.toLowerCase().indexOf(e)>=0)return n.push(t),!1})}),n.length>0&&(i=" (бывш. "+n.join(", ")+")"),i},getSuggestionValue:function(e,t){var n=null;return t.hasSameValues?n=e.options.restrict_value?this.getValueWithinConstraints(e,t.suggestion):e.bounds.own.length?this.getValueWithinBounds(e,t.suggestion):t.suggestion.unrestricted_value:t.hasBeenEnriched&&e.options.restrict_value&&(n=this.getValueWithinConstraints(e,t.suggestion,{excludeCityDistrict:!0})),n},getValueWithinConstraints:function(e,t,n){return this.composeValue(e.getUnrestrictedData(t.data),n)},getValueWithinBounds:function(e,t,n){var i=e.copyDataComponents(t.data,e.bounds.own.concat(["city_district_fias_id"]));return this.composeValue(i,n)}},F={urlSuffix:"fio",noSuggestionsHint:!1,matchers:[D.matchByNormalizedQuery(),D.matchByWords()],fieldNames:{surname:"фамилия",name:"имя",patronymic:"отчество"},isDataComplete:function(e){var t,n=this,s=n.options.params,o=e.data;return y.isFunction(s)&&(s=s.call(n.element,e.value)),s&&s.parts?t=s.parts.map(function(e){return e.toLowerCase()}):(t=["surname","name"],i(e,"surname")&&t.push("patronymic")),_.fieldsAreNotEmpty(o,t)},composeValue:function(e){return v.compact([e.surname,e.name,e.patronymic]).join(" ")}},A={LEGAL:[2,2,5,1],INDIVIDUAL:[2,2,6,2]},z={urlSuffix:"party",noSuggestionsHint:"Неизвестная организация",matchers:[D.matchByFields({value:null,"data.address.value":I,"data.inn":null,"data.ogrn":null})],dataComponents:q,enrichmentEnabled:!0,enrichmentMethod:"findById",enrichmentParams:{count:1,locations_boost:null},getEnrichmentQuery:function(e){return e.data.hid},geoEnabled:!0,formatResult:function(e,t,n,i){var a=this,r=a.type.formatResultInn.call(a,n,t),l=a.highlightMatches(_.getDeepValue(n.data,"ogrn"),t,n),u=s(r,l),c=a.highlightMatches(_.getDeepValue(n.data,"management.name"),t,n),d=_.getDeepValue(n.data,"address.value")||"";return a.isMobile&&((i||(i={})).maxLength=50),e=o.call(a,e,_.getDeepValue(n.data,"name.latin"),t,n,i),e=a.wrapFormattedValue(e,n),d&&(d=d.replace(/^(\d{6}?\s+|Россия,\s+)/i,""),d=a.isMobile?d.replace(new RegExp("^([^"+C+"]+["+C+"]+[^"+C+"]+).*"),"$1"):a.highlightMatches(d,t,n,{unformattableTokens:I})),(u||d||c)&&(e+='<div class="'+a.classes.subtext+'"><span class="'+a.classes.subtext_inline+'">'+(u||"")+"</span>"+(s(d,c)||"")+"</div>"),e},formatResultInn:function(e,t){var n,i,s=this,o=e.data&&e.data.inn,a=A[e.data&&e.data.type],r=/\d/;if(o)return i=s.highlightMatches(o,t,e),a&&(i=i.split(""),n=a.map(function(e){for(var t,n="";e&&(t=i.shift());)n+=t,r.test(t)&&e--;return n}),i=n.join('<span class="'+s.classes.subtext_delimiter+'"></span>')+i.join("")),i}},N={urlSuffix:"email",noSuggestionsHint:!1,matchers:[D.matchByNormalizedQuery()],isQueryRequestable:function(e){return this.options.suggest_local||e.indexOf("@")>=0}},M={urlSuffix:"bank",noSuggestionsHint:"Неизвестный банк",matchers:[D.matchByFields({value:null,"data.bic":null,"data.swift":null})],dataComponents:q,geoEnabled:!0,formatResult:function(e,t,n,i){var s=this,o=s.highlightMatches(_.getDeepValue(n.data,"bic"),t,n),a=_.getDeepValue(n.data,"address.value")||"";return e=s.highlightMatches(e,t,n,i),e=s.wrapFormattedValue(e,n),a&&(a=a.replace(/^\d{6}( РОССИЯ)?, /i,""),a=s.isMobile?a.replace(new RegExp("^([^"+C+"]+["+C+"]+[^"+C+"]+).*"),"$1"):s.highlightMatches(a,t,n,{unformattableTokens:I})),(o||a)&&(e+='<div class="'+s.classes.subtext+'"><span class="'+s.classes.subtext_inline+'">'+o+"</span>"+a+"</div>"),e},formatSelected:function(e){return _.getDeepValue(e,"data.name.payment")||null}},H={NAME:F,ADDRESS:$,PARTY:z,EMAIL:N,BANK:M};H.get=function(e){return H.hasOwnProperty(e)?H[e]:new a(e)},T.extend(L,{suggest_local:!0});var W={chains:{},on:function(e,t){return this.get(e).push(t),this},get:function(e){var t=this.chains;return t[e]||(t[e]=[])}},U={suggest:{defaultParams:{type:B.getDefaultType(),dataType:"json",contentType:B.getDefaultContentType()},addTypeInUrl:!0},iplocate:{defaultParams:{type:"GET",dataType:"json"},addTypeInUrl:!0},status:{defaultParams:{type:"GET",dataType:"json"},addTypeInUrl:!0},findById:{defaultParams:{type:B.getDefaultType(),dataType:"json",contentType:B.getDefaultContentType()},addTypeInUrl:!0}},Q={suggest:{method:"suggest",userSelect:!0,updateValue:!0,enrichmentEnabled:!0},findById:{method:"findById",userSelect:!1,updateValue:!1,enrichmentEnabled:!1}};r.prototype={initialize:function(){var e=this;e.uniqueId=B.uniqueId("i"),e.createWrapper(),e.notify("initialize"),e.bindWindowEvents(),e.setOptions(),e.fixPosition()},deferInitialization:function(){var e,t=this,n="mouseover focus keydown",i=function(){t.initializer.resolve(),t.enable()};t.initializer.always(function(){t.el.off(n,i),clearInterval(e)}),t.disabled=!0,t.el.on(n,i),e=setInterval(function(){t.el.is(":visible")&&i()},t.options.initializeInterval)},isInitialized:function(){return"resolved"===this.initializer.state()},dispose:function(){var e=this;e.initializer.reject(),e.notify("dispose"),e.el.removeData("suggestions").removeClass("suggestions-input"),e.unbindWindowEvents(),e.removeWrapper(),e.el.trigger("suggestions-dispose")},notify:function(t){var n=this,i=B.slice(arguments,1);return e.map(W.get(t),function(e){return e.apply(n,i)})},createWrapper:function(){var t=this;t.$wrapper=e('<div class="suggestions-wrapper"/>'),t.el.after(t.$wrapper),t.$wrapper.on("mousedown"+w,e.proxy(t.onMousedown,t))},removeWrapper:function(){var t=this;t.$wrapper&&t.$wrapper.remove(),e(t.options.$helpers).off(w)},onMousedown:function(t){var n=this;t.preventDefault(),n.cancelBlur=!0,B.delay(function(){delete n.cancelBlur}),0==e(t.target).closest(".ui-menu-item").length&&B.delay(function(){e(document).one("mousedown",function(t){var i=n.el.add(n.$wrapper).add(n.options.$helpers);n.options.floating&&(i=i.add(n.$container)),i=i.filter(function(){return this===t.target||e.contains(this,t.target)}),i.length||n.hide()})})},bindWindowEvents:function(){var t=this,n=e.proxy(t.fixPosition,t);t.$viewport.on("resize"+w+t.uniqueId,n).on("scroll"+w+t.uniqueId,n)},unbindWindowEvents:function(){this.$viewport.off("resize"+w+this.uniqueId).off("scroll"+w+this.uniqueId)},scrollToTop:function(){var t=this,n=t.options.scrollOnFocus;!0===n&&(n=t.el),n instanceof e&&n.length>0&&e("body,html").animate({scrollTop:n.offset().top},"fast")},setOptions:function(t){var n=this;e.extend(n.options,t),n.type=H.get(n.options.type),e.each({requestMode:Q},function(t,i){if(n[t]=i[n.options[t]],!n[t])throw n.disable(),"`"+t+"` option is incorrect! Must be one of: "+e.map(i,function(e,t){return'"'+t+'"'}).join(", ")}),e(n.options.$helpers).off(w).on("mousedown"+w,e.proxy(n.onMousedown,n)),n.isInitialized()&&n.notify("setOptions")},fixPosition:function(t){var n,i,s=this,o={};s.isMobile=s.$viewport.width()<=s.options.mobileWidth,s.isInitialized()&&(!t||"scroll"!=t.type||s.options.floating||s.isMobile)&&(s.$container.appendTo(s.options.floating?s.$body:s.$wrapper),s.notify("resetPosition"),s.el.css("paddingLeft",""),s.el.css("paddingRight",""),o.paddingLeft=parseFloat(s.el.css("paddingLeft")),o.paddingRight=parseFloat(s.el.css("paddingRight")),e.extend(o,s.el.offset()),o.borderTop="none"==s.el.css("border-top-style")?0:parseFloat(s.el.css("border-top-width")),o.borderLeft="none"==s.el.css("border-left-style")?0:parseFloat(s.el.css("border-left-width")),o.innerHeight=s.el.innerHeight(),o.innerWidth=s.el.innerWidth(),o.outerHeight=s.el.outerHeight(),o.componentsLeft=0,o.componentsRight=0,n=s.$wrapper.offset(),i={top:o.top-n.top,left:o.left-n.left},s.notify("fixPosition",i,o),o.componentsLeft>o.paddingLeft&&s.el.css("paddingLeft",o.componentsLeft+"px"),o.componentsRight>o.paddingRight&&s.el.css("paddingRight",o.componentsRight+"px"))},clearCache:function(){this.cachedResponse={},this.enrichmentCache={},this.badQueries=[]},clear:function(){var e=this,t=e.selection;e.isInitialized()&&(e.clearCache(),e.currentValue="",e.selection=null,e.hide(),e.suggestions=[],e.el.val(""),e.el.trigger("suggestions-clear"),e.notify("clear"),e.trigger("InvalidateSelection",t))},disable:function(){var e=this;e.disabled=!0,e.abortRequest(),e.visible&&e.hide()},enable:function(){this.disabled=!1},isUnavailable:function(){return this.disabled},update:function(){var e=this,t=e.el.val();e.isInitialized()&&(e.currentValue=t,e.isQueryRequestable(t)?e.updateSuggestions(t):e.hide())},setSuggestion:function(t){var n,i,s=this;e.isPlainObject(t)&&e.isPlainObject(t.data)&&(t=e.extend(!0,{},t),s.isUnavailable()&&s.initializer&&"pending"===s.initializer.state()&&(s.initializer.resolve(),s.enable()),s.bounds.own.length&&(s.checkValueBounds(t),n=s.copyDataComponents(t.data,s.bounds.all),t.data.kladr_id&&(n.kladr_id=s.getBoundedKladrId(t.data.kladr_id,s.bounds.all)),t.data=n),s.selection=t,s.suggestions=[t],i=s.getSuggestionValue(t)||"",s.currentValue=i,s.el.val(i),s.abortRequest(),s.el.trigger("suggestions-set"))},fixData:function(){var t=this,n=t.extendedCurrentValue(),i=t.el.val(),s=e.Deferred();s.done(function(e){t.selectSuggestion(e,0,i,{hasBeenEnriched:!0}),t.el.trigger("suggestions-fixdata",e)}).fail(function(){t.selection=null,t.el.trigger("suggestions-fixdata")}),t.isQueryRequestable(n)?(t.currentValue=n,t.getSuggestions(n,{count:1,from_bound:null,to_bound:null}).done(function(e){var t=e[0];t?s.resolve(t):s.reject()}).fail(function(){s.reject()})):s.reject()},extendedCurrentValue:function(){var t=this,n=t.getParentInstance(),i=n&&n.extendedCurrentValue(),s=e.trim(t.el.val());return B.compact([i,s]).join(" ")},getAjaxParams:function(t,n){var i=this,s=e.trim(i.options.token),o=e.trim(i.options.partner),a=i.options.serviceUrl,l=i.options.url,u=U[t],c=e.extend({timeout:i.options.timeout},u.defaultParams),d={};return l?a=l:(/\/$/.test(a)||(a+="/"),a+=t,u.addTypeInUrl&&(a+="/"+i.type.urlSuffix)),a=B.fixURLProtocol(a),e.support.cors?(s&&(d.Authorization="Token "+s),o&&(d["X-Partner"]=o),d["X-Version"]=r.version,c.headers||(c.headers={}),c.xhrFields||(c.xhrFields={}),e.extend(c.headers,i.options.headers,d),c.xhrFields.withCredentials=!1):(s&&(d.token=s),o&&(d.partner=o),d.version=r.version,a=B.addUrlParams(a,d)),c.url=a,e.extend(c,n)},isQueryRequestable:function(e){var t,n=this;return t=e.length>=n.options.minChars,t&&n.type.isQueryRequestable&&(t=n.type.isQueryRequestable.call(n,e)),t},constructRequestParams:function(t,n){var i=this,s=i.options,o=e.isFunction(s.params)?s.params.call(i.element,t):e.extend({},s.params);return i.type.constructRequestParams&&e.extend(o,i.type.constructRequestParams.call(i)),e.each(i.notify("requestParams"),function(t,n){e.extend(o,n)}),o[s.paramName]=t,e.isNumeric(s.count)&&s.count>0&&(o.count=s.count),e.extend(o,n)},updateSuggestions:function(e){var t=this;t.fetchPhase=t.getSuggestions(e).done(function(n){t.assignSuggestions(n,e)})},getSuggestions:function(t,n,i){var s,o=this,a=o.options,r=i&&i.noCallbacks,l=i&&i.useEnrichmentCache,u=i&&i.method||o.requestMode.method,c=o.constructRequestParams(t,n),d=e.param(c||{}),f=e.Deferred();return s=o.cachedResponse[d],s&&e.isArray(s.suggestions)?f.resolve(s.suggestions):o.isBadQuery(t)?f.reject():r||!1!==a.onSearchStart.call(o.element,c)?o.doGetSuggestions(c,u).done(function(e){o.processResponse(e)&&t==o.currentValue?(a.noCache||(l?o.enrichmentCache[t]=e.suggestions[0]:(o.enrichResponse(e,t),o.cachedResponse[d]=e,a.preventBadQueries&&0===e.suggestions.length&&o.badQueries.push(t))),f.resolve(e.suggestions)):f.reject(),r||a.onSearchComplete.call(o.element,t,e.suggestions)}).fail(function(e,n,i){f.reject(),r||"abort"===n||a.onSearchError.call(o.element,t,e,n,i)}):f.reject(),f},doGetSuggestions:function(t,n){var i=this,s=e.ajax(i.getAjaxParams(n,{data:B.serialize(t)}));return i.abortRequest(),i.currentRequest=s,i.notify("request"),s.always(function(){i.currentRequest=null,i.notify("request")}),s},isBadQuery:function(t){if(!this.options.preventBadQueries)return!1;var n=!1;return e.each(this.badQueries,function(e,i){return!(n=0===t.indexOf(i))}),n},abortRequest:function(){var e=this;e.currentRequest&&e.currentRequest.abort()},processResponse:function(t){var n,i=this;return!(!t||!e.isArray(t.suggestions))&&(i.verifySuggestionsFormat(t.suggestions),i.setUnrestrictedValues(t.suggestions),e.isFunction(i.options.onSuggestionsFetch)&&(n=i.options.onSuggestionsFetch.call(i.element,t.suggestions),e.isArray(n)&&(t.suggestions=n)),!0)},verifySuggestionsFormat:function(t){"string"==typeof t[0]&&e.each(t,function(e,n){t[e]={value:n,data:null}})},getSuggestionValue:function(t,n){var i,s=this,o=s.options.formatSelected||s.type.formatSelected,a=n&&n.hasSameValues,r=n&&n.hasBeenEnriched,l=null;return e.isFunction(o)&&(i=o.call(s,t)),"string"!=typeof i&&(i=t.value,s.type.getSuggestionValue&&null!==(l=s.type.getSuggestionValue(s,{suggestion:t,hasSameValues:a,hasBeenEnriched:r}))&&(i=l)),i},hasSameValues:function(t){var n=!1;return e.each(this.suggestions,function(e,i){if(i.value===t.value&&i!==t)return n=!0,!1}),n},assignSuggestions:function(e,t){var n=this;n.suggestions=e,n.notify("assignSuggestions",t)},shouldRestrictValues:function(){var e=this;return e.options.restrict_value&&e.constraints&&1==Object.keys(e.constraints).length},setUnrestrictedValues:function(t){var n=this,i=n.shouldRestrictValues(),s=n.getFirstConstraintLabel();e.each(t,function(e,t){t.unrestricted_value||(t.unrestricted_value=i?s+", "+t.value:t.value)})},areSuggestionsSame:function(e,t){return e&&t&&e.value===t.value&&B.areSame(e.data,t.data)},getNoSuggestionsHint:function(){var e=this;return!1!==e.options.noSuggestionsHint&&(e.options.noSuggestionsHint||e.type.noSuggestionsHint)}};var Z={setupElement:function(){this.el.attr("autocomplete","off").attr("autocorrect","off").attr("autocapitalize","off").attr("spellcheck","false").addClass("suggestions-input").css("box-sizing","border-box")},bindElementEvents:function(){var t=this;t.el.on("keydown"+w,e.proxy(t.onElementKeyDown,t)),t.el.on(["keyup"+w,"cut"+w,"paste"+w,"input"+w].join(" "),e.proxy(t.onElementKeyUp,t)),t.el.on("blur"+w,e.proxy(t.onElementBlur,t)),t.el.on("focus"+w,e.proxy(t.onElementFocus,t))},unbindElementEvents:function(){this.el.off(w)},onElementBlur:function(){var e=this;if(e.cancelBlur)return void(e.cancelBlur=!1);e.options.triggerSelectOnBlur?e.isUnavailable()||e.selectCurrentValue({noSpace:!0}).always(function(){e.hide()}):e.hide(),e.fetchPhase.abort&&e.fetchPhase.abort()},onElementFocus:function(){var t=this;t.cancelFocus||B.delay(e.proxy(t.completeOnFocus,t)),t.cancelFocus=!1},onElementKeyDown:function(e){var t=this;if(!t.isUnavailable())if(t.visible){switch(e.which){case x.ESC:t.el.val(t.currentValue),t.hide(),t.abortRequest();break;case x.TAB:if(!1===t.options.tabDisabled)return;break;case x.ENTER:t.options.triggerSelectOnEnter&&t.selectCurrentValue();break;case x.SPACE:return void(t.options.triggerSelectOnSpace&&t.isCursorAtEnd()&&(e.preventDefault(),t.selectCurrentValue({continueSelecting:!0,dontEnrich:!0}).fail(function(){t.currentValue+=" ",t.el.val(t.currentValue),t.proceedChangedValue()})));case x.UP:t.moveUp();break;case x.DOWN:t.moveDown();break;default:return}e.stopImmediatePropagation(),e.preventDefault()}else switch(e.which){case x.DOWN:t.suggest();break;case x.ENTER:t.options.triggerSelectOnEnter&&t.triggerOnSelectNothing()}},onElementKeyUp:function(e){var t=this;if(!t.isUnavailable()){switch(e.which){case x.UP:case x.DOWN:case x.ENTER:return}clearTimeout(t.onChangeTimeout),t.inputPhase.reject(),t.currentValue!==t.el.val()&&t.proceedChangedValue()}},proceedChangedValue:function(){var t=this;t.abortRequest(),t.inputPhase=e.Deferred().done(e.proxy(t.onValueChange,t)),t.options.deferRequestBy>0?t.onChangeTimeout=B.delay(function(){t.inputPhase.resolve()},t.options.deferRequestBy):t.inputPhase.resolve()},
-onValueChange:function(){var e,t=this;t.selection&&(e=t.selection,t.selection=null,t.trigger("InvalidateSelection",e)),t.selectedIndex=-1,t.update(),t.notify("valueChange")},completeOnFocus:function(){var e=this;e.isUnavailable()||e.isElementFocused()&&(e.fixPosition(),e.update(),e.isMobile&&(e.setCursorAtEnd(),e.scrollToTop()))},isElementFocused:function(){return document.activeElement===this.element},isElementDisabled:function(){return Boolean(this.element.getAttribute("disabled")||this.element.getAttribute("readonly"))},isCursorAtEnd:function(){var e,t,n=this,i=n.el.val().length;try{if("number"==typeof(e=n.element.selectionStart))return e===i}catch(e){}return!document.selection||(t=document.selection.createRange(),t.moveStart("character",-i),i===t.text.length)},setCursorAtEnd:function(){var e=this.element;try{e.selectionEnd=e.selectionStart=e.value.length,e.scrollLeft=e.scrollWidth}catch(t){e.value=e.value}}};e.extend(r.prototype,Z),W.on("initialize",Z.bindElementEvents).on("dispose",Z.unbindElementEvents);var K={};l();var G={checkStatus:function(){function e(e){B.isFunction(t.options.onSearchError)&&t.options.onSearchError.call(t.element,null,s,"error",e)}var t=this,n=t.options.token&&t.options.token.trim()||"",i=t.options.type+n,s=K[i];s||(s=K[i]=T.ajax(t.getAjaxParams("status"))),s.done(function(n,i,s){if(n.search){var o=s.getResponseHeader("X-Plan");n.plan=o,T.extend(t.status,n)}else e("Service Unavailable")}).fail(function(){e(s.statusText)})}};r.resetTokens=l,T.extend(r.prototype,G),W.on("setOptions",G.checkStatus);var J,X=!0,Y={checkLocation:function(){var t=this,n=t.options.geoLocation;t.type.geoEnabled&&n&&(t.geoLocation=e.Deferred(),e.isPlainObject(n)||e.isArray(n)?t.geoLocation.resolve(n):(J||(J=e.ajax(t.getAjaxParams("iplocate"))),J.done(function(e){var n=e&&e.location&&e.location.data;n&&n.kladr_id?t.geoLocation.resolve(n):t.geoLocation.reject()}).fail(function(){t.geoLocation.reject()})))},getGeoLocation:function(){return this.geoLocation},constructParams:function(){var t=this,n={};return t.geoLocation&&e.isFunction(t.geoLocation.promise)&&"resolved"==t.geoLocation.state()&&t.geoLocation.done(function(t){n.locations_boost=e.makeArray(t)}),n}};"GET"!=B.getDefaultType()&&(e.extend(L,{geoLocation:X}),e.extend(r,{resetLocation:u}),e.extend(r.prototype,{getGeoLocation:Y.getGeoLocation}),W.on("setOptions",Y.checkLocation).on("requestParams",Y.constructParams));var ee={enrichSuggestion:function(t,n){var i=this,s=e.Deferred();if(!i.options.enrichmentEnabled||!i.type.enrichmentEnabled||!i.requestMode.enrichmentEnabled||n&&n.dontEnrich)return s.resolve(t);if(t.data&&null!=t.data.qc)return s.resolve(t);i.disableDropdown();var o=i.type.getEnrichmentQuery(t),a=i.type.enrichmentParams,r={noCallbacks:!0,useEnrichmentCache:!0,method:i.type.enrichmentMethod};return i.currentValue=o,i.enrichPhase=i.getSuggestions(o,a,r).always(function(){i.enableDropdown()}).done(function(e){var n=e&&e[0];s.resolve(n||t,!!n)}).fail(function(){s.resolve(t)}),s},enrichResponse:function(t,n){var i=this,s=i.enrichmentCache[n];s&&e.each(t.suggestions,function(e,i){if(i.value===n)return t.suggestions[e]=s,!1})}};e.extend(r.prototype,ee);var te={width:"auto",floating:!1},ne={createContainer:function(){var t=this,n="."+t.classes.suggestion,i=t.options,s=e("<div/>").addClass(i.containerClass).css({position:"absolute",display:"none"});t.$container=s,s.on("click"+w,n,e.proxy(t.onSuggestionClick,t))},getContainer:function(){return this.$container.get(0)},removeContainer:function(){var e=this;e.options.floating&&e.$container.remove()},setContainerOptions:function(){var t=this;t.$container.off("mousedown.suggestions"),t.options.floating&&t.$container.on("mousedown.suggestions",e.proxy(t.onMousedown,t))},onSuggestionClick:function(t){var n,i=this,s=e(t.target);if(!i.dropdownDisabled){for(i.cancelFocus=!0,i.el.focus();s.length&&!(n=s.attr("data-index"));)s=s.closest("."+i.classes.suggestion);n&&!isNaN(n)&&i.select(+n)}},setDropdownPosition:function(e,t){var n,i=this,s=i.$viewport.scrollLeft();i.isMobile?(n=i.options.floating?{left:s+"px",top:t.top+t.outerHeight+"px"}:{left:e.left-t.left+s+"px",top:e.top+t.outerHeight+"px"},n.width=i.$viewport.width()+"px"):(n=i.options.floating?{left:t.left+"px",top:t.top+t.borderTop+t.innerHeight+"px"}:{left:e.left+"px",top:e.top+t.borderTop+t.innerHeight+"px"},B.delay(function(){var e=i.options.width;"auto"===e&&(e=i.el.outerWidth()),i.$container.outerWidth(e)})),i.$container.toggleClass(i.classes.mobile,i.isMobile).css(n),i.containerItemsPadding=t.left+t.borderLeft+t.paddingLeft-s},setItemsPositions:function(){var e=this;e.getSuggestionsItems().css("paddingLeft",e.isMobile?e.containerItemsPadding+"px":"")},getSuggestionsItems:function(){return this.$container.children("."+this.classes.suggestion)},toggleDropdownEnabling:function(e){this.dropdownDisabled=!e,this.$container.attr("disabled",!e)},disableDropdown:function(){this.toggleDropdownEnabling(!1)},enableDropdown:function(){this.toggleDropdownEnabling(!0)},hasSuggestionsToChoose:function(){var t=this;return t.suggestions.length>1||1===t.suggestions.length&&(!t.selection||e.trim(t.suggestions[0].value)!==e.trim(t.selection.value))},suggest:function(){var t=this,n=t.options,i=[];if(t.requestMode.userSelect){if(t.hasSuggestionsToChoose())!t.isMobile&&n.hint&&t.suggestions.length&&i.push('<div class="'+t.classes.hint+'">'+n.hint+"</div>"),t.selectedIndex=-1,t.suggestions.forEach(function(e,n){e==t.selection&&(t.selectedIndex=n),t.buildSuggestionHtml(e,n,i)});else{if(t.suggestions.length)return void t.hide();var s=t.getNoSuggestionsHint();if(!s)return void t.hide();i.push('<div class="'+t.classes.hint+'">'+s+"</div>")}i.push('<div class="'+S.promo+'"></div>'),i.push("</div>"),t.$container.html(i.join("")),n.autoSelectFirst&&-1===t.selectedIndex&&(t.selectedIndex=0),-1!==t.selectedIndex&&t.getSuggestionsItems().eq(t.selectedIndex).addClass(t.classes.selected),e.isFunction(n.beforeRender)&&n.beforeRender.call(t.element,t.$container),t.$container.show(),t.visible=!0,t.fixPosition(),t.setItemsPositions()}},buildSuggestionHtml:function(e,t,n){n.push('<div class="'+this.classes.suggestion+'" data-index="'+t+'">');var i=this.options.formatResult||this.type.formatResult||this.formatResult;n.push(i.call(this,e.value,this.currentValue,e,{unformattableTokens:this.type.unformattableTokens}));var s=this.makeSuggestionLabel(this.suggestions,e);s&&n.push('<span class="'+this.classes.subtext_label+'">'+B.escapeHtml(s)+"</span>"),n.push("</div>")},wrapFormattedValue:function(e,t){var n=this,i=B.getDeepValue(t.data,"state.status");return'<span class="'+n.classes.value+'"'+(i?' data-suggestion-status="'+i+'"':"")+">"+e+"</span>"},formatResult:function(e,t,n,i){var s=this;return e=s.highlightMatches(e,t,n,i),s.wrapFormattedValue(e,n)},highlightMatches:function(t,n,i,s){var o,a,r,l,u,f,p,h=this,g=[],m=s&&s.unformattableTokens,y=s&&s.maxLength,v=B.reWordExtractor();if(!t)return"";for(o=P.tokenize(n,m),a=e.map(o,function(e){return new RegExp("^((.*)([\\-\\+\\\\\\?!@#$%^&]+))?("+B.escapeRegExChars(e)+")([^\\-\\+\\\\\\?!@#$%^&]*[\\-\\+\\\\\\?!@#$%^&]*)","i")});(r=v.exec(t))&&r[0];)l=r[1],g.push({text:l,hasUpperCase:l.toLowerCase()!==l,formatted:B.formatToken(l),matchable:!0}),r[2]&&g.push({text:r[2]});for(u=0;u<g.length;u++)f=g[u],!f.matchable||f.matched||-1!==e.inArray(f.formatted,m)&&!f.hasUpperCase||e.each(a,function(e,t){var n,i=t.exec(f.formatted),s=u+1;if(i)return i={before:i[1]||"",beforeText:i[2]||"",beforeDelimiter:i[3]||"",text:i[4]||"",after:i[5]||""},i.before&&(g.splice(u,0,{text:f.text.substr(0,i.beforeText.length),formatted:i.beforeText,matchable:!0},{text:i.beforeDelimiter}),s+=2,n=i.before.length,f.text=f.text.substr(n),f.formatted=f.formatted.substr(n),u--),n=i.text.length+i.after.length,f.formatted.length>n&&(g.splice(s,0,{text:f.text.substr(n),formatted:f.formatted.substr(n),matchable:!0}),f.text=f.text.substr(0,n),f.formatted=f.formatted.substr(0,n)),i.after&&(n=i.text.length,g.splice(s,0,{text:f.text.substr(n),formatted:f.formatted.substr(n)}),f.text=f.text.substr(0,n),f.formatted=f.formatted.substr(0,n)),f.matched=!0,!1});if(y){for(u=0;u<g.length&&y>=0;u++)f=g[u],(y-=f.text.length)<0&&(f.text=f.text.substr(0,f.text.length+y)+"...");g.length=u}return p=c(g),d(p,h.classes.nowrap)},makeSuggestionLabel:function(t,n){var i,s,o=this,a=o.type.fieldNames,r={},l=B.reWordExtractor(),u=[];if(a&&f(t,n)&&n.data&&(e.each(a,function(e){var t=n.data[e];t&&(r[e]=B.formatToken(t))}),!e.isEmptyObject(r))){for(;(i=l.exec(B.formatToken(n.value)))&&(s=i[1]);)e.each(r,function(e,t){if(t==s)return u.push(a[e]),delete r[e],!1});if(u.length)return u.join(", ")}},hide:function(){var e=this;e.visible=!1,e.selectedIndex=-1,e.$container.hide().empty()},activate:function(e){var t,n,i=this,s=i.classes.selected;return!i.dropdownDisabled&&(n=i.getSuggestionsItems(),n.removeClass(s),i.selectedIndex=e,-1!==i.selectedIndex&&n.length>i.selectedIndex)?(t=n.eq(i.selectedIndex),t.addClass(s),t):null},deactivate:function(e){var t=this;t.dropdownDisabled||(t.selectedIndex=-1,t.getSuggestionsItems().removeClass(t.classes.selected),e&&t.el.val(t.currentValue))},moveUp:function(){var e=this;if(!e.dropdownDisabled)return-1===e.selectedIndex?void(e.suggestions.length&&e.adjustScroll(e.suggestions.length-1)):0===e.selectedIndex?void e.deactivate(!0):void e.adjustScroll(e.selectedIndex-1)},moveDown:function(){var e=this;if(!e.dropdownDisabled)return e.selectedIndex===e.suggestions.length-1?void e.deactivate(!0):void e.adjustScroll(e.selectedIndex+1)},adjustScroll:function(e){var t,n,i,s=this,o=s.activate(e),a=s.$container.scrollTop();o&&o.length&&(t=o.position().top,t<0?s.$container.scrollTop(a+t):(n=t+o.outerHeight(),i=s.$container.innerHeight(),n>i&&s.$container.scrollTop(a-i+n)),s.el.val(s.suggestions[e].value))}};e.extend(L,te),e.extend(r.prototype,ne),W.on("initialize",ne.createContainer).on("dispose",ne.removeContainer).on("setOptions",ne.setContainerOptions).on("fixPosition",ne.setDropdownPosition).on("fixPosition",ne.setItemsPositions).on("assignSuggestions",ne.suggest);var ie={addon:null},se={NONE:"none",SPINNER:"spinner",CLEAR:"clear"},oe=function(e){var t=T.select('<span class="suggestions-addon"/>');this.owner=e,this.$el=t,this.type=se.NONE,this.visible=!1,this.initialPadding=null,t.on("click",T.proxy(this,"onClick"))};oe.prototype={checkType:function(){var e=this.owner.options.addon,t=!1;v.each(se,function(n,i){if(t=n==e)return!1}),t||(e=this.owner.isMobile?se.CLEAR:se.SPINNER),e!=this.type&&(this.type=e,this.$el.attr("data-addon-type",e),this.toggle(!0))},isEnabled:function(){return!this.owner.isElementDisabled()},toggle:function(e){var t;switch(this.type){case se.CLEAR:t=!!this.owner.currentValue;break;case se.SPINNER:t=!!this.owner.currentRequest;break;default:t=!1}this.isEnabled()||(t=!1),t!=this.visible&&(this.visible=t,t?this.show(e):this.hide(e))},show:function(e){var t=this,n={opacity:1};e?(this.$el.show().css(n),this.showBackground(!0)):this.$el.stop(!0,!0).delay(50).queue(function(){t.$el.show(),t.showBackground(),t.$el.dequeue()}).animate(n,"fast")},hide:function(e){var t=this,n={opacity:0};e&&this.$el.hide().css(n),this.$el.stop(!0).animate(n,{duration:"fast",complete:function(){t.$el.hide(),t.hideBackground()}})},fixPosition:function(e,t){var n=t.innerHeight;this.checkType(),this.$el.css({left:e.left+t.borderLeft+t.innerWidth-n+"px",top:e.top+t.borderTop+"px",height:n,width:n}),this.initialPadding=t.paddingRight,this.width=n,this.visible&&(t.componentsRight+=n)},showBackground:function(e){var t=this.owner.el,n={paddingRight:this.width};this.width>this.initialPadding&&(this.stopBackground(),e?t.css(n):t.animate(n,{duration:"fast",queue:"addon"}).dequeue("addon"))},hideBackground:function(e){var t=this.owner.el,n={paddingRight:this.initialPadding};this.width>this.initialPadding&&(this.stopBackground(!0),e?t.css(n):t.delay(1e3,"addon").animate(n,{duration:"fast",queue:"addon"}).dequeue("addon"))},stopBackground:function(e){this.owner.el.stop("addon",!0,e)},onClick:function(e){this.isEnabled()&&this.type==se.CLEAR&&this.owner.clear()}};var ae={createAddon:function(){var e=new oe(this);this.$wrapper.append(e.$el),this.addon=e},fixAddonPosition:function(e,t){this.addon.fixPosition(e,t)},checkAddonType:function(){this.addon.checkType()},checkAddonVisibility:function(){this.addon.toggle()},stopBackground:function(){this.addon.stopBackground()}};T.extend(L,ie),W.on("initialize",ae.createAddon).on("setOptions",ae.checkAddonType).on("fixPosition",ae.fixAddonPosition).on("clear",ae.checkAddonVisibility).on("valueChange",ae.checkAddonVisibility).on("request",ae.checkAddonVisibility).on("resetPosition",ae.stopBackground);var re={constraints:null,restrict_value:!1},le=["region_fias_id","area_fias_id","city_fias_id","city_district_fias_id","settlement_fias_id","street_fias_id"],ue=function(e,t){var n,i,s=this,o={};s.instance=t,s.fields={},s.specificity=-1,y.isPlainObject(e)&&t.type.dataComponents&&v.each(t.type.dataComponents,function(t,n){var i=t.id;t.forLocations&&e[i]&&(s.fields[i]=e[i],s.specificity=n)}),n=Object.keys(s.fields),i=v.intersect(n,le),i.length?(v.each(i,function(e,t){o[e]=s.fields[e]}),s.fields=o,s.specificity=s.getFiasSpecificity(i)):s.fields.kladr_id&&(s.fields={kladr_id:s.fields.kladr_id},s.significantKladr=h(s.fields.kladr_id),s.specificity=s.getKladrSpecificity(s.significantKladr))};T.extend(ue.prototype,{getLabel:function(){return this.instance.type.composeValue(this.fields,{saveCityDistrict:!0})},getFields:function(){return this.fields},isValid:function(){return!y.isEmptyObject(this.fields)},getKladrSpecificity:function(e){var t=-1,n=e.length;return v.each(this.instance.type.dataComponents,function(e,i){e.kladrFormat&&n===e.kladrFormat.digits&&(t=i)}),t},getFiasSpecificity:function(e){var t=-1;return v.each(this.instance.type.dataComponents,function(n,i){n.fiasType&&e.indexOf(n.fiasType)>-1&&t<i&&(t=i)}),t},containsData:function(e){var t=!0;return this.fields.kladr_id?!!e.kladr_id&&0===e.kladr_id.indexOf(this.significantKladr):(v.each(this.fields,function(n,i){return t=!!e[i]&&e[i].toLowerCase()===n.toLowerCase()}),t)}}),r.ConstraintLocation=ue;var ce=function(e,t){this.id=j("c"),this.deletable=!!e.deletable,this.instance=t;var n=v.makeArray(e&&(e.locations||e.restrictions));this.locations=n.map(function(e){return new ue(e,t)}),this.locations=this.locations.filter(function(e){return e.isValid()}),this.label=e.label,null==this.label&&t.type.composeValue&&(this.label=this.locations.map(function(e){return e.getLabel()}).join(", ")),this.label&&this.isValid()&&(this.$el=T.select(document.createElement("li")).append(T.select(document.createElement("span")).text(this.label)).attr("data-constraint-id",this.id),this.deletable&&this.$el.append(T.select(document.createElement("span")).addClass(t.classes.removeConstraint)))};T.extend(ce.prototype,{isValid:function(){return this.locations.length>0},getFields:function(){return this.locations.map(function(e){return e.getFields()})}});var de={createConstraints:function(){var e=this;e.constraints={},e.$constraints=T.select('<ul class="suggestions-constraints"/>'),e.$wrapper.append(e.$constraints),e.$constraints.on("click","."+e.classes.removeConstraint,T.proxy(e.onConstraintRemoveClick,e))},setConstraintsPosition:function(e,t){var n=this;n.$constraints.css({left:e.left+t.borderLeft+t.paddingLeft+"px",top:e.top+t.borderTop+Math.round((t.innerHeight-n.$constraints.height())/2)+"px"}),t.componentsLeft+=n.$constraints.outerWidth(!0)+t.paddingLeft},onConstraintRemoveClick:function(e){var t=this,n=T.select(e.target).closest("li"),i=n.attr("data-constraint-id");delete t.constraints[i],t.update(),n.fadeOut("fast",function(){t.removeConstraint(i)})},setupConstraints:function(){var e,t=this,n=t.options.constraints;if(!n)return void t.unbindFromParent();T.isJqObject(n)||"string"==typeof n||"number"==typeof n.nodeType?(e=T.select(n),e.is(t.constraints)||(t.unbindFromParent(),e.is(t.el)||(t.constraints=e,t.bindToParent()))):(t._constraintsUpdating=!0,v.each(t.constraints,function(e,n){t.removeConstraint(n)}),v.each(v.makeArray(n),function(e,n){t.addConstraint(e)}),t._constraintsUpdating=!1,t.fixPosition())},filteredLocation:function(e){var t=[],n={};if(v.each(this.type.dataComponents,function(){this.forLocations&&t.push(this.id)}),y.isPlainObject(e)&&v.each(e,function(e,i){e&&t.indexOf(i)>=0&&(n[i]=e)}),!y.isEmptyObject(n))return n.kladr_id?{kladr_id:n.kladr_id}:n},addConstraint:function(e){var t=this;e=new ce(e,t),e.isValid()&&(t.constraints[e.id]=e,e.$el&&(t.$constraints.append(e.$el),t._constraintsUpdating||t.fixPosition()))},removeConstraint:function(e){var t=this;delete t.constraints[e],t.$constraints.children('[data-constraint-id="'+e+'"]').remove(),t._constraintsUpdating||t.fixPosition()},constructConstraintsParams:function(){for(var e,t,n=this,i=[],s=n.constraints,o={};T.isJqObject(s)&&(e=s.suggestions())&&!(t=_.getDeepValue(e,"selection.data"));)s=e.constraints;return T.isJqObject(s)?(t=new ue(t,e).getFields())&&(n.bounds.own.indexOf("city")>-1&&delete t.city_fias_id,o.locations=[t],o.restrict_value=!0):s&&(v.each(s,function(e,t){i=i.concat(e.getFields())}),i.length&&(o.locations=i,o.restrict_value=n.options.restrict_value)),o},getFirstConstraintLabel:function(){var e=this,t=y.isPlainObject(e.constraints)&&Object.keys(e.constraints)[0];return t?e.constraints[t].label:""},bindToParent:function(){var e=this;e.constraints.on(["suggestions-select."+e.uniqueId,"suggestions-invalidateselection."+e.uniqueId,"suggestions-clear."+e.uniqueId].join(" "),T.proxy(e.onParentSelectionChanged,e)).on("suggestions-dispose."+e.uniqueId,T.proxy(e.onParentDispose,e))},unbindFromParent:function(){var e=this,t=e.constraints;T.isJqObject(t)&&t.off("."+e.uniqueId)},onParentSelectionChanged:function(e,t,n){("suggestions-select"!==e.type||n)&&this.clear()},onParentDispose:function(e){this.unbindFromParent()},getParentInstance:function(){return T.isJqObject(this.constraints)&&this.constraints.suggestions()},shareWithParent:function(e){var t=this.getParentInstance();t&&t.type===this.type&&!p(e,t)&&(t.shareWithParent(e),t.setSuggestion(e))},getUnrestrictedData:function(e){var t=this,n=[],i={},s=-1;return v.each(t.constraints,function(t,n){v.each(t.locations,function(t,n){t.containsData(e)&&t.specificity>s&&(s=t.specificity)})}),s>=0?(e.region_kladr_id&&e.region_kladr_id===e.city_kladr_id&&n.push.apply(n,t.type.dataComponentsById.city.fields),v.each(t.type.dataComponents.slice(0,s+1),function(e,t){n.push.apply(n,e.fields)}),v.each(e,function(e,t){-1===n.indexOf(t)&&(i[t]=e)})):i=e,i}};T.extend(L,re),T.extend(r.prototype,de),"GET"!=V.getDefaultType()&&W.on("initialize",de.createConstraints).on("setOptions",de.setupConstraints).on("fixPosition",de.setConstraintsPosition).on("requestParams",de.constructConstraintsParams).on("dispose",de.unbindFromParent);var fe={proceedQuery:function(e){var t=this;e.length>=t.options.minChars?t.updateSuggestions(e):t.hide()},selectCurrentValue:function(e){var t=this,n=T.Deferred();return t.inputPhase.resolve(),t.fetchPhase.done(function(){var i;t.selection&&!t.visible?n.reject():(i=t.findSuggestionIndex(),t.select(i,e),-1===i?n.reject():n.resolve(i))}).fail(function(){n.reject()}),n},selectFoundSuggestion:function(){var e=this;e.requestMode.userSelect||e.select(0)},findSuggestionIndex:function(){var e,t=this,n=t.selectedIndex;return-1===n&&(e=t.el.val().trim())&&t.type.matchers.some(function(i){return-1!==(n=i(e,t.suggestions))}),n},select:function(e,t){var n,i=this,s=i.suggestions[e],o=t&&t.continueSelecting,a=i.currentValue;if(!i.triggering.Select){if(!s)return o||i.selection||i.triggerOnSelectNothing(),void i.onSelectComplete(o);n=i.hasSameValues(s),i.enrichSuggestion(s,t).done(function(s,o){var r=T.extend({hasBeenEnriched:o,hasSameValues:n},t);i.selectSuggestion(s,e,a,r)})}},selectSuggestion:function(e,t,n,i){var s=this,o=i.continueSelecting,a=!s.type.isDataComplete||s.type.isDataComplete.call(s,e),r=s.selection;s.triggering.Select||(s.type.alwaysContinueSelecting&&(o=!0),a&&(o=!1),i.hasBeenEnriched&&s.suggestions[t]&&(s.suggestions[t].data=e.data),s.requestMode.updateValue&&(s.checkValueBounds(e),s.currentValue=s.getSuggestionValue(e,i),!s.currentValue||i.noSpace||a||(s.currentValue+=" "),s.el.val(s.currentValue)),s.currentValue?(s.selection=e,s.areSuggestionsSame(e,r)||s.trigger("Select",e,s.currentValue!=n),s.requestMode.userSelect&&s.onSelectComplete(o)):(s.selection=null,s.triggerOnSelectNothing()),s.shareWithParent(e))},onSelectComplete:function(e){var t=this;e?(t.selectedIndex=-1,t.updateSuggestions(t.currentValue)):t.hide()},triggerOnSelectNothing:function(){var e=this;e.triggering.SelectNothing||e.trigger("SelectNothing",e.currentValue)},trigger:function(e){var t=this,n=B.slice(arguments,1),i=t.options["on"+e];t.triggering[e]=!0,B.isFunction(i)&&i.apply(t.element,n),t.el.trigger.call(t.el,"suggestions-"+e.toLowerCase(),n),t.triggering[e]=!1}};T.extend(r.prototype,fe),W.on("assignSuggestions",fe.selectFoundSuggestion);var pe={bounds:null},he={setupBounds:function(){this.bounds={from:null,to:null}},setBoundsOptions:function(){var t,n,i=this,s=[],o=e.trim(i.options.bounds).split("-"),a=o[0],r=o[o.length-1],l=[],u=[];i.type.dataComponents&&e.each(i.type.dataComponents,function(){this.forBounds&&s.push(this.id)}),-1===e.inArray(a,s)&&(a=null),n=e.inArray(r,s),-1!==n&&n!==s.length-1||(r=null),(a||r)&&(t=!a,e.each(s,function(e,n){if(n==a&&(t=!0),u.push(n),t&&l.push(n),n==r)return!1})),i.bounds.from=a,i.bounds.to=r,i.bounds.all=u,i.bounds.own=l},constructBoundsParams:function(){var e=this,t={};return e.bounds.from&&(t.from_bound={value:e.bounds.from}),e.bounds.to&&(t.to_bound={value:e.bounds.to}),t},checkValueBounds:function(e){var t,n=this;if(n.bounds.own.length&&n.type.composeValue){var i=n.bounds.own.slice(0);1===i.length&&"city_district"===i[0]&&i.push("city_district_fias_id"),t=n.copyDataComponents(e.data,i),e.value=n.type.composeValue(t)}},copyDataComponents:function(t,n){var i={},s=this.type.dataComponentsById;return s&&e.each(n,function(n,o){e.each(s[o].fields,function(e,n){null!=t[n]&&(i[n]=t[n])})}),i},getBoundedKladrId:function(t,n){var i,s=n[n.length-1];return e.each(this.type.dataComponents,function(e,t){if(t.id===s)return i=t.kladrFormat,!1}),t.substr(0,i.digits)+new Array((i.zeros||0)+1).join("0")}};e.extend(L,pe),e.extend(r.prototype,he),W.on("initialize",he.setupBounds).on("setOptions",he.setBoundsOptions).on("requestParams",he.constructBoundsParams);var ge={selectByClass:function(e,t){var n="."+e;return t?t.querySelector(n):document.querySelector(n)},addClass:function(e,t){var n=e.className.split(" ");-1===n.indexOf(t)&&n.push(t),e.className=n.join(" ")},setStyle:function(e,t,n){e.style[t]=n},listenTo:function(e,t,n,i){e.addEventListener(t,i,!1),n&&(eventsByNamespace[n]||(eventsByNamespace[n]=[]),eventsByNamespace[n].push({eventName:t,element:e,callback:i}))},stopListeningNamespace:function(e){var t=eventsByNamespace[e];t&&t.forEach(function(e){e.element.removeEventListener(e.eventName,e.callback,!1)})}};g.prototype.show=function(){"FREE"===this.plan&&this.element&&(this.setStyles(),this.setHtml())},g.prototype.setStyles=function(){this.element.style.display="block",this.isMobile||this.element.classList.add(S.promo_desktop)},g.prototype.setHtml=function(){this.element.innerHTML='<a target="_blank" href="https://dadata.ru/suggestions/?utm_source=dadata&utm_medium=module&utm_campaign=suggestions-jquery"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 167.55 38.92"><defs><style>.cls-1{fill:#cdcccc;}.cls-2{fill:#ef4741;}.cls-3{fill:#fff;}</style></defs><title>dadata-logo</title><path class="cls-1" d="M192.61,153.07H196v-3.15h-3.39Zm9.55-14.46v-2.45h-3v16.91h3.14V142.2a4.39,4.39,0,0,1,4.23-3.7h1.75v-2.69h-1.54C203.75,135.81,202.35,137.76,202.16,138.61Zm20.2-2.45v11.3a5,5,0,0,1-4.65,3.66,7.19,7.19,0,0,1-2-.23,2,2,0,0,1-1.12-.6,2.38,2.38,0,0,1-.44-.86,4.38,4.38,0,0,1-.1-1V136.16h-3.14v12.4a4.83,4.83,0,0,0,1.26,3.65q1.26,1.21,4.61,1.21c3.38,0,4.62-.91,5.56-2.34v2h3.14V136.16Z" transform="translate(-57.96 -122.27)"/><rect class="cls-2" width="131.91" height="38.92" rx="3" ry="3"/><path class="cls-3" d="M119.34,130.39h-9.18v22.68h10.23c3.84,0,10.18-.35,10.18-6.88v-8.91C130.56,130.74,123.18,130.39,119.34,130.39Zm5.77,15.2c0,3.27-2.38,3.6-5.09,3.6h-4.41V134.27H119c2.71,0,6.14.33,6.14,3.6Zm-48-15.2H68v22.68H78.18c3.84,0,10.18-.35,10.18-6.88v-8.91C88.36,130.74,81,130.39,77.14,130.39Zm5.77,15.2c0,3.27-2.38,3.6-5.09,3.6H73.41V134.27h3.36c2.71,0,6.14.33,6.14,3.6Zm74-14.32h-5.1V148a6.28,6.28,0,0,0,.4,2.36,4,4,0,0,0,1,1.54,4.56,4.56,0,0,0,1.57.88,8.16,8.16,0,0,0,1.85.42q.89.08,2.08.09a24.23,24.23,0,0,0,2.83-.17v-2.87h-1.82a3.08,3.08,0,0,1-2.31-.61,3.79,3.79,0,0,1-.52-2.36V139h4.65v-3.14h-4.65Zm21,5.68q-1.82-1.14-6.5-1.13h-5.92v.25l.73,2.9h5.19a5,5,0,0,1,2.5.5,2.37,2.37,0,0,1,.72,2v1.15H168.9q-3,0-4.12,1.17T163.62,148c0,2.21.37,3.14,1.12,3.84s2.2,1.22,4.48,1.22h7.06c1.76,0,3.45-.83,3.45-2.82v-8.81Q179.73,138.08,177.91,136.94Zm-3.29,13.3h-3.35a4.27,4.27,0,0,1-2.22-.35q-.44-.35-.44-2t.42-2.06a3.55,3.55,0,0,1,2.1-.38h3.49Zm-27.5-13.3q-1.82-1.14-6.5-1.13h-5.92v.25l.73,2.9h5.19a5,5,0,0,1,2.5.5,2.38,2.38,0,0,1,.72,2v1.15h-5.73q-3,0-4.12,1.17T132.84,148c0,2.21.37,3.14,1.12,3.84s2.2,1.22,4.48,1.22h7.06c1.77,0,3.45-.83,3.45-2.82v-8.81Q148.94,138.08,147.13,136.94Zm-3.28,13.3h-3.35a4.27,4.27,0,0,1-2.22-.35q-.44-.35-.44-2t.42-2.06a3.55,3.55,0,0,1,2.1-.38h3.49Zm-38.92-13.3q-1.82-1.14-6.5-1.13H92.5v.25l.73,2.9h5.19a5,5,0,0,1,2.5.5,2.38,2.38,0,0,1,.72,2v1.15H95.91q-3,0-4.12,1.17T90.63,148c0,2.21.37,3.14,1.12,3.84s2.2,1.22,4.48,1.22h7.06c1.77,0,3.45-.83,3.45-2.82v-8.81Q106.74,138.08,104.92,136.94Zm-3.28,13.3H98.29a4.27,4.27,0,0,1-2.22-.35q-.44-.35-.44-2t.42-2.06a3.55,3.55,0,0,1,2.1-.38h3.49Z" transform="translate(-57.96 -122.27)"/></svg></a>'},W.on("assignSuggestions",m),r.defaultOptions=L,r.version="19.2.0",e.Suggestions=r,e.fn.suggestions=function(t,n){return 0===arguments.length?this.first().data("suggestions"):this.each(function(){var i=e(this),s=i.data("suggestions");"string"==typeof t?s&&"function"==typeof s[t]&&s[t](n):(s&&s.dispose&&s.dispose(),s=new r(this,t),i.data("suggestions",s))})}});
+!function(e,t){ true?t(__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")):undefined}(this,function(e){"use strict";function t(e,t){return function(n,i){var s,o=[];return t(i)&&(s=k.splitTokens(k.split(n,e)),y.each(i,function(t,i){var a=t.value;if(k.stringEncloses(n,a))return!1;var r=k.splitTokens(k.split(a,e));0===y.minus(s,r).length&&o.push(i)})),1===o.length?o[0]:-1}}function n(e,t){var n=e.data&&e.data[t];return n&&new RegExp("^"+k.escapeRegExChars(n)+"(["+w+"]|$)","i").test(e.value)}function i(e,t){var n=/<strong>/;return n.test(t)&&!n.test(e)?t:e}function s(e,t,n,s,o){var a=this;return i(a.highlightMatches(e,n,s,o),a.highlightMatches(t,n,s,o))}function o(e){this.urlSuffix=e.toLowerCase(),this.noSuggestionsHint="Неизвестное значение",this.matchers=[O.matchByNormalizedQuery(),O.matchByWords()]}function a(t,n){var i=this;i.element=t,i.el=e(t),i.suggestions=[],i.badQueries=[],i.selectedIndex=-1,i.currentValue=i.element.value,i.intervalId=0,i.cachedResponse={},i.enrichmentCache={},i.currentRequest=null,i.inputPhase=e.Deferred(),i.fetchPhase=e.Deferred(),i.enrichPhase=e.Deferred(),i.onChangeTimeout=null,i.triggering={},i.$wrapper=null,i.options=e.extend({},B,n),i.classes=x,i.disabled=!1,i.selection=null,i.$viewport=e(window),i.$body=e(document.body),i.type=null,i.status={},i.setupElement(),i.initializer=e.Deferred(),i.el.is(":visible")?i.initializer.resolve():i.deferInitialization(),i.initializer.done(e.proxy(i.initialize,i))}function r(){j.each(Q,function(e){e.abort()}),Q={}}function l(){K=null,B.geoLocation=G}function u(t){return e.map(t,function(e){var t=j.escapeHtml(e.text);return t&&e.matched&&(t="<strong>"+t+"</strong>"),t}).join("")}function c(t,n){var i=t.split(", ");return 1===i.length?t:e.map(i,function(e){return'<span class="'+n+'">'+e+"</span>"}).join(", ")}function d(t,n){var i=!1;return e.each(t,function(e,t){if(i=t.value==n.value&&t!=n)return!1}),i}function f(e,t){var n=t.selection,i=n&&n.data&&t.bounds;return i&&y.each(t.bounds.all,function(t,s){return i=n.data[t]===e.data[t]}),i}function p(e){var t=e.replace(/^(\d{2})(\d*?)(0+)$/g,"$1$2"),n=t.length,i=-1;return n<=2?i=2:n>2&&n<=5?i=5:n>5&&n<=8?i=8:n>8&&n<=11?i=11:n>11&&n<=15?i=15:n>15&&(i=19),k.padEnd(t,i,"0")}function h(e){this.plan=e.status.plan,this.isMobile=e.isMobile;var t=e.getContainer();this.element=pe.selectByClass(x.promo,t)}function g(){new h(this).show()}e=e&&e.hasOwnProperty("default")?e.default:e;var m={isArray:function(e){return Array.isArray(e)},isFunction:function(e){return"[object Function]"===Object.prototype.toString.call(e)},isEmptyObject:function(e){return 0===Object.keys(e).length&&e.constructor===Object},isPlainObject:function(e){return void 0!==e&&"object"==typeof e&&null!==e&&!e.nodeType&&e!==e.window&&!(e.constructor&&!Object.prototype.hasOwnProperty.call(e.constructor.prototype,"isPrototypeOf"))}},y={compact:function(e){return e.filter(function(e){return!!e})},each:function(e,t){if(Array.isArray(e))return void e.some(function(e,n){return!1===t(e,n)});Object.keys(e).some(function(n){var i=e[n];return!1===t(i,n)})},intersect:function(e,t){var n=[];return Array.isArray(e)&&Array.isArray(t)?e.filter(function(e){return-1!==t.indexOf(e)}):n},minus:function(e,t){return t&&0!==t.length?e.filter(function(e){return-1===t.indexOf(e)}):e},makeArray:function(e){return m.isArray(e)?Array.prototype.slice.call(e):[e]},minusWithPartialMatching:function(e,t){return t&&0!==t.length?e.filter(function(e){return!t.some(function(t){return 0===t.indexOf(e)})}):e},slice:function(e,t){return Array.prototype.slice.call(e,t)}},v={delay:function(e,t){return setTimeout(e,t||0)}},b={areSame:function e(t,n){var i=!0;return typeof t==typeof n&&("object"==typeof t&&null!=t&&null!=n?(y.each(t,function(t,s){return i=e(t,n[s])}),i):t===n)},assign:function(e,t){if("function"==typeof Object.assign)return Object.assign.apply(null,arguments);if(null==e)throw new TypeError("Cannot convert undefined or null to object");for(var n=Object(e),i=1;i<arguments.length;i++){var s=arguments[i];if(null!=s)for(var o in s)Object.prototype.hasOwnProperty.call(s,o)&&(n[o]=s[o])}return n},clone:function(e){return JSON.parse(JSON.stringify(e))},compact:function(e){var t=b.clone(e);return y.each(t,function(e,n){null!==e&&void 0!==e&&""!==e||delete t[n]}),t},fieldsAreNotEmpty:function(e,t){if(!m.isPlainObject(e))return!1;var n=!0;return y.each(t,function(t,i){return n=!!e[t]}),n},getDeepValue:function e(t,n){var i=n.split("."),s=i.shift();return t&&(i.length?e(t[s],i.join(".")):t[s])},indexObjectsById:function(e,t,n){var i={};return y.each(e,function(e,s){var o=e[t],a={};n&&(a[n]=s),i[o]=b.assign(a,e)}),i}},_={ENTER:13,ESC:27,TAB:9,SPACE:32,UP:38,DOWN:40},x={hint:"suggestions-hint",mobile:"suggestions-mobile",nowrap:"suggestions-nowrap",promo:"suggestions-promo",promo_desktop:"suggestions-promo-desktop",selected:"suggestions-selected",suggestion:"suggestions-suggestion",subtext:"suggestions-subtext",subtext_inline:"suggestions-subtext suggestions-subtext_inline",subtext_delimiter:"suggestions-subtext-delimiter",subtext_label:"suggestions-subtext suggestions-subtext_label",removeConstraint:"suggestions-remove",value:"suggestions-value"},S=".suggestions",w="\\s\"'~\\*\\.,:\\|\\[\\]\\(\\)\\{\\}<>№",C=new RegExp("["+w+"]+","g"),E=new RegExp("[\\-\\+\\\\\\?!@#$%^&]+","g"),k={escapeHtml:function(e){var t={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#x27;","/":"&#x2F;"};return e&&y.each(t,function(t,n){e=e.replace(new RegExp(n,"g"),t)}),e},escapeRegExChars:function(e){return e.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,"\\$&")},formatToken:function(e){return e&&e.toLowerCase().replace(/[ёЁ]/g,"е")},getWordExtractorRegExp:function(){return new RegExp("([^"+w+"]*)(["+w+"]*)","g")},normalize:function(e,t){return k.split(e,t).join(" ")},padEnd:function(e,t,n){return String.prototype.padEnd?e.padEnd(t,n):(t>>=0,n=String(void 0!==n?n:" "),e.length>t?String(e):(t-=e.length,t>n.length&&(n+=n.repeat(t/n.length)),String(e)+n.slice(0,t)))},split:function(e,t){var n=e.toLowerCase().replace("ё","е").replace(/(\d+)([а-я]{2,})/g,"$1 $2").replace(/([а-я]+)(\d+)/g,"$1 $2"),i=y.compact(n.split(C));if(!i.length)return[];var s=i.pop(),o=y.minus(i,t);return o.push(s),o},splitTokens:function(e){var t=[];return y.each(e,function(e,n){var i=e.split(E);t=t.concat(y.compact(i))}),t},stringEncloses:function(e,t){return e.length>t.length&&-1!==e.toLowerCase().indexOf(t.toLowerCase())},tokenize:function(e,t){var n=y.compact(k.formatToken(e).split(C)),i=y.minus(n,t),s=y.minus(n,i);return n=k.withSubTokens(i.concat(s))},withSubTokens:function(e){var t=[];return y.each(e,function(e,n){var i=e.split(E);t.push(e),i.length>1&&(t=t.concat(y.compact(i)))}),t}},P={Deferred:function(){return e.Deferred()},ajax:function(t){return e.ajax(t)},extend:function(){return e.extend.apply(null,arguments)},isJqObject:function(t){return t instanceof e},param:function(t){return e.param(t)},proxy:function(t,n){return e.proxy(t,n)},select:function(t){return e(t)},supportsCors:function(){return e.support.cors}},T={getDefaultType:function(){return P.supportsCors()?"POST":"GET"},getDefaultContentType:function(){return P.supportsCors()?"application/json":"application/x-www-form-urlencoded"},fixURLProtocol:function(e){return P.supportsCors()?e:e.replace(/^https?:/,location.protocol)},addUrlParams:function(e,t){return e+(/\?/.test(e)?"&":"?")+P.param(t)},serialize:function(e){return P.supportsCors()?JSON.stringify(e,function(e,t){return null===t?void 0:t}):(e=b.compact(e),P.param(e,!0))}},V=function(){var e=0;return function(t){return(t||"")+ ++e}}(),j={escapeRegExChars:k.escapeRegExChars,escapeHtml:k.escapeHtml,formatToken:k.formatToken,normalize:k.normalize,reWordExtractor:k.getWordExtractorRegExp,stringEncloses:k.stringEncloses,addUrlParams:T.addUrlParams,getDefaultContentType:T.getDefaultContentType,getDefaultType:T.getDefaultType,fixURLProtocol:T.fixURLProtocol,serialize:T.serialize,arrayMinus:y.minus,arrayMinusWithPartialMatching:y.minusWithPartialMatching,arraysIntersection:y.intersect,compact:y.compact,each:y.each,makeArray:y.makeArray,slice:y.slice,delay:v.delay,areSame:b.areSame,compactObject:b.compact,getDeepValue:b.getDeepValue,fieldsNotEmpty:b.fieldsAreNotEmpty,indexBy:b.indexObjectsById,isArray:m.isArray,isEmptyObject:m.isEmptyObject,isFunction:m.isFunction,isPlainObject:m.isPlainObject,uniqueId:V},B={autoSelectFirst:!1,serviceUrl:"https://suggestions.dadata.ru/suggestions/api/4_1/rs",url:null,onSearchStart:e.noop,onSearchComplete:e.noop,onSearchError:e.noop,onSuggestionsFetch:null,onSelect:null,onSelectNothing:null,onInvalidateSelection:null,minChars:1,deferRequestBy:100,enrichmentEnabled:!0,params:{},paramName:"query",timeout:3e3,formatResult:null,formatSelected:null,noCache:!1,containerClass:"suggestions-suggestions",tabDisabled:!1,triggerSelectOnSpace:!1,triggerSelectOnEnter:!0,triggerSelectOnBlur:!0,preventBadQueries:!1,hint:"Выберите вариант или продолжите ввод",noSuggestionsHint:null,type:null,requestMode:"suggest",count:5,$helpers:null,headers:null,scrollOnFocus:!0,mobileWidth:980,initializeInterval:100},L=function(e){return function(t){if(0===t.length)return!1;if(1===t.length)return!0;var n=e(t[0].value);return 0===t.filter(function(t){return 0!==e(t.value).indexOf(n)}).length}}(function(e){return e}),O={matchByNormalizedQuery:function(e){return function(t,n){var i=k.normalize(t,e),s=[];return y.each(n,function(n,o){var a=n.value.toLowerCase();return!k.stringEncloses(t,a)&&(!(a.indexOf(i)>0)&&void(i===k.normalize(a,e)&&s.push(o)))}),1===s.length?s[0]:-1}},matchByWords:function(e){return t(e,L)},matchByWordsAddress:function(e){return t(e,L)},matchByFields:function(e){return function(t,n){var i=k.splitTokens(k.split(t)),s=[];return 1===n.length&&(e&&y.each(e,function(e,t){var i=b.getDeepValue(n[0],t),o=i&&k.splitTokens(k.split(i,e));o&&o.length&&(s=s.concat(o))}),0===y.minusWithPartialMatching(i,s).length)?0:-1}}},R=["ао","аобл","дом","респ","а/я","аал","автодорога","аллея","арбан","аул","б-р","берег","бугор","вал","вл","волость","въезд","высел","г","городок","гск","д","двлд","днп","дор","дп","ж/д_будка","ж/д_казарм","ж/д_оп","ж/д_платф","ж/д_пост","ж/д_рзд","ж/д_ст","жилзона","жилрайон","жт","заезд","заимка","зона","к","казарма","канал","кв","кв-л","км","кольцо","комн","кордон","коса","кп","край","линия","лпх","м","массив","местность","мкр","мост","н/п","наб","нп","обл","округ","остров","оф","п","п/о","п/р","п/ст","парк","пгт","пер","переезд","пл","пл-ка","платф","погост","полустанок","починок","пр-кт","проезд","промзона","просек","просека","проселок","проток","протока","проулок","р-н","рзд","россия","рп","ряды","с","с/а","с/мо","с/о","с/п","с/с","сад","сквер","сл","снт","спуск","ст","ст-ца","стр","тер","тракт","туп","у","ул","уч-к","ф/х","ферма","х","ш","бульвар","владение","выселки","гаражно-строительный","город","деревня","домовладение","дорога","квартал","километр","комната","корпус","литер","леспромхоз","местечко","микрорайон","набережная","область","переулок","платформа","площадка","площадь","поселение","поселок","проспект","разъезд","район","республика","село","сельсовет","слобода","сооружение","станица","станция","строение","территория","тупик","улица","улус","участок","хутор","шоссе"],D=[{id:"kladr_id",fields:["kladr_id"],forBounds:!1,forLocations:!0},{id:"postal_code",fields:["postal_code"],forBounds:!1,forLocations:!0},{id:"country_iso_code",fields:["country_iso_code"],forBounds:!1,forLocations:!0},{id:"country",fields:["country"],forBounds:!0,forLocations:!0,kladrFormat:{digits:0,zeros:13},fiasType:"country_iso_code"},{id:"region_fias_id",fields:["region_fias_id"],forBounds:!1,forLocations:!0},{id:"region_type_full",fields:["region_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:2,zeros:11},fiasType:"region_fias_id"},{id:"region",fields:["region","region_type","region_type_full","region_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:2,zeros:11},fiasType:"region_fias_id"},{id:"area_fias_id",fields:["area_fias_id"],forBounds:!1,forLocations:!0},{id:"area_type_full",fields:["area_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:5,zeros:8},fiasType:"area_fias_id"},{id:"area",fields:["area","area_type","area_type_full","area_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:5,zeros:8},fiasType:"area_fias_id"},{id:"city_fias_id",fields:["city_fias_id"],forBounds:!1,forLocations:!0},{id:"city_type_full",fields:["city_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:8,zeros:5},fiasType:"city_fias_id"},{id:"city",fields:["city","city_type","city_type_full","city_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:8,zeros:5},fiasType:"city_fias_id"},{id:"city_district_fias_id",fields:["city_district_fias_id"],forBounds:!1,forLocations:!0},{id:"city_district_type_full",fields:["city_district_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"city_district_fias_id"},{id:"city_district",fields:["city_district","city_district_type","city_district_type_full","city_district_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"city_district_fias_id"},{id:"settlement_fias_id",fields:["settlement_fias_id"],forBounds:!1,forLocations:!0},{id:"settlement_type_full",fields:["settlement_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"settlement_fias_id"},{id:"settlement",fields:["settlement","settlement_type","settlement_type_full","settlement_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:11,zeros:2},fiasType:"settlement_fias_id"},{id:"street_fias_id",fields:["street_fias_id"],forBounds:!1,forLocations:!0},{id:"street_type_full",fields:["street_type_full"],forBounds:!1,forLocations:!0,kladrFormat:{digits:15,zeros:2},fiasType:"street_fias_id"},{id:"street",fields:["street","street_type","street_type_full","street_with_type"],forBounds:!0,forLocations:!0,kladrFormat:{digits:15,zeros:2},fiasType:"street_fias_id"},{id:"house",fields:["house","house_type","house_type_full","block","block_type"],forBounds:!0,forLocations:!1,kladrFormat:{digits:19}}],I={urlSuffix:"address",noSuggestionsHint:"Неизвестный адрес",matchers:[O.matchByNormalizedQuery(R),O.matchByWordsAddress(R)],dataComponents:D,dataComponentsById:b.indexObjectsById(D,"id","index"),unformattableTokens:R,enrichmentEnabled:!0,enrichmentMethod:"suggest",enrichmentParams:{count:1,locations:null,locations_boost:null,from_bound:null,to_bound:null},getEnrichmentQuery:function(e){return e.unrestricted_value},geoEnabled:!0,isDataComplete:function(e){var t=[this.bounds.to||"flat"],n=e.data;return!m.isPlainObject(n)||b.fieldsAreNotEmpty(n,t)},composeValue:function(e,t){var n=e.country,i=e.region_with_type||y.compact([e.region,e.region_type]).join(" ")||e.region_type_full,s=e.area_with_type||y.compact([e.area_type,e.area]).join(" ")||e.area_type_full,o=e.city_with_type||y.compact([e.city_type,e.city]).join(" ")||e.city_type_full,a=e.settlement_with_type||y.compact([e.settlement_type,e.settlement]).join(" ")||e.settlement_type_full,r=e.city_district_with_type||y.compact([e.city_district_type,e.city_district]).join(" ")||e.city_district_type_full,l=e.street_with_type||y.compact([e.street_type,e.street]).join(" ")||e.street_type_full,u=y.compact([e.house_type,e.house,e.block_type,e.block]).join(" "),c=y.compact([e.flat_type,e.flat]).join(" "),d=e.postal_box&&"а/я "+e.postal_box;return i===o&&(i=""),t&&t.saveCityDistrict||(t&&t.excludeCityDistrict?r="":r&&!e.city_district_fias_id&&(r="")),y.compact([n,i,s,o,r,a,l,u,c,d]).join(", ")},formatResult:function(){var e=[],t=!1;return D.forEach(function(n){t&&e.push(n.id),"city_district"===n.id&&(t=!0)}),function(t,n,i,s){var o,a,r,l=this,u=i.data&&i.data.city_district_with_type,c=s&&s.unformattableTokens,d=i.data&&i.data.history_values;return d&&d.length>0&&(o=k.tokenize(n,c),a=this.type.findUnusedTokens(o,t),(r=this.type.getFormattedHistoryValues(a,d))&&(t+=r)),t=l.highlightMatches(t,n,i,s),t=l.wrapFormattedValue(t,i),u&&(!l.bounds.own.length||l.bounds.own.indexOf("street")>=0)&&!m.isEmptyObject(l.copyDataComponents(i.data,e))&&(t+='<div class="'+l.classes.subtext+'">'+l.highlightMatches(u,n,i)+"</div>"),t}}(),findUnusedTokens:function(e,t){return e.filter(function(e){return-1===t.indexOf(e)})},getFormattedHistoryValues:function(e,t){var n=[],i="";return t.forEach(function(t){y.each(e,function(e){if(t.toLowerCase().indexOf(e)>=0)return n.push(t),!1})}),n.length>0&&(i=" (бывш. "+n.join(", ")+")"),i},getSuggestionValue:function(e,t){var n=null;return t.hasSameValues?n=e.options.restrict_value?this.getValueWithinConstraints(e,t.suggestion):e.bounds.own.length?this.getValueWithinBounds(e,t.suggestion):t.suggestion.unrestricted_value:t.hasBeenEnriched&&e.options.restrict_value&&(n=this.getValueWithinConstraints(e,t.suggestion,{excludeCityDistrict:!0})),n},getValueWithinConstraints:function(e,t,n){return this.composeValue(e.getUnrestrictedData(t.data),n)},getValueWithinBounds:function(e,t,n){var i=e.copyDataComponents(t.data,e.bounds.own.concat(["city_district_fias_id"]));return this.composeValue(i,n)}},q={urlSuffix:"fio",noSuggestionsHint:!1,matchers:[O.matchByNormalizedQuery(),O.matchByWords()],fieldNames:{surname:"фамилия",name:"имя",patronymic:"отчество"},isDataComplete:function(e){var t,i=this,s=i.options.params,o=e.data;return m.isFunction(s)&&(s=s.call(i.element,e.value)),s&&s.parts?t=s.parts.map(function(e){return e.toLowerCase()}):(t=["surname","name"],n(e,"surname")&&t.push("patronymic")),b.fieldsAreNotEmpty(o,t)},composeValue:function(e){return y.compact([e.surname,e.name,e.patronymic]).join(" ")}},F={LEGAL:[2,2,5,1],INDIVIDUAL:[2,2,6,2]},$={urlSuffix:"party",noSuggestionsHint:"Неизвестная организация",matchers:[O.matchByFields({value:null,"data.address.value":R,"data.inn":null,"data.ogrn":null})],dataComponents:D,enrichmentEnabled:!0,enrichmentMethod:"findById",enrichmentParams:{count:1,locations_boost:null},getEnrichmentQuery:function(e){return e.data.hid},geoEnabled:!0,formatResult:function(e,t,n,o){var a=this,r=a.type.formatResultInn.call(a,n,t),l=a.highlightMatches(b.getDeepValue(n.data,"ogrn"),t,n),u=i(r,l),c=a.highlightMatches(b.getDeepValue(n.data,"management.name"),t,n),d=b.getDeepValue(n.data,"address.value")||"";return a.isMobile&&((o||(o={})).maxLength=50),e=s.call(a,e,b.getDeepValue(n.data,"name.latin"),t,n,o),e=a.wrapFormattedValue(e,n),d&&(d=d.replace(/^(\d{6}?\s+|Россия,\s+)/i,""),d=a.isMobile?d.replace(new RegExp("^([^"+w+"]+["+w+"]+[^"+w+"]+).*"),"$1"):a.highlightMatches(d,t,n,{unformattableTokens:R})),(u||d||c)&&(e+='<div class="'+a.classes.subtext+'"><span class="'+a.classes.subtext_inline+'">'+(u||"")+"</span>"+(i(d,c)||"")+"</div>"),e},formatResultInn:function(e,t){var n,i,s=this,o=e.data&&e.data.inn,a=F[e.data&&e.data.type],r=/\d/;if(o)return i=s.highlightMatches(o,t,e),a&&(i=i.split(""),n=a.map(function(e){for(var t,n="";e&&(t=i.shift());)n+=t,r.test(t)&&e--;return n}),i=n.join('<span class="'+s.classes.subtext_delimiter+'"></span>')+i.join("")),i}},A={urlSuffix:"email",noSuggestionsHint:!1,matchers:[O.matchByNormalizedQuery()],isQueryRequestable:function(e){return this.options.suggest_local||e.indexOf("@")>=0}},z={urlSuffix:"bank",noSuggestionsHint:"Неизвестный банк",matchers:[O.matchByFields({value:null,"data.bic":null,"data.swift":null})],dataComponents:D,geoEnabled:!0,formatResult:function(e,t,n,i){var s=this,o=s.highlightMatches(b.getDeepValue(n.data,"bic"),t,n),a=b.getDeepValue(n.data,"address.value")||"";return e=s.highlightMatches(e,t,n,i),e=s.wrapFormattedValue(e,n),a&&(a=a.replace(/^\d{6}( РОССИЯ)?, /i,""),a=s.isMobile?a.replace(new RegExp("^([^"+w+"]+["+w+"]+[^"+w+"]+).*"),"$1"):s.highlightMatches(a,t,n,{unformattableTokens:R})),(o||a)&&(e+='<div class="'+s.classes.subtext+'"><span class="'+s.classes.subtext_inline+'">'+o+"</span>"+a+"</div>"),e},formatSelected:function(e){return b.getDeepValue(e,"data.name.payment")||null}},N={NAME:q,ADDRESS:I,PARTY:$,EMAIL:A,BANK:z};N.get=function(e){return N.hasOwnProperty(e)?N[e]:new o(e)},P.extend(B,{suggest_local:!0});var M={chains:{},on:function(e,t){return this.get(e).push(t),this},get:function(e){var t=this.chains;return t[e]||(t[e]=[])}},H={suggest:{defaultParams:{type:j.getDefaultType(),dataType:"json",contentType:j.getDefaultContentType()},addTypeInUrl:!0},"iplocate/address":{defaultParams:{type:"GET",dataType:"json"},addTypeInUrl:!1},status:{defaultParams:{type:"GET",dataType:"json"},addTypeInUrl:!0},findById:{defaultParams:{type:j.getDefaultType(),dataType:"json",contentType:j.getDefaultContentType()},addTypeInUrl:!0}},U={suggest:{method:"suggest",userSelect:!0,updateValue:!0,enrichmentEnabled:!0},findById:{method:"findById",userSelect:!1,updateValue:!1,enrichmentEnabled:!1}};a.prototype={initialize:function(){var e=this;e.uniqueId=j.uniqueId("i"),e.createWrapper(),e.notify("initialize"),e.setOptions(),e.fixPosition()},deferInitialization:function(){var e,t=this,n="mouseover focus keydown",i=function(){t.initializer.resolve(),t.enable()};t.initializer.always(function(){t.el.off(n,i),clearInterval(e)}),t.disabled=!0,t.el.on(n,i),e=setInterval(function(){t.el.is(":visible")&&i()},t.options.initializeInterval)},isInitialized:function(){return"resolved"===this.initializer.state()},dispose:function(){var e=this;e.initializer.reject(),e.notify("dispose"),e.el.removeData("suggestions").removeClass("suggestions-input"),e.removeWrapper(),e.el.trigger("suggestions-dispose")},notify:function(t){var n=this,i=j.slice(arguments,1);return e.map(M.get(t),function(e){return e.apply(n,i)})},createWrapper:function(){var t=this;t.$wrapper=e('<div class="suggestions-wrapper"/>'),t.el.after(t.$wrapper),t.$wrapper.on("mousedown"+S,e.proxy(t.onMousedown,t))},removeWrapper:function(){var t=this;t.$wrapper&&t.$wrapper.remove(),e(t.options.$helpers).off(S)},onMousedown:function(t){var n=this;t.preventDefault(),n.cancelBlur=!0,j.delay(function(){delete n.cancelBlur}),0==e(t.target).closest(".ui-menu-item").length&&j.delay(function(){e(document).one("mousedown",function(t){var i=n.el.add(n.$wrapper).add(n.options.$helpers);n.options.floating&&(i=i.add(n.$container)),i=i.filter(function(){return this===t.target||e.contains(this,t.target)}),i.length||n.hide()})})},scrollToTop:function(){var t=this,n=t.options.scrollOnFocus;!0===n&&(n=t.el),n instanceof e&&n.length>0&&e("body,html").animate({scrollTop:n.offset().top},"fast")},setOptions:function(t){var n=this;e.extend(n.options,t),n.type=N.get(n.options.type),e.each({requestMode:U},function(t,i){if(n[t]=i[n.options[t]],!n[t])throw n.disable(),"`"+t+"` option is incorrect! Must be one of: "+e.map(i,function(e,t){return'"'+t+'"'}).join(", ")}),e(n.options.$helpers).off(S).on("mousedown"+S,e.proxy(n.onMousedown,n)),n.isInitialized()&&n.notify("setOptions")},fixPosition:function(t){var n,i,s=this,o={};s.isMobile=s.$viewport.width()<=s.options.mobileWidth,s.isInitialized()&&(!t||"scroll"!=t.type||s.options.floating||s.isMobile)&&(s.$container.appendTo(s.options.floating?s.$body:s.$wrapper),s.notify("resetPosition"),s.el.css("paddingLeft",""),s.el.css("paddingRight",""),o.paddingLeft=parseFloat(s.el.css("paddingLeft")),o.paddingRight=parseFloat(s.el.css("paddingRight")),e.extend(o,s.el.offset()),o.borderTop="none"==s.el.css("border-top-style")?0:parseFloat(s.el.css("border-top-width")),o.borderLeft="none"==s.el.css("border-left-style")?0:parseFloat(s.el.css("border-left-width")),o.innerHeight=s.el.innerHeight(),o.innerWidth=s.el.innerWidth(),o.outerHeight=s.el.outerHeight(),o.componentsLeft=0,o.componentsRight=0,n=s.$wrapper.offset(),i={top:o.top-n.top,left:o.left-n.left},s.notify("fixPosition",i,o),o.componentsLeft>o.paddingLeft&&s.el.css("paddingLeft",o.componentsLeft+"px"),o.componentsRight>o.paddingRight&&s.el.css("paddingRight",o.componentsRight+"px"))},clearCache:function(){this.cachedResponse={},this.enrichmentCache={},this.badQueries=[]},clear:function(){var e=this,t=e.selection;e.isInitialized()&&(e.clearCache(),e.currentValue="",e.selection=null,e.hide(),e.suggestions=[],e.el.val(""),e.el.trigger("suggestions-clear"),e.notify("clear"),e.trigger("InvalidateSelection",t))},disable:function(){var e=this;e.disabled=!0,e.abortRequest(),e.visible&&e.hide()},enable:function(){this.disabled=!1},isUnavailable:function(){return this.disabled},update:function(){var e=this,t=e.el.val();e.isInitialized()&&(e.currentValue=t,e.isQueryRequestable(t)?e.updateSuggestions(t):e.hide())},setSuggestion:function(t){var n,i,s=this;e.isPlainObject(t)&&e.isPlainObject(t.data)&&(t=e.extend(!0,{},t),s.isUnavailable()&&s.initializer&&"pending"===s.initializer.state()&&(s.initializer.resolve(),s.enable()),s.bounds.own.length&&(s.checkValueBounds(t),n=s.copyDataComponents(t.data,s.bounds.all),t.data.kladr_id&&(n.kladr_id=s.getBoundedKladrId(t.data.kladr_id,s.bounds.all)),t.data=n),s.selection=t,s.suggestions=[t],i=s.getSuggestionValue(t)||"",s.currentValue=i,s.el.val(i),s.abortRequest(),s.el.trigger("suggestions-set"))},fixData:function(){var t=this,n=t.extendedCurrentValue(),i=t.el.val(),s=e.Deferred();s.done(function(e){t.selectSuggestion(e,0,i,{hasBeenEnriched:!0}),t.el.trigger("suggestions-fixdata",e)}).fail(function(){t.selection=null,t.el.trigger("suggestions-fixdata")}),t.isQueryRequestable(n)?(t.currentValue=n,t.getSuggestions(n,{count:1,from_bound:null,to_bound:null}).done(function(e){var t=e[0];t?s.resolve(t):s.reject()}).fail(function(){s.reject()})):s.reject()},extendedCurrentValue:function(){var t=this,n=t.getParentInstance(),i=n&&n.extendedCurrentValue(),s=e.trim(t.el.val());return j.compact([i,s]).join(" ")},getAjaxParams:function(t,n){var i=this,s=e.trim(i.options.token),o=e.trim(i.options.partner),r=i.options.serviceUrl,l=i.options.url,u=H[t],c=e.extend({timeout:i.options.timeout},u.defaultParams),d={};return l?r=l:(/\/$/.test(r)||(r+="/"),r+=t,u.addTypeInUrl&&(r+="/"+i.type.urlSuffix)),r=j.fixURLProtocol(r),e.support.cors?(s&&(d.Authorization="Token "+s),o&&(d["X-Partner"]=o),d["X-Version"]=a.version,c.headers||(c.headers={}),c.xhrFields||(c.xhrFields={}),e.extend(c.headers,i.options.headers,d),c.xhrFields.withCredentials=!1):(s&&(d.token=s),o&&(d.partner=o),d.version=a.version,r=j.addUrlParams(r,d)),c.url=r,e.extend(c,n)},isQueryRequestable:function(e){var t,n=this;return t=e.length>=n.options.minChars,t&&n.type.isQueryRequestable&&(t=n.type.isQueryRequestable.call(n,e)),t},constructRequestParams:function(t,n){var i=this,s=i.options,o=e.isFunction(s.params)?s.params.call(i.element,t):e.extend({},s.params);return i.type.constructRequestParams&&e.extend(o,i.type.constructRequestParams.call(i)),e.each(i.notify("requestParams"),function(t,n){e.extend(o,n)}),o[s.paramName]=t,e.isNumeric(s.count)&&s.count>0&&(o.count=s.count),e.extend(o,n)},updateSuggestions:function(e){var t=this;t.fetchPhase=t.getSuggestions(e).done(function(n){t.assignSuggestions(n,e)})},getSuggestions:function(t,n,i){var s,o=this,a=o.options,r=i&&i.noCallbacks,l=i&&i.useEnrichmentCache,u=i&&i.method||o.requestMode.method,c=o.constructRequestParams(t,n),d=e.param(c||{}),f=e.Deferred();return s=o.cachedResponse[d],s&&e.isArray(s.suggestions)?f.resolve(s.suggestions):o.isBadQuery(t)?f.reject():r||!1!==a.onSearchStart.call(o.element,c)?o.doGetSuggestions(c,u).done(function(e){o.processResponse(e)&&t==o.currentValue?(a.noCache||(l?o.enrichmentCache[t]=e.suggestions[0]:(o.enrichResponse(e,t),o.cachedResponse[d]=e,a.preventBadQueries&&0===e.suggestions.length&&o.badQueries.push(t))),f.resolve(e.suggestions)):f.reject(),r||a.onSearchComplete.call(o.element,t,e.suggestions)}).fail(function(e,n,i){f.reject(),r||"abort"===n||a.onSearchError.call(o.element,t,e,n,i)}):f.reject(),f},doGetSuggestions:function(t,n){var i=this,s=e.ajax(i.getAjaxParams(n,{data:j.serialize(t)}));return i.abortRequest(),i.currentRequest=s,i.notify("request"),s.always(function(){i.currentRequest=null,i.notify("request")}),s},isBadQuery:function(t){if(!this.options.preventBadQueries)return!1;var n=!1;return e.each(this.badQueries,function(e,i){return!(n=0===t.indexOf(i))}),n},abortRequest:function(){var e=this;e.currentRequest&&e.currentRequest.abort()},processResponse:function(t){var n,i=this;return!(!t||!e.isArray(t.suggestions))&&(i.verifySuggestionsFormat(t.suggestions),i.setUnrestrictedValues(t.suggestions),e.isFunction(i.options.onSuggestionsFetch)&&(n=i.options.onSuggestionsFetch.call(i.element,t.suggestions),e.isArray(n)&&(t.suggestions=n)),!0)},verifySuggestionsFormat:function(t){"string"==typeof t[0]&&e.each(t,function(e,n){t[e]={value:n,data:null}})},getSuggestionValue:function(t,n){var i,s=this,o=s.options.formatSelected||s.type.formatSelected,a=n&&n.hasSameValues,r=n&&n.hasBeenEnriched,l=null;return e.isFunction(o)&&(i=o.call(s,t)),"string"!=typeof i&&(i=t.value,s.type.getSuggestionValue&&null!==(l=s.type.getSuggestionValue(s,{suggestion:t,hasSameValues:a,hasBeenEnriched:r}))&&(i=l)),i},hasSameValues:function(t){var n=!1;return e.each(this.suggestions,function(e,i){if(i.value===t.value&&i!==t)return n=!0,!1}),n},assignSuggestions:function(e,t){var n=this;n.suggestions=e,n.notify("assignSuggestions",t)},shouldRestrictValues:function(){var e=this;return e.options.restrict_value&&e.constraints&&1==Object.keys(e.constraints).length},setUnrestrictedValues:function(t){var n=this,i=n.shouldRestrictValues(),s=n.getFirstConstraintLabel();e.each(t,function(e,t){t.unrestricted_value||(t.unrestricted_value=i?s+", "+t.value:t.value)})},areSuggestionsSame:function(e,t){return e&&t&&e.value===t.value&&j.areSame(e.data,t.data)},getNoSuggestionsHint:function(){var e=this;return!1!==e.options.noSuggestionsHint&&(e.options.noSuggestionsHint||e.type.noSuggestionsHint)}};var W={setupElement:function(){this.el.attr("autocomplete","never").attr("autocorrect","off").attr("autocapitalize","off").attr("spellcheck","false").addClass("suggestions-input").css("box-sizing","border-box")},bindElementEvents:function(){var t=this;t.el.on("keydown"+S,e.proxy(t.onElementKeyDown,t)),t.el.on(["keyup"+S,"cut"+S,"paste"+S,"input"+S].join(" "),e.proxy(t.onElementKeyUp,t)),t.el.on("blur"+S,e.proxy(t.onElementBlur,t)),t.el.on("focus"+S,e.proxy(t.onElementFocus,t))},unbindElementEvents:function(){this.el.off(S)},onElementBlur:function(){var e=this;if(e.cancelBlur)return void(e.cancelBlur=!1);e.options.triggerSelectOnBlur?e.isUnavailable()||e.selectCurrentValue({noSpace:!0}).always(function(){e.hide()}):e.hide(),e.fetchPhase.abort&&e.fetchPhase.abort()},onElementFocus:function(){var t=this;t.cancelFocus||j.delay(e.proxy(t.completeOnFocus,t)),t.cancelFocus=!1},onElementKeyDown:function(e){var t=this;if(!t.isUnavailable())if(t.visible){switch(e.which){case _.ESC:t.el.val(t.currentValue),t.hide(),t.abortRequest();break;case _.TAB:if(!1===t.options.tabDisabled)return;break;case _.ENTER:t.options.triggerSelectOnEnter&&t.selectCurrentValue();break;case _.SPACE:return void(t.options.triggerSelectOnSpace&&t.isCursorAtEnd()&&(e.preventDefault(),t.selectCurrentValue({continueSelecting:!0,dontEnrich:!0}).fail(function(){t.currentValue+=" ",t.el.val(t.currentValue),t.proceedChangedValue()})));case _.UP:t.moveUp();break;case _.DOWN:t.moveDown();break;default:return}e.stopImmediatePropagation(),e.preventDefault()}else switch(e.which){case _.DOWN:t.suggest();break;case _.ENTER:t.options.triggerSelectOnEnter&&t.triggerOnSelectNothing()}},onElementKeyUp:function(e){var t=this;if(!t.isUnavailable()){switch(e.which){case _.UP:case _.DOWN:case _.ENTER:return}clearTimeout(t.onChangeTimeout),t.inputPhase.reject(),t.currentValue!==t.el.val()&&t.proceedChangedValue()}},proceedChangedValue:function(){var t=this;t.abortRequest(),t.inputPhase=e.Deferred().done(e.proxy(t.onValueChange,t)),t.options.deferRequestBy>0?t.onChangeTimeout=j.delay(function(){t.inputPhase.resolve()},t.options.deferRequestBy):t.inputPhase.resolve()},onValueChange:function(){var e,t=this;t.selection&&(e=t.selection,t.selection=null,t.trigger("InvalidateSelection",e)),t.selectedIndex=-1,t.update(),
+t.notify("valueChange")},completeOnFocus:function(){var e=this;e.isUnavailable()||e.isElementFocused()&&(e.update(),e.isMobile&&(e.setCursorAtEnd(),e.scrollToTop()))},isElementFocused:function(){return document.activeElement===this.element},isElementDisabled:function(){return Boolean(this.element.getAttribute("disabled")||this.element.getAttribute("readonly"))},isCursorAtEnd:function(){var e,t,n=this,i=n.el.val().length;try{if("number"==typeof(e=n.element.selectionStart))return e===i}catch(e){}return!document.selection||(t=document.selection.createRange(),t.moveStart("character",-i),i===t.text.length)},setCursorAtEnd:function(){var e=this.element;try{e.selectionEnd=e.selectionStart=e.value.length,e.scrollLeft=e.scrollWidth}catch(t){e.value=e.value}}};e.extend(a.prototype,W),M.on("initialize",W.bindElementEvents).on("dispose",W.unbindElementEvents);var Q={};r();var Z={checkStatus:function(){function e(e){j.isFunction(t.options.onSearchError)&&t.options.onSearchError.call(t.element,null,s,"error",e)}var t=this,n=t.options.token&&t.options.token.trim()||"",i=t.options.type+n,s=Q[i];s||(s=Q[i]=P.ajax(t.getAjaxParams("status"))),s.done(function(n,i,s){if(n.search){var o=s.getResponseHeader("X-Plan");n.plan=o,P.extend(t.status,n)}else e("Service Unavailable")}).fail(function(){e(s.statusText)})}};a.resetTokens=r,P.extend(a.prototype,Z),M.on("setOptions",Z.checkStatus);var K,G=!0,J={checkLocation:function(){var t=this,n=t.options.geoLocation;t.type.geoEnabled&&n&&(t.geoLocation=e.Deferred(),e.isPlainObject(n)||e.isArray(n)?t.geoLocation.resolve(n):(K||(K=e.ajax(t.getAjaxParams("iplocate/address"))),K.done(function(e){var n=e&&e.location&&e.location.data;n&&n.kladr_id?t.geoLocation.resolve({kladr_id:n.kladr_id}):t.geoLocation.reject()}).fail(function(){t.geoLocation.reject()})))},getGeoLocation:function(){return this.geoLocation},constructParams:function(){var t=this,n={};return t.geoLocation&&e.isFunction(t.geoLocation.promise)&&"resolved"==t.geoLocation.state()&&t.geoLocation.done(function(t){n.locations_boost=e.makeArray(t)}),n}};"GET"!=j.getDefaultType()&&(e.extend(B,{geoLocation:G}),e.extend(a,{resetLocation:l}),e.extend(a.prototype,{getGeoLocation:J.getGeoLocation}),M.on("setOptions",J.checkLocation).on("requestParams",J.constructParams));var X={enrichSuggestion:function(t,n){var i=this,s=e.Deferred();if(!i.options.enrichmentEnabled||!i.type.enrichmentEnabled||!i.requestMode.enrichmentEnabled||n&&n.dontEnrich)return s.resolve(t);if(t.data&&null!=t.data.qc)return s.resolve(t);i.disableDropdown();var o=i.type.getEnrichmentQuery(t),a=i.type.enrichmentParams,r={noCallbacks:!0,useEnrichmentCache:!0,method:i.type.enrichmentMethod};return i.currentValue=o,i.enrichPhase=i.getSuggestions(o,a,r).always(function(){i.enableDropdown()}).done(function(e){var n=e&&e[0];s.resolve(n||t,!!n)}).fail(function(){s.resolve(t)}),s},enrichResponse:function(t,n){var i=this,s=i.enrichmentCache[n];s&&e.each(t.suggestions,function(e,i){if(i.value===n)return t.suggestions[e]=s,!1})}};e.extend(a.prototype,X);var Y={width:"auto",floating:!1},ee={createContainer:function(){var t=this,n="."+t.classes.suggestion,i=t.options,s=e("<div/>").addClass(i.containerClass).css({position:"absolute",display:"none"});t.$container=s,s.on("click"+S,n,e.proxy(t.onSuggestionClick,t))},getContainer:function(){return this.$container.get(0)},removeContainer:function(){var e=this;e.options.floating&&e.$container.remove()},setContainerOptions:function(){var t=this;t.$container.off("mousedown.suggestions"),t.options.floating&&t.$container.on("mousedown.suggestions",e.proxy(t.onMousedown,t))},onSuggestionClick:function(t){var n,i=this,s=e(t.target);if(!i.dropdownDisabled){for(i.cancelFocus=!0,i.el.focus();s.length&&!(n=s.attr("data-index"));)s=s.closest("."+i.classes.suggestion);n&&!isNaN(n)&&i.select(+n)}},setDropdownPosition:function(e,t){var n,i=this,s=i.$viewport.scrollLeft();i.isMobile?(n=i.options.floating?{left:s+"px",top:t.top+t.outerHeight+"px"}:{left:e.left-t.left+s+"px",top:e.top+t.outerHeight+"px"},n.width=i.$viewport.width()+"px"):(n=i.options.floating?{left:t.left+"px",top:t.top+t.borderTop+t.innerHeight+"px"}:{left:e.left+"px",top:e.top+t.borderTop+t.innerHeight+"px"},j.delay(function(){var e=i.options.width;"auto"===e&&(e=i.el.outerWidth()),i.$container.outerWidth(e)})),i.$container.toggleClass(i.classes.mobile,i.isMobile).css(n),i.containerItemsPadding=t.left+t.borderLeft+t.paddingLeft-s},setItemsPositions:function(){var e=this;e.getSuggestionsItems().css("paddingLeft",e.isMobile?e.containerItemsPadding+"px":"")},getSuggestionsItems:function(){return this.$container.children("."+this.classes.suggestion)},toggleDropdownEnabling:function(e){this.dropdownDisabled=!e,this.$container.attr("disabled",!e)},disableDropdown:function(){this.toggleDropdownEnabling(!1)},enableDropdown:function(){this.toggleDropdownEnabling(!0)},hasSuggestionsToChoose:function(){var t=this;return t.suggestions.length>1||1===t.suggestions.length&&(!t.selection||e.trim(t.suggestions[0].value)!==e.trim(t.selection.value))},suggest:function(){var t=this,n=t.options,i=[];if(t.requestMode.userSelect){if(t.hasSuggestionsToChoose())!t.isMobile&&n.hint&&t.suggestions.length&&i.push('<div class="'+t.classes.hint+'">'+n.hint+"</div>"),t.selectedIndex=-1,t.suggestions.forEach(function(e,n){e==t.selection&&(t.selectedIndex=n),t.buildSuggestionHtml(e,n,i)});else{if(t.suggestions.length)return void t.hide();var s=t.getNoSuggestionsHint();if(!s)return void t.hide();i.push('<div class="'+t.classes.hint+'">'+s+"</div>")}i.push('<div class="'+x.promo+'"></div>'),i.push("</div>"),t.$container.html(i.join("")),n.autoSelectFirst&&-1===t.selectedIndex&&(t.selectedIndex=0),-1!==t.selectedIndex&&t.getSuggestionsItems().eq(t.selectedIndex).addClass(t.classes.selected),e.isFunction(n.beforeRender)&&n.beforeRender.call(t.element,t.$container),t.$container.show(),t.visible=!0,t.setItemsPositions()}},buildSuggestionHtml:function(e,t,n){n.push('<div class="'+this.classes.suggestion+'" data-index="'+t+'">');var i=this.options.formatResult||this.type.formatResult||this.formatResult;n.push(i.call(this,e.value,this.currentValue,e,{unformattableTokens:this.type.unformattableTokens}));var s=this.makeSuggestionLabel(this.suggestions,e);s&&n.push('<span class="'+this.classes.subtext_label+'">'+j.escapeHtml(s)+"</span>"),n.push("</div>")},wrapFormattedValue:function(e,t){var n=this,i=j.getDeepValue(t.data,"state.status");return'<span class="'+n.classes.value+'"'+(i?' data-suggestion-status="'+i+'"':"")+">"+e+"</span>"},formatResult:function(e,t,n,i){var s=this;return e=s.highlightMatches(e,t,n,i),s.wrapFormattedValue(e,n)},highlightMatches:function(t,n,i,s){var o,a,r,l,d,f,p,h=this,g=[],m=s&&s.unformattableTokens,y=s&&s.maxLength,v=j.reWordExtractor();if(!t)return"";for(o=k.tokenize(n,m),a=e.map(o,function(e){return new RegExp("^((.*)([\\-\\+\\\\\\?!@#$%^&]+))?("+j.escapeRegExChars(e)+")([^\\-\\+\\\\\\?!@#$%^&]*[\\-\\+\\\\\\?!@#$%^&]*)","i")});(r=v.exec(t))&&r[0];)l=r[1],g.push({text:l,hasUpperCase:l.toLowerCase()!==l,formatted:j.formatToken(l),matchable:!0}),r[2]&&g.push({text:r[2]});for(d=0;d<g.length;d++)f=g[d],!f.matchable||f.matched||-1!==e.inArray(f.formatted,m)&&!f.hasUpperCase||e.each(a,function(e,t){var n,i=t.exec(f.formatted),s=d+1;if(i)return i={before:i[1]||"",beforeText:i[2]||"",beforeDelimiter:i[3]||"",text:i[4]||"",after:i[5]||""},i.before&&(g.splice(d,0,{text:f.text.substr(0,i.beforeText.length),formatted:i.beforeText,matchable:!0},{text:i.beforeDelimiter}),s+=2,n=i.before.length,f.text=f.text.substr(n),f.formatted=f.formatted.substr(n),d--),n=i.text.length+i.after.length,f.formatted.length>n&&(g.splice(s,0,{text:f.text.substr(n),formatted:f.formatted.substr(n),matchable:!0}),f.text=f.text.substr(0,n),f.formatted=f.formatted.substr(0,n)),i.after&&(n=i.text.length,g.splice(s,0,{text:f.text.substr(n),formatted:f.formatted.substr(n)}),f.text=f.text.substr(0,n),f.formatted=f.formatted.substr(0,n)),f.matched=!0,!1});if(y){for(d=0;d<g.length&&y>=0;d++)f=g[d],(y-=f.text.length)<0&&(f.text=f.text.substr(0,f.text.length+y)+"...");g.length=d}return p=u(g),c(p,h.classes.nowrap)},makeSuggestionLabel:function(t,n){var i,s,o=this,a=o.type.fieldNames,r={},l=j.reWordExtractor(),u=[];if(a&&d(t,n)&&n.data&&(e.each(a,function(e){var t=n.data[e];t&&(r[e]=j.formatToken(t))}),!e.isEmptyObject(r))){for(;(i=l.exec(j.formatToken(n.value)))&&(s=i[1]);)e.each(r,function(e,t){if(t==s)return u.push(a[e]),delete r[e],!1});if(u.length)return u.join(", ")}},hide:function(){var e=this;e.visible=!1,e.selectedIndex=-1,e.$container.hide().empty()},activate:function(e){var t,n,i=this,s=i.classes.selected;return!i.dropdownDisabled&&(n=i.getSuggestionsItems(),n.removeClass(s),i.selectedIndex=e,-1!==i.selectedIndex&&n.length>i.selectedIndex)?(t=n.eq(i.selectedIndex),t.addClass(s),t):null},deactivate:function(e){var t=this;t.dropdownDisabled||(t.selectedIndex=-1,t.getSuggestionsItems().removeClass(t.classes.selected),e&&t.el.val(t.currentValue))},moveUp:function(){var e=this;if(!e.dropdownDisabled)return-1===e.selectedIndex?void(e.suggestions.length&&e.adjustScroll(e.suggestions.length-1)):0===e.selectedIndex?void e.deactivate(!0):void e.adjustScroll(e.selectedIndex-1)},moveDown:function(){var e=this;if(!e.dropdownDisabled)return e.selectedIndex===e.suggestions.length-1?void e.deactivate(!0):void e.adjustScroll(e.selectedIndex+1)},adjustScroll:function(e){var t,n,i,s=this,o=s.activate(e),a=s.$container.scrollTop();o&&o.length&&(t=o.position().top,t<0?s.$container.scrollTop(a+t):(n=t+o.outerHeight(),i=s.$container.innerHeight(),n>i&&s.$container.scrollTop(a-i+n)),s.el.val(s.suggestions[e].value))}};e.extend(B,Y),e.extend(a.prototype,ee),M.on("initialize",ee.createContainer).on("dispose",ee.removeContainer).on("setOptions",ee.setContainerOptions).on("fixPosition",ee.setDropdownPosition).on("fixPosition",ee.setItemsPositions).on("assignSuggestions",ee.suggest);var te={addon:null},ne={NONE:"none",SPINNER:"spinner",CLEAR:"clear"},ie=function(e){var t=P.select('<span class="suggestions-addon"/>');this.owner=e,this.$el=t,this.type=ne.NONE,this.visible=!1,this.initialPadding=null,t.on("click",P.proxy(this,"onClick"))};ie.prototype={checkType:function(){var e=this.owner.options.addon,t=!1;y.each(ne,function(n,i){if(t=n==e)return!1}),t||(e=this.owner.isMobile?ne.CLEAR:ne.SPINNER),e!=this.type&&(this.type=e,this.$el.attr("data-addon-type",e),this.toggle(!0))},isEnabled:function(){return!this.owner.isElementDisabled()},toggle:function(e){var t;switch(this.type){case ne.CLEAR:t=!!this.owner.currentValue;break;case ne.SPINNER:t=!!this.owner.currentRequest;break;default:t=!1}this.isEnabled()||(t=!1),t!=this.visible&&(this.visible=t,t?this.show(e):this.hide(e))},show:function(e){var t=this,n={opacity:1};e?(this.$el.show().css(n),this.showBackground(!0)):this.$el.stop(!0,!0).delay(50).queue(function(){t.$el.show(),t.showBackground(),t.$el.dequeue()}).animate(n,"fast")},hide:function(e){var t=this,n={opacity:0};e&&this.$el.hide().css(n),this.$el.stop(!0).animate(n,{duration:"fast",complete:function(){t.$el.hide(),t.hideBackground()}})},fixPosition:function(e,t){var n=t.innerHeight;this.checkType(),this.$el.css({left:e.left+t.borderLeft+t.innerWidth-n+"px",top:e.top+t.borderTop+"px",height:n,width:n}),this.initialPadding=t.paddingRight,this.width=n,this.visible&&(t.componentsRight+=n)},showBackground:function(e){var t=this.owner.el,n={paddingRight:this.width};this.width>this.initialPadding&&(this.stopBackground(),e?t.css(n):t.animate(n,{duration:"fast",queue:"addon"}).dequeue("addon"))},hideBackground:function(e){var t=this.owner.el,n={paddingRight:this.initialPadding};this.width>this.initialPadding&&(this.stopBackground(!0),e?t.css(n):t.delay(50,"addon").animate(n,{duration:"fast",queue:"addon"}).dequeue("addon"))},stopBackground:function(e){this.owner.el.stop("addon",!0,e)},onClick:function(e){this.isEnabled()&&this.type==ne.CLEAR&&this.owner.clear()}};var se={createAddon:function(){var e=new ie(this);this.$wrapper.append(e.$el),this.addon=e},fixAddonPosition:function(e,t){this.addon.fixPosition(e,t)},checkAddonType:function(){this.addon.checkType()},checkAddonVisibility:function(){this.addon.toggle()},stopBackground:function(){this.addon.stopBackground()}};P.extend(B,te),M.on("initialize",se.createAddon).on("setOptions",se.checkAddonType).on("fixPosition",se.fixAddonPosition).on("clear",se.checkAddonVisibility).on("valueChange",se.checkAddonVisibility).on("request",se.checkAddonVisibility).on("resetPosition",se.stopBackground);var oe={constraints:null,restrict_value:!1},ae=["country_iso_code","region_fias_id","area_fias_id","city_fias_id","city_district_fias_id","settlement_fias_id","street_fias_id"],re=function(e,t){var n,i,s=this,o={};s.instance=t,s.fields={},s.specificity=-1,m.isPlainObject(e)&&t.type.dataComponents&&y.each(t.type.dataComponents,function(t,n){var i=t.id;t.forLocations&&e[i]&&(s.fields[i]=e[i],s.specificity=n)}),n=Object.keys(s.fields),i=y.intersect(n,ae),i.length?(y.each(i,function(e,t){o[e]=s.fields[e]}),s.fields=o,s.specificity=s.getFiasSpecificity(i)):s.fields.kladr_id&&(s.fields={kladr_id:s.fields.kladr_id},s.significantKladr=p(s.fields.kladr_id),s.specificity=s.getKladrSpecificity(s.significantKladr))};P.extend(re.prototype,{getLabel:function(){return this.instance.type.composeValue(this.fields,{saveCityDistrict:!0})},getFields:function(){return this.fields},isValid:function(){return!m.isEmptyObject(this.fields)},getKladrSpecificity:function(e){var t=-1,n=e.length;return y.each(this.instance.type.dataComponents,function(e,i){e.kladrFormat&&n===e.kladrFormat.digits&&(t=i)}),t},getFiasSpecificity:function(e){var t=-1;return y.each(this.instance.type.dataComponents,function(n,i){n.fiasType&&e.indexOf(n.fiasType)>-1&&t<i&&(t=i)}),t},containsData:function(e){var t=!0;return this.fields.kladr_id?!!e.kladr_id&&0===e.kladr_id.indexOf(this.significantKladr):(y.each(this.fields,function(n,i){return t=!!e[i]&&e[i].toLowerCase()===n.toLowerCase()}),t)}}),a.ConstraintLocation=re;var le=function(e,t){this.id=V("c"),this.deletable=!!e.deletable,this.instance=t;var n=y.makeArray(e&&(e.locations||e.restrictions));this.locations=n.map(function(e){return new re(e,t)}),this.locations=this.locations.filter(function(e){return e.isValid()}),this.label=e.label,null==this.label&&t.type.composeValue&&(this.label=this.locations.map(function(e){return e.getLabel()}).join(", ")),this.label&&this.isValid()&&(this.$el=P.select(document.createElement("li")).append(P.select(document.createElement("span")).text(this.label)).attr("data-constraint-id",this.id),this.deletable&&this.$el.append(P.select(document.createElement("span")).addClass(t.classes.removeConstraint)))};P.extend(le.prototype,{isValid:function(){return this.locations.length>0},getFields:function(){return this.locations.map(function(e){return e.getFields()})}});var ue={createConstraints:function(){var e=this;e.constraints={},e.$constraints=P.select('<ul class="suggestions-constraints"/>'),e.$wrapper.append(e.$constraints),e.$constraints.on("click","."+e.classes.removeConstraint,P.proxy(e.onConstraintRemoveClick,e))},setConstraintsPosition:function(e,t){var n=this;n.$constraints.css({left:e.left+t.borderLeft+t.paddingLeft+"px",top:e.top+t.borderTop+Math.round((t.innerHeight-n.$constraints.height())/2)+"px"}),t.componentsLeft+=n.$constraints.outerWidth(!0)+t.paddingLeft},onConstraintRemoveClick:function(e){var t=this,n=P.select(e.target).closest("li"),i=n.attr("data-constraint-id");delete t.constraints[i],t.update(),n.fadeOut("fast",function(){t.removeConstraint(i)})},setupConstraints:function(){var e,t=this,n=t.options.constraints;if(!n)return void t.unbindFromParent();P.isJqObject(n)||"string"==typeof n||"number"==typeof n.nodeType?(e=P.select(n),e.is(t.constraints)||(t.unbindFromParent(),e.is(t.el)||(t.constraints=e,t.bindToParent()))):(t._constraintsUpdating=!0,y.each(t.constraints,function(e,n){t.removeConstraint(n)}),y.each(y.makeArray(n),function(e,n){t.addConstraint(e)}),t._constraintsUpdating=!1,t.fixPosition())},filteredLocation:function(e){var t=[],n={};if(y.each(this.type.dataComponents,function(){this.forLocations&&t.push(this.id)}),m.isPlainObject(e)&&y.each(e,function(e,i){e&&t.indexOf(i)>=0&&(n[i]=e)}),!m.isEmptyObject(n))return n.kladr_id?{kladr_id:n.kladr_id}:n},addConstraint:function(e){var t=this;e=new le(e,t),e.isValid()&&(t.constraints[e.id]=e,e.$el&&(t.$constraints.append(e.$el),t._constraintsUpdating||t.fixPosition()))},removeConstraint:function(e){var t=this;delete t.constraints[e],t.$constraints.children('[data-constraint-id="'+e+'"]').remove(),t._constraintsUpdating||t.fixPosition()},constructConstraintsParams:function(){for(var e,t,n=this,i=[],s=n.constraints,o={};P.isJqObject(s)&&(e=s.suggestions())&&!(t=b.getDeepValue(e,"selection.data"));)s=e.constraints;return P.isJqObject(s)?(t=new re(t,e).getFields())&&(n.bounds.own.indexOf("city")>-1&&delete t.city_fias_id,o.locations=[t],o.restrict_value=!0):s&&(y.each(s,function(e,t){i=i.concat(e.getFields())}),i.length&&(o.locations=i,o.restrict_value=n.options.restrict_value)),o},getFirstConstraintLabel:function(){var e=this,t=m.isPlainObject(e.constraints)&&Object.keys(e.constraints)[0];return t?e.constraints[t].label:""},bindToParent:function(){var e=this;e.constraints.on(["suggestions-select."+e.uniqueId,"suggestions-invalidateselection."+e.uniqueId,"suggestions-clear."+e.uniqueId].join(" "),P.proxy(e.onParentSelectionChanged,e)).on("suggestions-dispose."+e.uniqueId,P.proxy(e.onParentDispose,e))},unbindFromParent:function(){var e=this,t=e.constraints;P.isJqObject(t)&&t.off("."+e.uniqueId)},onParentSelectionChanged:function(e,t,n){("suggestions-select"!==e.type||n)&&this.clear()},onParentDispose:function(e){this.unbindFromParent()},getParentInstance:function(){return P.isJqObject(this.constraints)&&this.constraints.suggestions()},shareWithParent:function(e){var t=this.getParentInstance();t&&t.type===this.type&&!f(e,t)&&(t.shareWithParent(e),t.setSuggestion(e))},getUnrestrictedData:function(e){var t=this,n=[],i={},s=-1;return y.each(t.constraints,function(t,n){y.each(t.locations,function(t,n){t.containsData(e)&&t.specificity>s&&(s=t.specificity)})}),s>=0?(e.region_kladr_id&&e.region_kladr_id===e.city_kladr_id&&n.push.apply(n,t.type.dataComponentsById.city.fields),y.each(t.type.dataComponents.slice(0,s+1),function(e,t){n.push.apply(n,e.fields)}),y.each(e,function(e,t){-1===n.indexOf(t)&&(i[t]=e)})):i=e,i}};P.extend(B,oe),P.extend(a.prototype,ue),"GET"!=T.getDefaultType()&&M.on("initialize",ue.createConstraints).on("setOptions",ue.setupConstraints).on("fixPosition",ue.setConstraintsPosition).on("requestParams",ue.constructConstraintsParams).on("dispose",ue.unbindFromParent);var ce={proceedQuery:function(e){var t=this;e.length>=t.options.minChars?t.updateSuggestions(e):t.hide()},selectCurrentValue:function(e){var t=this,n=P.Deferred();return t.inputPhase.resolve(),t.fetchPhase.done(function(){var i;t.selection&&!t.visible?n.reject():(i=t.findSuggestionIndex(),t.select(i,e),-1===i?n.reject():n.resolve(i))}).fail(function(){n.reject()}),n},selectFoundSuggestion:function(){var e=this;e.requestMode.userSelect||e.select(0)},findSuggestionIndex:function(){var e,t=this,n=t.selectedIndex;return-1===n&&(e=t.el.val().trim())&&t.type.matchers.some(function(i){return-1!==(n=i(e,t.suggestions))}),n},select:function(e,t){var n,i=this,s=i.suggestions[e],o=t&&t.continueSelecting,a=i.currentValue;if(!i.triggering.Select){if(!s)return o||i.selection||i.triggerOnSelectNothing(),void i.onSelectComplete(o);n=i.hasSameValues(s),i.enrichSuggestion(s,t).done(function(s,o){var r=P.extend({hasBeenEnriched:o,hasSameValues:n},t);i.selectSuggestion(s,e,a,r)})}},selectSuggestion:function(e,t,n,i){var s=this,o=i.continueSelecting,a=!s.type.isDataComplete||s.type.isDataComplete.call(s,e),r=s.selection;s.triggering.Select||(s.type.alwaysContinueSelecting&&(o=!0),a&&(o=!1),i.hasBeenEnriched&&s.suggestions[t]&&(s.suggestions[t].data=e.data),s.requestMode.updateValue&&(s.checkValueBounds(e),s.currentValue=s.getSuggestionValue(e,i),!s.currentValue||i.noSpace||a||(s.currentValue+=" "),s.el.val(s.currentValue)),s.currentValue?(s.selection=e,s.areSuggestionsSame(e,r)||s.trigger("Select",e,s.currentValue!=n),s.requestMode.userSelect&&s.onSelectComplete(o)):(s.selection=null,s.triggerOnSelectNothing()),s.shareWithParent(e))},onSelectComplete:function(e){var t=this;e?(t.selectedIndex=-1,t.updateSuggestions(t.currentValue)):t.hide()},triggerOnSelectNothing:function(){var e=this;e.triggering.SelectNothing||e.trigger("SelectNothing",e.currentValue)},trigger:function(e){var t=this,n=j.slice(arguments,1),i=t.options["on"+e];t.triggering[e]=!0,j.isFunction(i)&&i.apply(t.element,n),t.el.trigger.call(t.el,"suggestions-"+e.toLowerCase(),n),t.triggering[e]=!1}};P.extend(a.prototype,ce),M.on("assignSuggestions",ce.selectFoundSuggestion);var de={bounds:null},fe={setupBounds:function(){this.bounds={from:null,to:null}},setBoundsOptions:function(){var t,n,i=this,s=[],o=e.trim(i.options.bounds).split("-"),a=o[0],r=o[o.length-1],l=[],u=[];i.type.dataComponents&&e.each(i.type.dataComponents,function(){this.forBounds&&s.push(this.id)}),-1===e.inArray(a,s)&&(a=null),n=e.inArray(r,s),-1!==n&&n!==s.length-1||(r=null),(a||r)&&(t=!a,e.each(s,function(e,n){if(n==a&&(t=!0),u.push(n),t&&l.push(n),n==r)return!1})),i.bounds.from=a,i.bounds.to=r,i.bounds.all=u,i.bounds.own=l},constructBoundsParams:function(){var e=this,t={};return e.bounds.from&&(t.from_bound={value:e.bounds.from}),e.bounds.to&&(t.to_bound={value:e.bounds.to}),t},checkValueBounds:function(e){var t,n=this;if(n.bounds.own.length&&n.type.composeValue){var i=n.bounds.own.slice(0);1===i.length&&"city_district"===i[0]&&i.push("city_district_fias_id"),t=n.copyDataComponents(e.data,i),e.value=n.type.composeValue(t)}},copyDataComponents:function(t,n){var i={},s=this.type.dataComponentsById;return s&&e.each(n,function(n,o){e.each(s[o].fields,function(e,n){null!=t[n]&&(i[n]=t[n])})}),i},getBoundedKladrId:function(t,n){var i,s=n[n.length-1];return e.each(this.type.dataComponents,function(e,t){if(t.id===s)return i=t.kladrFormat,!1}),t.substr(0,i.digits)+new Array((i.zeros||0)+1).join("0")}};e.extend(B,de),e.extend(a.prototype,fe),M.on("initialize",fe.setupBounds).on("setOptions",fe.setBoundsOptions).on("requestParams",fe.constructBoundsParams);var pe={selectByClass:function(e,t){var n="."+e;return t?t.querySelector(n):document.querySelector(n)},addClass:function(e,t){var n=e.className.split(" ");-1===n.indexOf(t)&&n.push(t),e.className=n.join(" ")},setStyle:function(e,t,n){e.style[t]=n},listenTo:function(e,t,n,i){e.addEventListener(t,i,!1),n&&(eventsByNamespace[n]||(eventsByNamespace[n]=[]),eventsByNamespace[n].push({eventName:t,element:e,callback:i}))},stopListeningNamespace:function(e){var t=eventsByNamespace[e];t&&t.forEach(function(e){e.element.removeEventListener(e.eventName,e.callback,!1)})}};h.prototype.show=function(){"FREE"===this.plan&&this.element&&(this.setStyles(),this.setHtml())},h.prototype.setStyles=function(){this.element.style.display="block",this.isMobile||this.element.classList.add(x.promo_desktop)},h.prototype.setHtml=function(){this.element.innerHTML='<a target="_blank" href="https://dadata.ru/suggestions/?utm_source=dadata&utm_medium=module&utm_campaign=suggestions-jquery"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 167.55 38.92"><defs><style>.cls-1{fill:#cdcccc;}.cls-2{fill:#ef4741;}.cls-3{fill:#fff;}</style></defs><title>dadata-logo</title><path class="cls-1" d="M192.61,153.07H196v-3.15h-3.39Zm9.55-14.46v-2.45h-3v16.91h3.14V142.2a4.39,4.39,0,0,1,4.23-3.7h1.75v-2.69h-1.54C203.75,135.81,202.35,137.76,202.16,138.61Zm20.2-2.45v11.3a5,5,0,0,1-4.65,3.66,7.19,7.19,0,0,1-2-.23,2,2,0,0,1-1.12-.6,2.38,2.38,0,0,1-.44-.86,4.38,4.38,0,0,1-.1-1V136.16h-3.14v12.4a4.83,4.83,0,0,0,1.26,3.65q1.26,1.21,4.61,1.21c3.38,0,4.62-.91,5.56-2.34v2h3.14V136.16Z" transform="translate(-57.96 -122.27)"/><rect class="cls-2" width="131.91" height="38.92" rx="3" ry="3"/><path class="cls-3" d="M119.34,130.39h-9.18v22.68h10.23c3.84,0,10.18-.35,10.18-6.88v-8.91C130.56,130.74,123.18,130.39,119.34,130.39Zm5.77,15.2c0,3.27-2.38,3.6-5.09,3.6h-4.41V134.27H119c2.71,0,6.14.33,6.14,3.6Zm-48-15.2H68v22.68H78.18c3.84,0,10.18-.35,10.18-6.88v-8.91C88.36,130.74,81,130.39,77.14,130.39Zm5.77,15.2c0,3.27-2.38,3.6-5.09,3.6H73.41V134.27h3.36c2.71,0,6.14.33,6.14,3.6Zm74-14.32h-5.1V148a6.28,6.28,0,0,0,.4,2.36,4,4,0,0,0,1,1.54,4.56,4.56,0,0,0,1.57.88,8.16,8.16,0,0,0,1.85.42q.89.08,2.08.09a24.23,24.23,0,0,0,2.83-.17v-2.87h-1.82a3.08,3.08,0,0,1-2.31-.61,3.79,3.79,0,0,1-.52-2.36V139h4.65v-3.14h-4.65Zm21,5.68q-1.82-1.14-6.5-1.13h-5.92v.25l.73,2.9h5.19a5,5,0,0,1,2.5.5,2.37,2.37,0,0,1,.72,2v1.15H168.9q-3,0-4.12,1.17T163.62,148c0,2.21.37,3.14,1.12,3.84s2.2,1.22,4.48,1.22h7.06c1.76,0,3.45-.83,3.45-2.82v-8.81Q179.73,138.08,177.91,136.94Zm-3.29,13.3h-3.35a4.27,4.27,0,0,1-2.22-.35q-.44-.35-.44-2t.42-2.06a3.55,3.55,0,0,1,2.1-.38h3.49Zm-27.5-13.3q-1.82-1.14-6.5-1.13h-5.92v.25l.73,2.9h5.19a5,5,0,0,1,2.5.5,2.38,2.38,0,0,1,.72,2v1.15h-5.73q-3,0-4.12,1.17T132.84,148c0,2.21.37,3.14,1.12,3.84s2.2,1.22,4.48,1.22h7.06c1.77,0,3.45-.83,3.45-2.82v-8.81Q148.94,138.08,147.13,136.94Zm-3.28,13.3h-3.35a4.27,4.27,0,0,1-2.22-.35q-.44-.35-.44-2t.42-2.06a3.55,3.55,0,0,1,2.1-.38h3.49Zm-38.92-13.3q-1.82-1.14-6.5-1.13H92.5v.25l.73,2.9h5.19a5,5,0,0,1,2.5.5,2.38,2.38,0,0,1,.72,2v1.15H95.91q-3,0-4.12,1.17T90.63,148c0,2.21.37,3.14,1.12,3.84s2.2,1.22,4.48,1.22h7.06c1.77,0,3.45-.83,3.45-2.82v-8.81Q106.74,138.08,104.92,136.94Zm-3.28,13.3H98.29a4.27,4.27,0,0,1-2.22-.35q-.44-.35-.44-2t.42-2.06a3.55,3.55,0,0,1,2.1-.38h3.49Z" transform="translate(-57.96 -122.27)"/></svg></a>'},M.on("assignSuggestions",g),a.defaultOptions=B,a.version="19.11.0",e.Suggestions=a,e.fn.suggestions=function(t,n){return 0===arguments.length?this.first().data("suggestions"):this.each(function(){var i=e(this),s=i.data("suggestions");"string"==typeof t?s&&"function"==typeof s[t]&&s[t](n):(s&&s.dispose&&s.dispose(),s=new a(this,t),i.data("suggestions",s))})}});
 
 /***/ }),
 
@@ -78542,6 +78687,7 @@ function Shipment() {
           self.reloadBlock.innerHTML = result;
 
           if (result !== '') {
+            console.log('AS');
             var arrayReqName = self.requestName.split('_');
 
             if (arrayReqName[arrayReqName.length - 1] === 'toDoor' && arrayReqName[arrayReqName.length - 2] !== 'toDoor') {
@@ -79739,8 +79885,8 @@ function getXmlHttpRequest() {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/otjog/public_html/my-shop/resources/assets/js/app.js */"./resources/assets/js/app.js");
-module.exports = __webpack_require__(/*! /home/otjog/public_html/my-shop/resources/assets/sass/app.scss */"./resources/assets/sass/app.scss");
+__webpack_require__(/*! /home/otjog/public_html/myshop/resources/assets/js/app.js */"./resources/assets/js/app.js");
+module.exports = __webpack_require__(/*! /home/otjog/public_html/myshop/resources/assets/sass/app.scss */"./resources/assets/sass/app.scss");
 
 
 /***/ })
