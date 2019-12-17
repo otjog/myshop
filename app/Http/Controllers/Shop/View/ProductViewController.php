@@ -60,9 +60,11 @@ class ProductViewController extends Controller
      * @param string $view
      * @return \Illuminate\Http\Response
      */
-    public function show($id, $view)
+    public function show(Request $request, $id, $view)
     {
-        $product = $this->products->getProduct($id);
+        $productsFromRoute = $this->products->getProductsFromRoute($request->route()->parameters);
+
+        $product = $productsFromRoute[0];
 
         $global_data = GlobalData::getParameters();
 
