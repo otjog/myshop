@@ -143,17 +143,19 @@ class Product extends Model
         return $products;
     }
 
-    public function getProductsById($idProducts)
+    public function getProductsById($referenceIds)
     {
         $pagination = GlobalData::getParameter('components.shop.pagination');
 
         $productsQuery = $this->getListProductQuery();
 
+        $referenceIdsStr = implode(',', $referenceIds);
+
         $products = $productsQuery
 
-            ->whereIn('products.id', $idProducts)
+            ->whereIn('products.id', $referenceIds)
 
-            ->orderBy('products.name')
+            ->orderByRaw(DB::raw("FIELD(products.id, $referenceIdsStr)"))
 
             ->paginate($pagination);
 
