@@ -12,10 +12,12 @@
             <div class="row">
 
                 {{-- Name --}}
-                @include( $global_data['template']['name']. '.components.shop.product.show.name')
+                <div class="order-2 order-sm-1">
+                    @include( $global_data['template']['name']. '.components.shop.product.show.name')
+                </div>
 
                 {{-- Images --}}
-                <div class="col-lg-7">
+                <div class="col-lg-7 order-1 order-sm-2">
                     @include( $global_data['template']['name']. '.components.shop.product.show.image')
                 </div>
 

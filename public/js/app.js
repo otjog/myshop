@@ -62745,7 +62745,6 @@ function ProductFilter() {
     /**/
 
     var effectsList = getEffectsList(actionElement, dataset, pf);
-    console.log(ajaxPath);
     sendRequest(dataset['ajaxName' + pf], dataset['ajaxMethod' + pf], queryString, ajaxPath, pushState, htmlReload, effectsList, function (response) {
       if (htmlReload !== null) {
         htmlReload.innerHTML = String(response);
