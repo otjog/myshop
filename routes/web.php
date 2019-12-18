@@ -75,6 +75,9 @@
     //BasketView
     Route::resource('/baskets.views',       'Shop\View\BasketViewController',   [ 'only' => [ 'show' ]]);
 
+    //SearchView
+    Route::get('/search/views/{view}',             'Search\SearchController@showView' );
+
 
     //Pay
     Route::group(['prefix' => 'pay'], function(){
