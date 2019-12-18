@@ -78687,7 +78687,6 @@ function Shipment() {
           self.reloadBlock.innerHTML = result;
 
           if (result !== '') {
-            console.log('AS');
             var arrayReqName = self.requestName.split('_');
 
             if (arrayReqName[arrayReqName.length - 1] === 'toDoor' && arrayReqName[arrayReqName.length - 2] !== 'toDoor') {
@@ -78728,7 +78727,7 @@ function Shipment() {
           for (var i = 0; i < self.elements.shipmentOffersPrices.length; i++) {
             var value = self.elements.shipmentOffersPrices[i].innerHTML;
 
-            if (value !== '') {
+            if (Number.isInteger(value * 1)) {
               pricesArray[i] = value * 1;
             }
           }
@@ -78736,8 +78735,8 @@ function Shipment() {
           for (var _i2 = 0; _i2 < self.elements.shipmentOffersDays.length; _i2++) {
             var valuesArray = self.elements.shipmentOffersDays[_i2].innerHTML.split('-');
 
-            if (valuesArray[0] !== '') {
-              if (valuesArray[1] !== undefined && valuesArray[1] !== null) {
+            if (Number.isInteger(valuesArray[0] * 1)) {
+              if (valuesArray[1] !== undefined && valuesArray[1] !== null && Number.isInteger(valuesArray[1] * 1)) {
                 daysArray[_i2] = valuesArray[1] * 1;
               } else {
                 daysArray[_i2] = valuesArray[0] * 1;
