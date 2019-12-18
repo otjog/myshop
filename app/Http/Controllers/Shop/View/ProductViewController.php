@@ -63,7 +63,7 @@ class ProductViewController extends Controller
     public function show(Request $request, $id, $view)
     {
         $productsFromRoute = $this->products->getProductsFromRoute($request->route()->parameters);
-
+//todo добавить chunk=false
         $product = $productsFromRoute[0];
 
         $global_data = GlobalData::getParameters();

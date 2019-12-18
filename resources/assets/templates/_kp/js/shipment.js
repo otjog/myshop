@@ -296,7 +296,7 @@ export default function Shipment(){
 
                         let value = self.elements.shipmentOffersPrices[i].innerHTML;
 
-                        if(value !== '') {
+                        if(Number.isInteger(value*1)) {
                             pricesArray[i] = value * 1;
                         }
                     }
@@ -304,8 +304,13 @@ export default function Shipment(){
                     for(let i = 0; i < self.elements.shipmentOffersDays.length; i++){
                         let valuesArray = self.elements.shipmentOffersDays[i].innerHTML.split('-');
 
-                        if(valuesArray[0] !== ''){
-                            if(valuesArray[1] !== undefined && valuesArray[1] !== null){
+                        if(Number.isInteger(valuesArray[0]*1)){
+
+                            if (
+                                valuesArray[1] !== undefined
+                                && valuesArray[1] !== null
+                                && Number.isInteger(valuesArray[1]*1)
+                            ) {
                                 daysArray[i] = valuesArray[1] * 1;
                             }else{
                                 daysArray[i] = valuesArray[0] * 1;
