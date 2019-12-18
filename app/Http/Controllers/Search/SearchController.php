@@ -16,6 +16,10 @@ class SearchController extends Controller{
 
     protected $data;
 
+    protected $request;
+
+    protected $sphinx;
+
     /**
      * Создание нового экземпляра контроллера.
      *
@@ -27,14 +31,16 @@ class SearchController extends Controller{
 
         $this->queryString = $request->search;
 
+        $this->request = $request;
+
+        $this->sphinx  = new SphinxSearch();
+
         $this->data['shop']['parameters']  = $request->toArray();
     }
 
     public function show()
     {
-        $sphinx  = new SphinxSearch();
-
-        $searchIdResult = $sphinx->search($this->queryString, env( 'SPHINXSEARCH_INDEX' ))->query();
+        $searchIdResult = $this->sphinx->search($this->queryString, env( 'SPHINXSEARCH_INDEX' ))->query();
 
         $this->data['shop']['products']    = [];
         $this->data['query'] = $this->queryString;
@@ -47,6 +53,28 @@ class SearchController extends Controller{
         $globalData = GlobalData::getParametersForController($this->data, 'shop', 'search', 'show');
 
         return view($globalData['template']['viewKey'], ['global_data' => $globalData]);
+    }
+
+    public function showView($view)
+    {
+        $searchIdResult = $this->sphinx->search($this->queryString, env( 'SPHINXSEARCH_INDEX' ))->query();
+
+        $data['parameters'] = $this->request->all();
+
+        $data['products'] = [];
+
+        if( isset( $searchIdResult[ 'matches' ] ) && count( $searchIdResult[ 'matches' ] ) > 0 ){
+            $data['products'] = $this->products->getProductsById( array_keys( $searchIdResult[ 'matches' ] ) );
+        }
+
+        $path = str_replace(['/views', '/'.$view], '', $this->request->url());
+
+        /*Убирает у ссылок пагинации параметр views/... */
+        $data['products']->setPath($path);
+
+        $data['global_data'] = GlobalData::getParametersForController($this->data, 'shop', 'search', 'show');
+
+        return view($view, $data);
     }
 
 }
