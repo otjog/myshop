@@ -1,2 +1,6 @@
 User-agent: *
-Disallow:
+Disallow: /baskets
+Disallow: /orders
+Disallow: /search
+Disallow: /ajax
+Disallow: /message
