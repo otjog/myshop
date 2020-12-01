@@ -29065,7 +29065,6 @@ select option {
   border: solid 1px #e8e8e8;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  padding: 15px;
 }
 
 .single_product .image_selected img {
@@ -29077,8 +29076,6 @@ select option {
 }
 
 .single_product .product_name {
-  font-size: 30px;
-  font-weight: 500;
   margin-top: 11px;
 }
 
@@ -32768,6 +32765,16 @@ button.bg-light:focus {
 
   .single_post_text p {
     font-size: 14px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 1rem;
+    padding-top: 0.5rem;
   }
 }
 
