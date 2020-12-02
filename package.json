@@ -34,5 +34,6 @@
         "suggestions-jquery": "^19.2.0",
         "tiny-slider": "^2.9.2",
         "tridi": "^1.0.0"
-    }
+    },
+    "version": "0.0.0"
 }
