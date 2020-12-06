@@ -18,18 +18,25 @@
         <div class="col-4">
             <div class="custom-control custom-radio">
                 <input
-                        id="shipment_{{$global_data['ajax']->offer['id_response']}}"
+                        id="shipment_{{$global_data['ajax']->id}}"
                         class="custom-control-input"
                         name="shipment_id"
-                        value="{{$global_data['ajax']->id}}_{{$global_data['ajax']->offer['message']}}"
+                        value="{{$global_data['ajax']->id}}"
                         type="radio"
                         required="">
-
                 <label
-                        for="shipment_{{$global_data['ajax']->offer['id_response']}}"
+                        for="shipment_{{$global_data['ajax']->id}}"
                         class="custom-control-label">
                     {{$global_data['ajax']['name']}}
                 </label>
+                <input
+                        name="shipment_days_{{$global_data['ajax']->id}}"
+                        value="{{$global_data['ajax']->offer['days'][0] . $global_data['ajax']->offer['days'][1]}}"
+                        type="hidden">
+                <input
+                        name="shipment_price_{{$global_data['ajax']->id}}"
+                        value="{{$global_data['ajax']->offer['price'][0]}}"
+                        type="hidden">
             </div>
         </div>
 

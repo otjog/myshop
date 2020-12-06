@@ -32,7 +32,22 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Способ доставки: {{$order->shipment->name}}</li>
                 <li class="list-group-item">Адрес: {{$order->delivery_address}}</li>
-                <li class="list-group-item">Статус доставки: </li>
+                <li class="list-group-item">
+                    Срок доставки:
+                    @if($order->shipment_days === "-1")
+                        <span class="text-danger">Необходимо уточнить адрес</span>
+                    @else
+                        {{$order->shipment_days}}
+                    @endif
+                </li>
+                <li class="list-group-item">
+                    Стоимость доставки:
+                    @if($order->shipment_price === -1)
+                        <span class="text-danger">Необходимо уточнить адрес</span>
+                    @else
+                        {{$order->shipment_price}}{{$global_data['components']['shop']['currency']['symbol']}}
+                    @endif
+                </li>
             </ul>
         </div>
     </div>
@@ -131,7 +146,7 @@
             <div class="row no-gutters align-items-center my-2 border-bottom py-2 ">
 
                 <div class="col-lg-10 text-right">
-                    Сумма заказа
+                    Стоимость товаров:
                 </div>
 
                 <div class="col-lg-2 text-center">
@@ -140,6 +155,64 @@
                 </div>
 
             </div>
+
+            @if($order->shipment_price !== -1)
+                <div class="row no-gutters align-items-center my-2 border-bottom py-2 ">
+
+                    <div class="col-lg-10 text-right">
+                        Стоимость доставки:
+                    </div>
+
+                    <div class="col-lg-2 text-center">
+                        <span>{{$order->shipment_price}}</span>
+                        <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
+                    </div>
+
+                </div>
+            @endif
+
+            @if($order->payment->tax !== 0)
+
+                <div class="row no-gutters align-items-center my-2 border-bottom py-2 ">
+
+                    <div class="col-lg-10 text-right">
+                        @if($order->payment->tax < 0 ) Дополнительная скидка: @else Комиссия: @endif
+                    </div>
+
+                    <div class="col-lg-2 text-center">
+                        <span>
+                            @if($order->payment->tax_type === 'percent')
+                                {{round($order->total * $order->payment->tax/100, 0)}}
+                            @else
+                                {{ $order->payment->tax }}
+                            @endif
+                        </span>
+                        <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
+                    </div>
+
+                </div>
+
+                <div class="row no-gutters align-items-center my-2 border-bottom py-2 ">
+
+                    <div class="col-lg-10 text-right">
+                        Итого:
+                    </div>
+
+                    <div class="col-lg-2 text-center">
+                        <span>
+                            @if($order->payment->tax_type === 'percent')
+                                {{ round($order->total + $order->shipment_price - $order->total * $order->payment->tax/100*-1, 0) }}
+                            @else
+                                {{ round($order->total + $order->shipment_price + $order->payment->tax) }}
+                            @endif
+                        </span>
+                        <span class="text-muted small"><small>{{$global_data['components']['shop']['currency']['symbol']}}</small></span>
+                    </div>
+
+                </div>
+
+            @endif
+
 
         </div>
 

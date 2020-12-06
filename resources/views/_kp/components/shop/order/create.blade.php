@@ -44,8 +44,16 @@
                     @endforeach
 
                     <li class="list-group-item d-flex justify-content-between bg-light">
-                        <span>Сумма:</span>
-                        <strong>{{ $basket->total }} <small>руб</small></strong>
+                        <span>Сумма за товары:</span>
+                        <strong>{{ $basket->total + $basket->total_sale}} <small>руб</small></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <span>Скидка за товары:</span>
+                        <strong>{{$basket->total_sale}} <small>руб</small></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between bg-success">
+                        <span>Итого к оплате за товары:</span>
+                        <strong>{{$basket->total}} <small>руб</small></strong>
                     </li>
                 </ul>
 
@@ -139,6 +147,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-map-marker"></i></span>
                         </div>
+
                         <input
                                 type="text"
                                 class="form-control"
@@ -146,11 +155,15 @@
                                 name="address"
                                 placeholder="308011 г.Белгород ул.Садовая д.118"
                                 required=""
-                                @guest
-                                    value="{{ old('phone') }}"
+                                @if(
+                                    isset($global_data['geo']['address_string']) &&
+                                    $global_data['geo']['address_string'] !== null &&
+                                    $global_data['geo']['address_string'] !== ""
+                                    )
+                                    value="{{$global_data['geo']['address_string']}}"
                                 @else
-                                    value="{{ Auth::user()->address }}"
-                                @endguest
+                                    value="{{ old('address') }}"
+                                @endif
                                 data-suggestion="ADDRESS">
                         {{--input type="hidden" id="address_json" name="address_json"--}}
                         <div class="invalid-feedback">
@@ -182,9 +195,9 @@
 
                 {{-- COMMENT --}}
                 <div class="mb-3">
-                    <label for="comment">Ваши пожелания</label>
+                    <label for="comment">Ваши пожелания к заказу (не более 255 символов)</label>
                     <div class="input-group">
-                        <textarea class="form-control" id="comment" name="comment"></textarea>
+                        <textarea class="form-control" id="comment" name="comment" maxlength="255"></textarea>
                     </div>
                 </div>
 

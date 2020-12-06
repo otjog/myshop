@@ -22,6 +22,13 @@
                                 data-suggestion="ADDRESS"
                                 data-event-to-update="click"
                                 placeholder="308011 г.Белгород ул.Садовая д.118"
+                                @if(
+                                    isset($global_data['geo']['address_string']) &&
+                                    $global_data['geo']['address_string'] !== null &&
+                                    $global_data['geo']['address_string'] !== ""
+                                    )
+                                    value="{{$global_data['geo']['address_string']}}"
+                                @endif
                                 required="">
 
                         <input type="hidden" id="address_json" name="address_json">

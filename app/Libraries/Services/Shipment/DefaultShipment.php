@@ -6,24 +6,21 @@ use App\Libraries\Services\Shipment\Contracts\ShipmentServices;
 
 class DefaultShipment implements ShipmentServices
 {
-    protected $shipmentMethod;
+    protected $shipmentService;
 
-    public function __construct($shipmentMethod)
+    public function __construct($shipmentService)
     {
-        $this->shipmentMethod = $shipmentMethod;
+        $this->shipmentService = $shipmentService;
     }
 
-    public function getDeliveryCost($parcelData, $destinationType)
+    public function getDeliveryCost($parcelData)
     {
         return [
             'error' => [
                 'message' => 'У данного метода доставки нет Сервиса Расчета Доставки'
             ],
-            'message' => $this->shipmentMethod[0]->description,
-            'type'  => $destinationType,
             'days'  => ['~'],
             'price' => ['~'],
-            'id_response' => $this->shipmentMethod[0]->alias . '_' . $destinationType,
         ];
     }
 

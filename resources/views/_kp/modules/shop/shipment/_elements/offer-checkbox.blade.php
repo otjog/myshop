@@ -19,7 +19,7 @@
                     id="shipment_{{$service->id}}"
                     class="custom-control-input"
                     name="shipment_id"
-                    value="{{$service->id}}_{{$service->descripton}}"
+                    value="{{$service->id}}"
                     type="radio"
                     required="">
 
@@ -28,6 +28,14 @@
                     class="custom-control-label">
                 {{$service->name}}
             </label>
+            <input
+                    name="shipment_days_{{$service->id}}"
+                    value="-1"
+                    type="hidden">
+            <input
+                    name="shipment_price_{{$service->id}}"
+                    value="-1"
+                    type="hidden">
         </div>
     </div>
 

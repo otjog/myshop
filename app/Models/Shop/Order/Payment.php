@@ -11,6 +11,8 @@ class Payment extends Model{
         return $this->hasMany('App\Models\Shop\Order\Order');
     }
 
+    protected $table = 'shop_payments';
+
     public function images()
     {
         return $this->morphToMany('App\Models\Site\Image', 'imageable');
@@ -21,7 +23,9 @@ class Payment extends Model{
             'id',
             'alias',
             'name',
-            'description'
+            'description',
+            'tax',
+            'tax_type'
         )
             ->with('images')
             ->where('active', 1)
@@ -33,7 +37,9 @@ class Payment extends Model{
             'id',
             'alias',
             'name',
-            'description'
+            'description',
+            'tax',
+            'tax_type'
         )
             ->with('images')
             ->where('active', 1)

@@ -9,6 +9,7 @@ export default function DaData(id, type){
     let qsParams = {
         module : requestName,
         response : 'json', //view or json
+        address_string : '',
         address_json : ''
     };
     let queryString = '';
@@ -26,6 +27,8 @@ export default function DaData(id, type){
                     let input = document.getElementById(id);
 
                     let eventToUpdate = input.dataset.eventToUpdate;
+
+                    qsParams.address_string = suggestion.unrestricted_value;
 
                     qsParams.address_json = JSON.stringify(suggestion.data);
 
@@ -94,8 +97,8 @@ export default function DaData(id, type){
         shipment.getPoints();
     }
 
-    function setQueryStirng(parameters, queryString = ''){
-
+    function setQueryStirng(parameters, queryString = '')
+    {
         for(let parameter in parameters){
 
             if(queryString !== ''){

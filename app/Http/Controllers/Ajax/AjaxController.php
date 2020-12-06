@@ -54,7 +54,7 @@ class AjaxController extends Controller{
 
                     /** Записываем введенную пользователем Геолокацию в Сессию */
                     $geoDataObj = GeoData::getInstance();
-                    $geoDataObj->setGeoInput($this->request['address_json']);
+                    $geoDataObj->setGeoInput($this->request);
 
                     /**
                      * Получаем гео-данные

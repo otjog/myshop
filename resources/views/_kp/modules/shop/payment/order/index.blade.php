@@ -1,8 +1,8 @@
 <div class="col-lg-12">
 
-    <h4 class="mb-3">Способ оплаты</h4>
-
     @if(isset($payments) && count($payments) > 0 && $payments !== null)
+
+        <h4 class="mb-3">Способ оплаты</h4>
 
         <div class="my-4">
 
@@ -18,7 +18,7 @@
                         @endphp
                         <img
                                 class="img-fluid"
-                                src="{{route('getImage', ['default', 'xxs', $imageSrc, $service->id])}}"
+                                src="{{route('getImage', ['default', 's', $imageSrc, $service->id])}}"
                                 alt="{{$service->images[0]->alt or $service->name}}"
                         />
                     </div>
@@ -31,25 +31,27 @@
                     </div>
 
                     <div class="col">
-                        @if(isset($service->options))
-                            @foreach ($service->options as $option)
-                                <div class="col text-left">
-                                    <span class="payment-message">
-                                        @if(is_array($option))
-                                            @foreach ($option as $pieceOfData)
-                                                @if(mb_strlen($pieceOfData) > 10)
-                                                    <small>{{$pieceOfData . ' '}}</small>
-                                                @else
-                                                    {{$pieceOfData . ' '}}
-                                                @endif
-                                            @endforeach
-                                        @else
-                                            <small>{{$option}}</small>
-                                        @endif
-                                    </span>
-                                </div>
-                            @endforeach
+
+                        @if($service->tax !== 0)
+                            <span class="@if($service->tax < 0 ) text-success @else text-danger @endif">
+                                @if($service->tax < 0 ) Дополнительная скидка: @else Комиссия: @endif
+
+                                <strong>
+                                    @if($service->tax_type === 'percent')
+                                        {{round($global_data['shop']['basket']['total'] * $service->tax/100*-1, 0)}}
+                                    @else
+                                        {{ $service->tax }}
+                                    @endif
+                                    {{$global_data['components']['shop']['currency']['symbol']}}
+                                </strong>
+
+                            </span>
+                            <br>
                         @endif
+
+                        <span class="text-muted">
+                            {{ $service->description }}
+                        </span>
                     </div>
 
                 </div>

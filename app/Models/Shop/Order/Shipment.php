@@ -20,6 +20,8 @@ class Shipment extends Model{
         return $this->hasMany('App\Models\Shop\Order\Order');
     }
 
+    protected $table = 'shop_shipments';
+
     public function images()
     {
         return $this->morphToMany('App\Models\Site\Image', 'imageable');
@@ -30,6 +32,10 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
+            'type',
+            'tax',
+            'tax_type',
+            'processing_time',
             'description',
             'is_service'
         )
@@ -43,6 +49,10 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
+            'type',
+            'tax',
+            'tax_type',
+            'processing_time',
             'description',
             'is_service'
         )
@@ -62,6 +72,10 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
+            'type',
+            'tax',
+            'tax_type',
+            'processing_time',
             'description',
             'is_service'
         )
@@ -75,6 +89,10 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
+            'type',
+            'tax',
+            'tax_type',
+            'processing_time',
             'description',
             'is_service'
         )
@@ -90,12 +108,34 @@ class Shipment extends Model{
             'id',
             'alias',
             'name',
+            'type',
+            'tax',
+            'tax_type',
+            'processing_time',
             'description',
             'is_service'
         )
             ->with('images')
             ->where('active', 1)
             ->where('alias', $alias)
+            ->get();
+    }
+
+    public function getShipmentMethodById($id){
+        return self::select(
+            'id',
+            'alias',
+            'name',
+            'type',
+            'tax',
+            'tax_type',
+            'processing_time',
+            'description',
+            'is_service'
+        )
+            ->with('images')
+            ->where('active', 1)
+            ->where('id', $id)
             ->get();
     }
 

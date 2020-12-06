@@ -2,7 +2,6 @@
 
 namespace App\Models\Shop\Order;
 
-use App\Models\Shop\Services\PaymentService;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Shop\Product\Product;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +25,8 @@ class Order extends Model
         'products_json',
         'address',
         'comment',
+        'shipment_days',
+        'shipment_price',
         'paid',
         'pay_id',
         'address_json'
@@ -62,6 +63,8 @@ class Order extends Model
             'customer_id',
             'address as delivery_address',
             'comment',
+            'shipment_days',
+            'shipment_price',
             'paid',
             'pay_id',
             'address_json as delivery_address_json',
@@ -105,6 +108,8 @@ class Order extends Model
             'products_json',
             'address as delivery_address',
             'comment',
+            'shipment_days',
+            'shipment_price',
             'paid',
             'pay_id',
             'address_json as delivery_address_json'
@@ -119,9 +124,9 @@ class Order extends Model
 
         $data['basket']   = $baskets->getActiveBasketWithProductsAndRelations();
 
-        $payments = new PaymentService();
+        $payments = new Payment();
 
-        $data['payments'] = $payments->getActiveMethodsWithTax($data['basket']['total']);
+        $data['payments'] = $payments->getActiveMethods();
 
         $products = new Product();
 
@@ -149,35 +154,18 @@ class Order extends Model
         return $order;
     }
 
-    private function getDataForStoreOrder($data, $basket, $customer){
-
-        $data_order = [
+    private function getDataForStoreOrder($data, $basket, $customer)
+    {
+        return [
             'shop_basket_id'    => $basket->id,
             'customer_id'       => $customer->id,
-            'comment'           => '',
+            'comment'           => $data['comment'],
+            'address'           => $data['address'],
+            'payment_id'        => $data['payment_id'],
+            'shipment_id'       => $data['shipment_id'],
+            'shipment_days'     => $data['shipment_days_'.$data['shipment_id']],
+            'shipment_price'    => $data['shipment_price_'.$data['shipment_id']],
         ];
-
-        foreach($data as $key => $value){
-            switch($key){
-                case 'payment_id'       :
-                case 'address'          :
-                case 'address_json'     :
-                case 'paid'             :
-                case 'pay_id'           :
-                    $data_order[$key] = $value;
-                    break;
-                case 'comment'          :
-                    $data_order[$key] .= "\n" . $value;
-                    break;
-                case 'shipment_id'      :
-                    $shipmentData = explode('_', $value);
-                    $data_order[$key] = $shipmentData[0];
-                    $data_order['comment'] .= "\n" . $value;
-                    break;
-            }
-        }
-
-        return $data_order;
     }
 
     private function getDataForRelationOrder(Product $products, $basket, $order){

@@ -44,8 +44,6 @@ class Cdek implements ShipmentServices
 
     private $geoData;
 
-    private $destinationType;
-
     private $tariffsOfAllDestination = [
         'toTerminal' => [
             ['id' => '136'],
@@ -66,9 +64,13 @@ class Cdek implements ShipmentServices
         ],
     ];
 
-    public function __construct($geoData)
+    private $shipmentService;
+
+    public function __construct($geoData, $shipmentService)
     {
         $this->geoData = $this->prepareGeoData($geoData);
+
+        $this->shipmentService = $shipmentService;
 
         $this->clientAuthData     = [
             //Параметры рабочей версии
@@ -89,13 +91,11 @@ class Cdek implements ShipmentServices
 
     }
 
-    public function getDeliveryCost($parcelData, $destinationType)
+    public function getDeliveryCost($parcelData)
     {
-        $this->destinationType = $destinationType;
-
         $parcelData['parcel'] = $this->getParcelParameters($parcelData['parcel']);
 
-        $tariffList = $this->tariffsOfAllDestination[$this->destinationType];
+        $tariffList = $this->tariffsOfAllDestination[$this->shipmentService->type];
 
         $services = $this->getServiceCost($parcelData, $tariffList);
 
@@ -297,12 +297,9 @@ class Cdek implements ShipmentServices
 
     }
 
-    private function prepareResponse($data){
-
-        $response = [
-            'id_response' => 'cdek_' . $this->destinationType,
-            'type' => $this->destinationType
-        ];
+    private function prepareResponse($data)
+    {
+        $response = [];
 
         foreach($data as $key => $value){
             switch($key){
@@ -316,12 +313,12 @@ class Cdek implements ShipmentServices
                 case 'deliveryPeriodMin' :
                 case 'deliveryPeriodMax' :
                     if( isset($response['days']) ){
-                        if($response['days'][0] !== (string)$value){
+                        if($response['days'][0] !== (string)($value + $this->shipmentService->processing_time)){
 
-                            $response['days'][0] .= '-' . $value;
+                            $response['days'][0] .= '-' . (string)($value + $this->shipmentService->processing_time);
                         }
                     }else{
-                        $response['days'][] = (string)$value;
+                        $response['days'][] = (string)($value + $this->shipmentService->processing_time);
                     }
                     break;
                 case 'services' :
@@ -331,10 +328,6 @@ class Cdek implements ShipmentServices
                     break;
             }
         }
-
-        $response['message'] = 'CDEK ' . $this->destinationType
-            . ' Срок доставки: ' . $response['days'][0]
-            . ' Стоимость доставки: ' . $response['price'][0];
 
         return $response;
     }

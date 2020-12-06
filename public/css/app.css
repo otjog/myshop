@@ -27286,10 +27286,6 @@ p a:hover::after {
   opacity: 0.2;
 }
 
-.form-control {
-  color: #db5246;
-}
-
 section {
   display: block;
   position: relative;
@@ -31643,6 +31639,10 @@ html {
 body {
   font-family: arial;
   font-size: 0.8rem;
+}
+
+.form-control {
+  color: #0b0b0b !important;
 }
 
 .icon {

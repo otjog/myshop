@@ -27,17 +27,25 @@ class ShipmentService extends Model
         if ($geoData !== null) {
             $shipments = new Shipment();
 
-            $shipmentService = $shipments->getShipmentMethodByAlias($shipmentData['alias']);
+            $shipmentService = $shipments->getShipmentMethodById($shipmentData['shipment_id']);
 
             $shipmentData['parcel_data'] = $this->getParcelParameters($shipmentData['parcel_data']);
 
             $serviceObj = $this->getServiceObject($shipmentService, $geoData);
 
             if ($serviceObj !== null) {
-                $data = $serviceObj->getDeliveryCost($shipmentData['parcel_data'], $shipmentData['type']);
+                $data = $serviceObj->getDeliveryCost($shipmentData['parcel_data']);
 
                 if ($data !== null ) {
                     $data['days'][] = $this->getDeclisionOfDays($data['days'][0]);
+
+                    if ($shipmentService[0]->tax !== 0) {
+                        if ($shipmentService[0]->tax_type === 'percent')
+                            $data['price'][0] += round ( $shipmentData['parcel_data']['declaredValue'] * $shipmentService[0]->tax/100, 0);
+                        else
+                            $data['price'][0] += round ( $shipmentData['parcel_data']['declaredValue'] + $shipmentService[0]->tax, 0);
+                    }
+
                     $data['price'][] = GlobalData::getParameter('components.shop.currency.symbol');
                     $shipmentService[0]->offer = $data;
                 }
@@ -105,19 +113,19 @@ class ShipmentService extends Model
         switch ($shipmentService[0]->alias) {
 
             case 'dpd'      :
-                $serviceObj = new Dpd($geoData);
+                $serviceObj = new Dpd($geoData, $shipmentService[0]);
                 break;
 
             case 'cdek'     :
-                $serviceObj = new Cdek($geoData);
+                $serviceObj = new Cdek($geoData, $shipmentService[0]);
                 break;
 
             case 'pochta'   :
-                $serviceObj = new Pochta($geoData);
+                $serviceObj = new Pochta($geoData, $shipmentService[0]);
                 break;
 
             case 'own'   :
-                $serviceObj = new OwnShipment($geoData);
+                $serviceObj = new OwnShipment($geoData, $shipmentService[0]);
                 break;
 
             default :

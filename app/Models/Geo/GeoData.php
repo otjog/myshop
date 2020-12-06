@@ -29,10 +29,10 @@ class GeoData extends Model{
         });
     }
 
-    public function setGeoInput($json)
+    public function setGeoInput($request)
     {
-        if($json !== null){
-            $objectData = json_decode($json);
+        if($request['address_json'] !== null){
+            $objectData = json_decode($request['address_json']);
 
             $geoData = [
                 'postal_code'   => $objectData->postal_code,
@@ -52,6 +52,7 @@ class GeoData extends Model{
                 'house_type'    => $objectData->house_type,
                 'latitude'      => $objectData->geo_lat,
                 'longitude'     => $objectData->geo_lon,
+                'address_string'=> $request['address_string']
             ];
 
             if($geoData['city_name'] === null){

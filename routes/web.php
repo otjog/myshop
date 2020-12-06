@@ -60,7 +60,7 @@
             //GeoData
 
             Route::post('geodata', function (\Illuminate\Http\Request $request, \App\Models\Geo\GeoData $geoData){
-                $geoData->setGeoInput( $request->address_json );
+                $geoData->setGeoInput( $request->all() );
                 return back();
             })->name('GetGeo');
 

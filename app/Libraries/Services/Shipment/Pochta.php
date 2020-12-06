@@ -25,14 +25,16 @@ class Pochta implements ShipmentServices
 
     private $geoData;
 
-    private $destinationType;
+    private $shipmentService;
 
     private $postalTypeOfAllDestination = [
-        'toTerminal' => ["PARCEL_CLASS_1", "POSTAL_PARCEL"],
-        'toDoor' => []
+        'toTerminal' => ["PARCEL_CLASS_1", "POSTAL_PARCEL", "ONLINE_PARCEL"],
+        'toDoor' => ["ONLINE_COURIER"]
     ];
 
-    public function __construct($geoData){
+    public function __construct($geoData, $shipmentService)
+    {
+        $this->shipmentService = $shipmentService;
 
         $this->geoData = $this->prepareGeoData($geoData);
 
@@ -48,11 +50,9 @@ class Pochta implements ShipmentServices
 
     }
 
-    public function getDeliveryCost($parcelData, $destinationType)
+    public function getDeliveryCost($parcelData)
     {
-        $this->destinationType = $destinationType;
-
-        $postalTypes = $this->postalTypeOfAllDestination[$destinationType];
+        $postalTypes = $this->postalTypeOfAllDestination[$this->shipmentService->type];
 
         $services = $this->getServiceCost($parcelData, $postalTypes);
 
@@ -110,6 +110,7 @@ class Pochta implements ShipmentServices
                 "payment-method"        => "CASHLESS",
                 "with-order-of-notice"  => false,
                 "with-simple-notice"    => false,
+                "completeness-checking" => true
             ];
 
             if (count($postalTypes) > 0)
@@ -229,8 +230,6 @@ class Pochta implements ShipmentServices
     private function prepareResponse($data){
 
         $response = [
-            'id_response' => 'pochta_' . $this->destinationType,
-            'type' => $this->destinationType,
             'price' => [0]
         ];
 
@@ -247,20 +246,15 @@ class Pochta implements ShipmentServices
                     break;
                 case 'delivery-time'  :
                     if(isset($value["min-days"]) && $value["min-days"] !== $value["max-days"] )
-                        $response['days'][] = $value["min-days"] . '-' . $value["max-days"];
+                        $response['days'][] = ($value["min-days"] + $this->shipmentService->processing_time) . '-' . ($value["max-days"] + $this->shipmentService->processing_time);
                     else
-                        $response['days'][] = $value["max-days"];
+                        $response['days'][] = $value["max-days"] + $this->shipmentService->processing_time;
                     break;
             }
         }
 
-        $response['message'] = 'Pochta ' . $this->destinationType
-            . ' Стоимость доставки: ' . $response['price'][0];
-
         if( !isset($response['days']))
             $response['days'][] = '~';
-        else
-            $response['message'] .= ' Срок доставки: ' . $response['days'][0];
 
         return $response;
     }

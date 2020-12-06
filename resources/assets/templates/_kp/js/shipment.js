@@ -18,21 +18,17 @@ export default function Shipment(){
 
             for(let i=0; i < requests.length; i++){
 
-                if(requests[i].hasAttribute('data-alias')){
+                if(requests[i].hasAttribute('data-shipment_id')){
 
-                    if(requests[i].hasAttribute('data-type')){
+                    let requestData = Object.assign({}, offers);
 
-                        let requestData = Object.assign({}, offers);
+                    let offerAttributes = requests[i].attributes;
 
-                        let offerAttributes = requests[i].attributes;
-
-                        requestData.queryString = setQueryString(offerAttributes, queryString);
-                        requestData.requestName += offerAttributes['data-alias']['nodeValue'] + '_' + offerAttributes['data-type']['nodeValue'];
-                        requestData.reloadBlock = requests[i];
+                    requestData.queryString = setQueryString(offerAttributes, queryString);
+                    requestData.requestName += offerAttributes['data-shipment_id']['nodeValue'];
+                    requestData.reloadBlock = requests[i];
 
                     sendRequest(requestData);
-
-                    }
 
                 }
 
@@ -204,13 +200,13 @@ export default function Shipment(){
                 module : 'shipment',
                 response : 'view'
             },
-            requestName : 'shipment_',
+            requestName : 'shipment_offer_',
             elements : {
                 wrapBlock : document.getElementById('shipment-offers'),
                 shipmentBestOfferWrap   : document.getElementById('shipment-best-offer'),
                 shipmentDefaultMethods  : {
-                    'toTerminal'    : document.querySelector('[data-alias="toTerminal"]'),
-                    'toDoor'        : document.querySelector('[data-alias="toDoor"]'),
+                    'toTerminal'    : document.querySelector('[data-shipment_id="1"]'),
+                    'toDoor'        : document.querySelector('[data-shipment_id="2"]'),
                 }
             },
             functions : {
@@ -249,11 +245,9 @@ export default function Shipment(){
                     if(result !== ''){
                         
                         let arrayReqName = self.requestName.split('_');
-
-                        if (arrayReqName[arrayReqName.length -1 ] === 'toDoor' && arrayReqName[arrayReqName.length - 2 ] !== 'toDoor') {
+/*это id дефолтных сервисов доставки*/
+                        if (arrayReqName[1] !== "1" && arrayReqName[1] !== "2") {
                             self.elements.shipmentDefaultMethods.toDoor.style.display = 'none';
-
-                        } else if (arrayReqName[arrayReqName.length -1 ] === 'toTerminal' && arrayReqName[arrayReqName.length - 2 ] !== 'toTerminal') {
                             self.elements.shipmentDefaultMethods.toTerminal.style.display = 'none';
                         }
 
