@@ -697,6 +697,11 @@ class Product extends Model
                         $join->on('products.id', '=', 'shop_marketplace_has_product.product_id')
                             ->where('shop_marketplace_has_product.marketplace_id', '=', $id);
                     });
+                    $products = $products->rightJoin('shop_store_has_product', function ($join) {
+                        $join->on('products.id', '=', 'shop_store_has_product.product_id')
+                            ->where('shop_store_has_product.active', '=', 1)
+                            ->where('shop_store_has_product.product_id', '>', 0);
+                    });
                     break;
             }
         }

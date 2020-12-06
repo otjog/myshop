@@ -106,12 +106,12 @@ class Pricelists extends Model
 
                 $this->getYmlElement($writer, 'categoryId', $product->category_id);
 
-                if (count($product->images) > 0)
-                    $imageSrc = $product->images[0]->src;
-                else
-                    $imageSrc = 'noimage';
-
-                $this->getYmlElement($writer, 'picture', route('getImage',['product', 'l', $imageSrc, $product->id]));
+                if (count($product->images) > 0) {
+                    foreach ($product->images as $image)
+                        $this->getYmlElement($writer, 'picture', route('getImage',['product', 'l', $image->src, $product->id]));
+                } else {
+                    $this->getYmlElement($writer, 'picture', route('getImage',['product', 'l', 'noimage', $product->id]));
+                }
 
                 $this->getYmlElement($writer, 'delivery', true);
 

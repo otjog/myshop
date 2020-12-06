@@ -71,6 +71,7 @@ class MarketplacePricelistController extends Controller
      */
     public function show(Request $request, $mp_alias, $pl_alias)
     {
+
         $categories = $this->categoryModel->getActiveCategories();
 
         $marketplace = $this->marketplaceModel->select('id')->where('alias', $mp_alias)->first();
@@ -80,6 +81,12 @@ class MarketplacePricelistController extends Controller
         $routeParameters['marketplace'] = $marketplace->id;
 
         $products = $this->productModel->getProductsFromRoute($routeParameters, $request->all(), false);
+
+        foreach ($products as $product) {
+            if(!isset($product->stores[0])){
+                dump($product);
+            }
+        }
 
         $xmlString = $this->pricelistModel->getPriceList($products, $categories, $pl_alias);
 
