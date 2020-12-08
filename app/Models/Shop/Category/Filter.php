@@ -94,10 +94,13 @@ class Filter extends Model{
                                 $prices->max('value'),
                             ];
 
-                            if($values[0] !== null || $values[1] !== null ){
-                                $filter['values'] = $values;
-                            }else{
+                            if($values[0] === null)
+                                $values[0] = 0;
+
+                            if($values[1] === null ){
                                 $filter['values'] = [];
+                            }else{
+                                $filter['values'] = $values;
                             }
 
                             $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
@@ -127,47 +130,40 @@ class Filter extends Model{
                             break;
 
                         default             :
-                            if($filter['filter_type'] === 'slider-range'){
 
-                                //todo должно отдавать только минимальное и максимальное значение, как в price
-                                //todo проверка значений на null
-                                $filter['values']       = [$filter['value']];
+                            $parameters = $products->pluck('parameters');
 
-                                $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
+                            $values = [];
 
-                                break;
+                            foreach($parameters as $productParameters){
 
-                            }else{
+                                foreach($productParameters as $parameter){
 
-                                $parameters = $products->pluck('parameters');
-
-                                $values = [];
-
-                                foreach($parameters as $productParameters){
-
-                                    foreach($productParameters as $parameter){
-
-                                        if( $parameter->alias === $filter['alias']){
-
-                                            if( !isset($values[ $parameter->pivot->value ])){
-                                                $values[ $parameter->pivot->value ] = $parameter->pivot->value;
-                                            }
-
-                                        }
-
+                                    if( $parameter->alias === $filter['alias']){
+                                        if( !isset($values[ $parameter->pivot->value ]))
+                                            $values[ $parameter->pivot->value ] = $parameter->pivot->value;
                                     }
                                 }
-
-                                $filter['alias']        = $prefix . $filter['alias'];
-
-                                asort($values);
-                                $filter['values']       = array_flip($values);
-
-                                $filter['old_values']   = $this->addOldValues($old_values, $filter['alias']);
-
-                                break;
-
                             }
+
+                            $filter['alias'] = $prefix . $filter['alias'];
+
+                            if($filter['type'] === 'slider-range' && count($values) !== 0 && $values !== null){
+
+                                $filter['values'] = [
+                                    0 => min($values),
+                                    1 => max($values)
+                                ];
+
+                            } else {
+                                asort($values);
+                                $filter['values'] = array_flip($values);
+                            }
+
+                            $filter['old_values'] = $this->addOldValues($old_values, $filter['alias']);
+
+                            break;
+
                     }
 
                     if( count( $filter['values'] ) > 0){

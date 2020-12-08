@@ -663,12 +663,28 @@ class Product extends Model
         /************PARAMETERS*************/
         foreach($filterData as $key => $parameter){
 
+            $filter_alias = str_replace($filter_prefix, '', $key);
+
+            $filter_type = DB::table('filters')
+                ->select('type')
+                ->where('alias', $filter_alias)
+                ->get();
+
             if(strpos($key, $filter_prefix) === 0){
-                $key = str_replace($filter_prefix, '', $key);
-                $products = $products->whereHas('parameters', function($query) use ($parameter, $key) {
-                    $query->where('product_parameters.alias', '=', $key)
-                        ->whereIn('product_has_parameter.value', $parameter);
-                });
+                if($filter_type[0]->type === 'slider-range') {
+
+                    $products = $products->whereHas('parameters', function($query) use ($parameter, $filter_alias) {
+                        $query->where('product_parameters.alias', '=', $filter_alias)
+                            ->having('product_has_parameter.value', '>=', $parameter[0]*1)
+                                ->having('product_has_parameter.value', '<=', $parameter[1]*1);
+                    });
+                } else {
+                    $products = $products->whereHas('parameters', function($query) use ($parameter, $filter_alias) {
+                        $query->where('product_parameters.alias', '=', $filter_alias)
+                            ->whereIn('product_has_parameter.value', $parameter);
+                    });
+                }
+
             }
 
         }
