@@ -1,7 +1,8 @@
-<div>
-    @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
-        <small class="text-success">В наличии</small>
-    @else
-        <small class="text-muted">Нет в наличии</small>
-    @endif
-</div>
+@if( !isset($product->stores) || $product->stores === null || count($product->stores) === 0 )
+    <div class="pb-3">
+            <span class="text-dark">
+                 <i class="fas fa-exclamation-circle"></i>
+                Товар распродан
+            </span>
+    </div>
+@endif

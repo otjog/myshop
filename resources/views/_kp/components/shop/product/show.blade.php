@@ -36,10 +36,12 @@
                         {{-- Quantity Discounts --}}
                         @include( $global_data['template']['name']. '.components.shop.product.show.quantity_discount')
 
-                        {{-- Best Shipment Offer --}}
-                        <div id="shipment-best-offer" class="py-1">
-                            @include($global_data['template']['name']. '.modules.shop.shipment._elements.best-offer')
-                        </div>
+                        @if( isset($product->stores) && $product->stores !== null && count($product->stores) !== 0 )
+                            {{-- Best Shipment Offer --}}
+                            <div id="shipment-best-offer" class="py-1">
+                                @include($global_data['template']['name']. '.modules.shop.shipment._elements.best-offer')
+                            </div>
+                        @endif
 
                     </div>
                 </div>
