@@ -4,10 +4,11 @@
         <div class="mx-1">
             @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.contact')
         </div>
-
-        <div class="mx-1">
-            @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.fastbuy')
-        </div>
+        @if( isset($product->stores) && $product->stores !== null && count($product->stores) > 0 )
+            <div class="mx-1">
+                @include( $global_data['template']['name']. '.components.shop.product.show.sell_block.fastbuy')
+            </div>
+        @endif
 
     </div>
 </div>
