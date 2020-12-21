@@ -2,7 +2,7 @@
     <ol class="breadcrumb p-0 bg-transparent">
 
         @if(count($breadcrumbs) > 0)
-            <li class="breadcrumb-item p-0 p-sm-1"><a href="{{$global_data['site_url']}}">Главная</a></li>
+            <li class="breadcrumb-item p-0 p-sm-1"><a href="{{route('home')}}">Главная</a></li>
         @endif
 
         @foreach($breadcrumbs as $item)
