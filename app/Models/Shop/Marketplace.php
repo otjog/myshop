@@ -14,4 +14,5 @@ class Marketplace extends Model
         return $this->belongsToMany('App\Models\Shop\Product\Product', 'shop_marketplace_has_product')->withTimestamps();
     }
 
+
 }

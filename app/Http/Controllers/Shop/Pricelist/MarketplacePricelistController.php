@@ -71,7 +71,7 @@ class MarketplacePricelistController extends Controller
      */
     public function show(Request $request, $mp_alias, $pl_alias)
     {
-        $categories = $this->categoryModel->getActiveCategories();
+        $categories = $this->categoryModel->getActiveCategoriesForMarketPlace($mp_alias);
 
         $marketplace = $this->marketplaceModel->select('id')->where('alias', $mp_alias)->first();
 

@@ -73,8 +73,14 @@ class Pricelists extends Model
                 if ($category->parent_id !== 0) {
                     $this->getYmlAttributes($writer, ['parentId'=>$category->parent_id]);
                 }
-
-                $writer->text($category->name);
+                if(
+                    isset($category->marketplaces[0]->pivot->category_name)
+                    && $category->marketplaces[0]->pivot->category_name !== null
+                ) {
+                    $writer->text($category->marketplaces[0]->pivot->category_name);
+                } else {
+                    $writer->text($category->name);
+                }
 
             $writer->endElement();
 

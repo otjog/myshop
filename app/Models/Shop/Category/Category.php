@@ -45,6 +45,13 @@ class Category extends Model{
         return $this->hasMany('App\Models\Shop\Category\Category', 'parent_id');
     }
 
+    public function marketplaces()
+    {
+        return $this->belongsToMany('App\Models\Shop\Marketplace', 'shop_marketplace_has_category')
+            ->withPivot('category_name')
+            ->withTimestamps();
+    }
+
     public function getAllCategories(){
         return self::select(
             'id',
@@ -72,6 +79,23 @@ class Category extends Model{
             ->with('images')
             ->with('parent')
             ->with('children')
+            ->get();
+    }
+
+    public function getActiveCategoriesForMarketPlace($mp_alias){
+        return self::select(
+            'id',
+            'parent_id',
+            'name',
+            'description'
+        )
+            ->where('active', 1)
+            ->orderBy('sort')
+            ->with('parent')
+            ->with('children')
+            ->with(['marketplaces' => function ($query) use ($mp_alias) {
+                $query->where('shop_marketplaces.alias', '=', $mp_alias);
+            }])
             ->get();
     }
 
