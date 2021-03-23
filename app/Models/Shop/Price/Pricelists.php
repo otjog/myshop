@@ -99,7 +99,12 @@ class Pricelists extends Model
 
                 $this->getYmlAttributes($writer, ['id'=>$product->id]);
 
-                $this->getYmlElement($writer, 'name', $product->name);
+                $productName = $product->name;
+
+                if (isset($product->manufacturer))
+                    $productName = ucfirst(strtolower($product->manufacturer['name'])) . ' ' .  $productName;
+
+                $this->getYmlElement($writer, 'name', $productName);
 
                 $this->getYmlElement($writer, 'url', route('products.show', $product->id));
 
@@ -122,6 +127,10 @@ class Pricelists extends Model
                 $this->getYmlElement($writer, 'delivery', true);
 
                 $this->getYmlElement($writer, 'pickup', true);
+
+                $this->getYmlElement($writer, 'store', true);
+
+                $this->getYmlElement($writer, 'manufacturer_warranty', true);
 
 
             $writer->endElement();
