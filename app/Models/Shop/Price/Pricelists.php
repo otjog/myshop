@@ -94,7 +94,7 @@ class Pricelists extends Model
         $writer->startElement("offers");
 
         foreach ($products as $product) {
-dd($product);
+
             $writer->startElement("offer");
 
                 $this->getYmlAttributes($writer, ['id'=>$product->id]);
