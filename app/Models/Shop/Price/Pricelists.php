@@ -94,7 +94,7 @@ class Pricelists extends Model
         $writer->startElement("offers");
 
         foreach ($products as $product) {
-
+dd($product);
             $writer->startElement("offer");
 
                 $this->getYmlAttributes($writer, ['id'=>$product->id]);
@@ -123,6 +123,16 @@ class Pricelists extends Model
                 } else {
                     $this->getYmlElement($writer, 'picture', route('getImage',['product', 'l', 'noimage', $product->id]));
                 }
+
+                $this->getYmlElement($writer, 'description', $product->description);
+
+                $this->getYmlElement($writer, 'weight', $product->weight);
+
+                $this->getYmlElement($writer, 'length', $product->length);
+
+                $this->getYmlElement($writer, 'width', $product->width);
+
+                $this->getYmlElement($writer, 'height', $product->height);
 
                 $this->getYmlElement($writer, 'delivery', true);
 
