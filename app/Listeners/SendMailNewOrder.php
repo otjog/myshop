@@ -26,8 +26,8 @@ class SendMailNewOrder{
      * @param  NewOrder  $event
      * @return void
      */
-    public function handle(NewOrder $event){
-
+    public function handle(NewOrder $event)
+    {
         $orders = new Order();
 
         $products = new Product();
@@ -36,8 +36,13 @@ class SendMailNewOrder{
 
         $globalData = GlobalData::pushArrayParameters($data);
 
-        Mail::to(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
-            ->cc($data['order']->customer->email, $data['order']->customer->full_name )
-            ->send(new OrderShipped(['global_data' => $globalData]));
+        $sending = Mail::to(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+        /*Если заказ оформлен по телефону и адрес почты указан `номертелефона@nomail.ru` письмо не отправляем по этому адресу*/
+        if (!stripos($data['order']->customer->email, '@nomail.')) {
+            $sending->cc($data['order']->customer->email, $data['order']->customer->full_name);
+        }
+        $sending->send(new OrderShipped(['global_data' => $globalData]));
+
+
     }
 }
