@@ -90,7 +90,7 @@
                             </div>
                         </div>
 
-                        <input type="hidden" name="check" value="">
+                        <input style="display:none;" type="text" name="check" value="">
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
