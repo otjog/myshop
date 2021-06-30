@@ -41,6 +41,9 @@ class SendMailNewOrder{
         if (!stripos($data['order']->customer->email, '@nomail.')) {
             $sending->cc($data['order']->customer->email, $data['order']->customer->full_name);
         }
+        if(env('SECOND_MAIL_FROM_ADDRESS') !== null || env('SECOND_MAIL_FROM_ADDRESS') !== '' ) {
+            $sending->bcc(env('SECOND_MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+        }
         $sending->send(new OrderShipped(['global_data' => $globalData]));
 
 

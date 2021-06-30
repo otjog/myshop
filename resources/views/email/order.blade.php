@@ -27,7 +27,7 @@
                         <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 10px; padding-left: 10px; padding-top: 0px; padding-bottom: 10px; font-family: Tahoma, Verdana, sans-serif"><![endif]-->
                         <div style="color:#052D3D;font-family:'Lato', Tahoma, Verdana, Segoe, sans-serif;line-height:120%;padding-top:0px;padding-right:10px;padding-bottom:10px;padding-left:10px;">
                             <div style="font-size: 12px; line-height: 14px; font-family: 'Lato', Tahoma, Verdana, Segoe, sans-serif; color: #052D3D;">
-                                <p style="font-size: 14px; line-height: 26px; text-align: center; margin: 0;"><span style="font-size: 22px;"><strong><span style="line-height: 26px; font-size: 22px;">{{$order->customer->full_name}}, меня зовут Олег, я уже начал обработку вашего заказа и свяжусь с вами в ближайшее время.</span></strong></span></p>
+                                <p style="font-size: 14px; line-height: 26px; text-align: center; margin: 0;"><span style="font-size: 22px;"><strong><span style="line-height: 26px; font-size: 22px;">{{$order->customer->full_name}}, спасибо за заказ. Мы уже начали обработку вашего заказа и свяжемся с вами в ближайшее время.</span></strong></span></p>
                             </div>
                         </div>
                         <!--[if mso]></td></tr></table><![endif]-->

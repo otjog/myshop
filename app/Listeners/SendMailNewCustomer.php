@@ -33,6 +33,7 @@ class SendMailNewCustomer
 
         Mail::to(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
             ->cc($event->customer->email, $event->customer->full_name )
+            ->bcc(env('SECOND_MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'))
             ->send(new CustomerCreate(['global_data' => $globalData]));
     }
 }
